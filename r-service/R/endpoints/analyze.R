@@ -51,7 +51,8 @@ analyze_run_handler <- function(body) {
       incremental = unbox_scalar(sum(gl$incremental, na.rm = TRUE)),
       treatment_start = unbox_scalar(gl$TreatmentStart),
       treatment_end = unbox_scalar(gl$TreatmentEnd),
-      test_locations = as.character(gl$test_id$name)
+      # I() forces a JSON array even for a single-market test - see data.R
+      test_locations = I(as.character(gl$test_id$name))
     ),
     att_series = att_series,
     lift_series = lift_series,

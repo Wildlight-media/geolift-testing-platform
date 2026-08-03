@@ -9,9 +9,12 @@ data_read_handler <- function(body) {
     preview = sanitize_df(utils::head(result, 500)),
     row_count = nrow(result),
     location_count = length(locations),
-    locations = locations,
+    # I() forces a JSON array even when length 1 - without it, jsonlite's
+    # auto_unbox collapses a single-location result to a bare string, which
+    # breaks a `list[str]` response model on the Python side.
+    locations = I(locations),
     time_period_count = length(unique(result$time)),
     time_range = list(min = min(result$time), max = max(result$time)),
-    columns = names(result)
+    columns = I(names(result))
   )
 }

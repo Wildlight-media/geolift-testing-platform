@@ -22,6 +22,8 @@ class DatasetOut(BaseModel):
     date_format: str
     covariate_cols: list[str]
     converted_from_zip: bool
+    dropped_zip_row_count: int
+    dropped_zip_codes: list[str]
     row_count: int | None
     location_count: int | None
     time_period_count: int | None

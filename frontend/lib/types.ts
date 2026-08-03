@@ -16,6 +16,8 @@ export type Dataset = {
   date_format: string;
   covariate_cols: string[];
   converted_from_zip: boolean;
+  dropped_zip_row_count: number;
+  dropped_zip_codes: string[];
   row_count: number | null;
   location_count: number | null;
   time_period_count: number | null;

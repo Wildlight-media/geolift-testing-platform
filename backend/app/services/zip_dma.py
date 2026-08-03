@@ -29,26 +29,38 @@ def _normalize_zip(raw: str) -> str:
     return str(raw).strip().split("-")[0].zfill(5)
 
 
-def convert_zip_column_to_dma(df: pd.DataFrame, location_col: str) -> tuple[pd.DataFrame, list[str]]:
+def convert_zip_column_to_dma(
+    df: pd.DataFrame, location_col: str, *, drop_unmapped: bool = False
+) -> tuple[pd.DataFrame, list[str], int]:
     """Replaces `location_col`'s zip codes with their DMA name in place.
 
-    Returns (converted_df, unmapped_zips) - unmapped_zips is non-empty if
-    any value didn't match the crosswalk, in which case converted_df should
-    not be used (the caller should surface the mismatch to the user rather
-    than silently dropping/aggregating incomplete data).
+    Returns (converted_df, unmapped_zips, dropped_row_count).
+
+    If any zip doesn't match the crosswalk and `drop_unmapped` is False (the
+    default), converted_df is unchanged/unusable and the caller should
+    surface `unmapped_zips` as a hard error rather than silently aggregating
+    incomplete data. If `drop_unmapped` is True, rows with an unmapped zip
+    are excluded instead, and `unmapped_zips`/`dropped_row_count` describe
+    what was dropped so the caller can still report it, just not block on it.
     """
     crosswalk = _load_crosswalk()
     normalized = df[location_col].map(_normalize_zip)
     dma = normalized.map(crosswalk)
-
     unmapped_mask = dma.isna()
-    if unmapped_mask.any():
-        unmapped = sorted(set(normalized[unmapped_mask]))
-        return df, unmapped
 
-    df = df.copy()
-    df[location_col] = dma
-    return df, []
+    if not unmapped_mask.any():
+        df = df.copy()
+        df[location_col] = dma
+        return df, [], 0
+
+    unmapped = sorted(set(normalized[unmapped_mask]))
+    if not drop_unmapped:
+        return df, unmapped, 0
+
+    dropped_row_count = int(unmapped_mask.sum())
+    df = df.loc[~unmapped_mask].copy()
+    df[location_col] = dma.loc[~unmapped_mask]
+    return df, unmapped, dropped_row_count
 
 
 def aggregate_to_dma(df: pd.DataFrame, *, location_col: str, date_col: str, sum_cols: list[str]) -> pd.DataFrame:

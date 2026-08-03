@@ -24,6 +24,7 @@ def upload_dataset(
     date_format: str = Form("yyyy-mm-dd"),
     covariate_cols: str = Form(""),
     convert_zip_to_dma: bool = Form(False),
+    drop_unmapped_zips: bool = Form(False),
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
@@ -43,18 +44,30 @@ def upload_dataset(
     if df[y_col].isna().any():
         raise HTTPException(status_code=400, detail=f"Column '{y_col}' has non-numeric values")
 
+    dropped_zip_row_count = 0
+    dropped_zip_codes: list[str] = []
     if convert_zip_to_dma:
-        df, unmapped = zip_dma.convert_zip_column_to_dma(df, location_col)
-        if unmapped:
-            sample = ", ".join(unmapped[:20])
-            more = f" (+{len(unmapped) - 20} more)" if len(unmapped) > 20 else ""
+        df, unmapped, dropped_zip_row_count = zip_dma.convert_zip_column_to_dma(
+            df, location_col, drop_unmapped=drop_unmapped_zips
+        )
+        if unmapped and not drop_unmapped_zips:
+            # structured detail (not just a string) so the frontend can offer
+            # a "drop these rows and continue" recovery action instead of a
+            # dead-end error
             raise HTTPException(
                 status_code=400,
-                detail=(
-                    f"{len(unmapped)} zip code(s) in '{location_col}' didn't match the zip→DMA "
-                    f"crosswalk: {sample}{more}. Check for non-US zips or typos."
-                ),
+                detail={
+                    "error": "zip_mismatch",
+                    "location_col": location_col,
+                    "unmapped_count": len(unmapped),
+                    "sample": unmapped[:20],
+                    "message": (
+                        f"{len(unmapped)} zip code(s) in '{location_col}' didn't match the zip→DMA crosswalk. "
+                        "Check for non-US zips, typos, or blank values that got filled with placeholder numbers."
+                    ),
+                },
             )
+        dropped_zip_codes = unmapped
         df = zip_dma.aggregate_to_dma(df, location_col=location_col, date_col=date_col, sum_cols=[y_col, *covariates])
         content = df.to_csv(index=False).encode("utf-8")
 
@@ -79,6 +92,8 @@ def upload_dataset(
         date_format=date_format,
         covariate_cols=covariates,
         converted_from_zip=convert_zip_to_dma,
+        dropped_zip_row_count=dropped_zip_row_count,
+        dropped_zip_codes=dropped_zip_codes,
         row_count=r_result["row_count"],
         location_count=r_result["location_count"],
         time_period_count=r_result["time_period_count"],

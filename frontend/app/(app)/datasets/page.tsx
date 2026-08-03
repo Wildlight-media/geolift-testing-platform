@@ -81,7 +81,12 @@ export default function DatasetsPage() {
                 </div>
               </div>
               {d.converted_from_zip && (
-                <span className="badge bg-blue-100 text-blue-700 mt-3">Converted from zip → DMA</span>
+                <span className="badge bg-blue-100 text-blue-700 mt-3 mr-2">Converted from zip → DMA</span>
+              )}
+              {d.dropped_zip_row_count > 0 && (
+                <span className="badge bg-amber-100 text-amber-700 mt-3">
+                  {d.dropped_zip_row_count} row(s) dropped (unmapped zip)
+                </span>
               )}
             </div>
           ))}
@@ -103,6 +108,7 @@ function UploadForm({ onUploaded }: { onUploaded: () => void }) {
   const [covariateCols, setCovariateCols] = useState<string[]>([]);
   const [convertZipToDma, setConvertZipToDma] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [zipMismatch, setZipMismatch] = useState<{ count: number; sample: string[] } | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   function onFileChange(selected: File | null) {
@@ -137,8 +143,7 @@ function UploadForm({ onUploaded }: { onUploaded: () => void }) {
     setCovariateCols((cur) => (cur.includes(col) ? cur.filter((c) => c !== col) : [...cur, col]));
   }
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function submitUpload(dropUnmappedZips: boolean) {
     if (!file) return;
     setSubmitting(true);
     setError(null);
@@ -151,14 +156,27 @@ function UploadForm({ onUploaded }: { onUploaded: () => void }) {
       form.set("date_format", dateFormat);
       form.set("covariate_cols", covariateCols.join(","));
       form.set("convert_zip_to_dma", String(convertZipToDma));
+      form.set("drop_unmapped_zips", String(dropUnmappedZips));
       form.set("file", file);
       await apiUpload("/api/datasets", form);
+      setZipMismatch(null);
       onUploaded();
     } catch (err) {
+      if (err instanceof ApiError && (err.detail as { error?: string })?.error === "zip_mismatch") {
+        const detail = err.detail as { unmapped_count: number; sample: string[] };
+        setZipMismatch({ count: detail.unmapped_count, sample: detail.sample });
+      } else {
+        setZipMismatch(null);
+      }
       setError(err instanceof ApiError ? err.message : "Upload failed");
     } finally {
       setSubmitting(false);
     }
+  }
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    await submitUpload(false);
   }
 
   const covariateOptions = headers.filter((h) => h !== locationCol && h !== dateCol && h !== yCol);
@@ -276,6 +294,25 @@ function UploadForm({ onUploaded }: { onUploaded: () => void }) {
       )}
 
       {error && <p className="text-sm text-red-600">{error}</p>}
+
+      {zipMismatch && (
+        <div className="rounded-lg bg-amber-50 border border-amber-200 p-3 text-sm space-y-2">
+          <p className="text-amber-800">
+            Sample unmapped values: {zipMismatch.sample.join(", ")}
+            {zipMismatch.count > zipMismatch.sample.length ? ` (+${zipMismatch.count - zipMismatch.sample.length} more)` : ""}.
+            These are often blank postal codes that got filled with placeholder numbers, or non-US zips.
+          </p>
+          <button
+            type="button"
+            className="btn-secondary"
+            disabled={submitting}
+            onClick={() => submitUpload(true)}
+          >
+            Drop these {zipMismatch.count} row(s) and upload anyway
+          </button>
+        </div>
+      )}
+
       <button type="submit" disabled={submitting || !ready} className="btn-primary">
         {submitting ? "Uploading & validating..." : "Upload"}
       </button>

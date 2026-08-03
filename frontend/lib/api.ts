@@ -2,9 +2,15 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 export class ApiError extends Error {
   status: number;
-  constructor(message: string, status: number) {
+  // the raw `detail` field from FastAPI's error body - a plain string in most
+  // cases, but some endpoints send a structured object so the UI can react
+  // to a specific error type (e.g. offering a recovery action) rather than
+  // just displaying text.
+  detail: unknown;
+  constructor(message: string, status: number, detail?: unknown) {
     super(message);
     this.status = status;
+    this.detail = detail;
   }
 }
 
@@ -16,14 +22,16 @@ function authHeaders(): Record<string, string> {
 
 async function handle<T>(res: Response): Promise<T> {
   if (!res.ok) {
-    let detail = res.statusText;
+    let detail: unknown = res.statusText;
     try {
       const body = await res.json();
-      detail = body.detail ?? JSON.stringify(body);
+      detail = body.detail ?? body;
     } catch {
       // ignore, keep statusText
     }
-    throw new ApiError(typeof detail === "string" ? detail : JSON.stringify(detail), res.status);
+    const message =
+      typeof detail === "string" ? detail : (detail as { message?: string })?.message ?? JSON.stringify(detail);
+    throw new ApiError(message, res.status, detail);
   }
   if (res.status === 204) return undefined as T;
   return res.json();
