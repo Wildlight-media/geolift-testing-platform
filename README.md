@@ -43,7 +43,12 @@ an experiment.
    approximation (zip centroid plotted against DMA boundaries, from
    [this gist](https://gist.github.com/clarkenheim/023882f8d77741f4d5347f80d95bc259)), not licensed Nielsen data —
    swap in your organization's own crosswalk in that file if you have one (same `zip_code\tdma_code\tdma_description`
-   TSV format) for the most accurate mapping to your actual media buys.
+   TSV format) for the most accurate mapping to your actual media buys. Every upload also gets its panel "densified":
+   `GeoDataRead` silently drops any location missing even one date in the range, and most sales/conversion exports
+   only record days something actually happened — so any missing (location, date) combination is filled with `Y=0`
+   (and covariates=0) before validation, and the count of filled gaps is shown on the dataset card. If a location
+   still doesn't appear after upload, check the raw file for that location entirely — densifying only helps when the
+   location has *some* rows to begin with.
 2. **Design** — run `GeoLiftMarketSelection` with full control over every parameter (treatment durations, candidate
    market counts, effect sizes, budget, cpic, alpha, include/exclude markets, holdout range, etc.), then drill into
    any ranked candidate for its pre-treatment fit and power curve.

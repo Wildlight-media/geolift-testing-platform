@@ -84,8 +84,13 @@ export default function DatasetsPage() {
                 <span className="badge bg-blue-100 text-blue-700 mt-3 mr-2">Converted from zip → DMA</span>
               )}
               {d.dropped_zip_row_count > 0 && (
-                <span className="badge bg-amber-100 text-amber-700 mt-3">
+                <span className="badge bg-amber-100 text-amber-700 mt-3 mr-2">
                   {d.dropped_zip_row_count} row(s) dropped (unmapped zip)
+                </span>
+              )}
+              {d.filled_missing_row_count > 0 && (
+                <span className="badge bg-slate-100 text-slate-600 mt-3" title="Missing location/date combinations filled with 0 so no location got dropped as incomplete.">
+                  {d.filled_missing_row_count} gap(s) filled with 0
                 </span>
               )}
             </div>

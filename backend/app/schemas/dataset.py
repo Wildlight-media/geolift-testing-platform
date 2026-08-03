@@ -24,6 +24,7 @@ class DatasetOut(BaseModel):
     converted_from_zip: bool
     dropped_zip_row_count: int
     dropped_zip_codes: list[str]
+    filled_missing_row_count: int
     row_count: int | None
     location_count: int | None
     time_period_count: int | None

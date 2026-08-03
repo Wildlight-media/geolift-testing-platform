@@ -25,6 +25,7 @@ class Dataset(Base, UUIDMixin, TimestampMixin):
     converted_from_zip: Mapped[bool] = mapped_column(Boolean, default=False)
     dropped_zip_row_count: Mapped[int] = mapped_column(Integer, default=0)
     dropped_zip_codes: Mapped[list] = mapped_column(JSONB, default=list)
+    filled_missing_row_count: Mapped[int] = mapped_column(Integer, default=0)
 
     # populated from the GeoDataRead validation response
     row_count: Mapped[int | None] = mapped_column(Integer, nullable=True)

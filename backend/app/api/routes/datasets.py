@@ -9,7 +9,7 @@ from app.models.dataset import Dataset
 from app.models.user import User
 from app.schemas.dataset import DatasetOut
 from app.services import r_client, storage, zip_dma
-from app.services.dataset_loader import parse_csv_bytes
+from app.services.dataset_loader import densify_panel, parse_csv_bytes
 from app.services.r_client import RServiceError
 
 router = APIRouter(prefix="/api/datasets", tags=["datasets"])
@@ -69,7 +69,14 @@ def upload_dataset(
             )
         dropped_zip_codes = unmapped
         df = zip_dma.aggregate_to_dma(df, location_col=location_col, date_col=date_col, sum_cols=[y_col, *covariates])
-        content = df.to_csv(index=False).encode("utf-8")
+
+    # Always fill gaps to a complete panel - GeoDataRead silently drops any
+    # location missing even one date, and most sales/conversion exports only
+    # record days something happened rather than explicit zero rows.
+    df, filled_missing_row_count = densify_panel(
+        df, location_col=location_col, date_col=date_col, y_col=y_col, covariate_cols=covariates
+    )
+    content = df.to_csv(index=False).encode("utf-8")
 
     mapping = {"date_id": date_col, "location_id": location_col, "Y_id": y_col, "format": date_format, "X": covariates}
 
@@ -94,6 +101,7 @@ def upload_dataset(
         converted_from_zip=convert_zip_to_dma,
         dropped_zip_row_count=dropped_zip_row_count,
         dropped_zip_codes=dropped_zip_codes,
+        filled_missing_row_count=filled_missing_row_count,
         row_count=r_result["row_count"],
         location_count=r_result["location_count"],
         time_period_count=r_result["time_period_count"],

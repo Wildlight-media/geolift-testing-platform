@@ -17,6 +17,37 @@ def parse_csv_bytes(content: bytes, *, y_col: str, covariate_cols: list[str]) ->
     return df
 
 
+def densify_panel(
+    df: pd.DataFrame, *, location_col: str, date_col: str, y_col: str, covariate_cols: list[str]
+) -> tuple[pd.DataFrame, int]:
+    """Fills in any missing (location, date) combination with Y=0 (and
+    covariates=0).
+
+    GeoLift::GeoDataRead drops a location entirely if it's missing even one
+    of the dataset's distinct dates ("incomplete panel"), which silently
+    discards a lot of real data - most sales/conversion exports only record
+    days something happened, so a sparse location is the norm, not the
+    exception, and a missing day almost always means zero activity that day.
+    Densifying here means GeoDataRead never has anything to drop.
+    """
+    value_cols = [y_col, *covariate_cols]
+    df = df[[location_col, date_col, *value_cols]]
+    # collapse any duplicate (location, date) rows (e.g. multiple line items
+    # per day) - reindexing below requires a unique index, and summing is
+    # the same aggregation zip->DMA conversion already does.
+    df = df.groupby([location_col, date_col], as_index=False)[value_cols].sum()
+
+    locations = df[location_col].unique()
+    dates = df[date_col].unique()
+    full_index = pd.MultiIndex.from_product([locations, dates], names=[location_col, date_col])
+
+    densified = df.set_index([location_col, date_col]).reindex(full_index)
+    filled_count = int(densified[y_col].isna().sum())
+    densified[value_cols] = densified[value_cols].fillna(0)
+
+    return densified.reset_index(), filled_count
+
+
 def load_records(dataset: Dataset) -> list[dict]:
     content = storage.read_bytes(dataset.storage_path)
     df = parse_csv_bytes(content, y_col=dataset.y_col, covariate_cols=dataset.covariate_cols)

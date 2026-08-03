@@ -18,6 +18,7 @@ export type Dataset = {
   converted_from_zip: boolean;
   dropped_zip_row_count: number;
   dropped_zip_codes: string[];
+  filled_missing_row_count: number;
   row_count: number | null;
   location_count: number | null;
   time_period_count: number | null;
