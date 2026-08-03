@@ -9,7 +9,7 @@ from app.models.dataset import Dataset
 from app.models.user import User
 from app.schemas.dataset import DatasetOut
 from app.services import r_client, storage, zip_dma
-from app.services.dataset_loader import densify_panel, parse_csv_bytes
+from app.services.dataset_loader import densify_panel, load_records, mapping_for, parse_csv_bytes
 from app.services.r_client import RServiceError
 
 router = APIRouter(prefix="/api/datasets", tags=["datasets"])
@@ -132,4 +132,37 @@ def get_dataset(
     dataset = db.get(Dataset, dataset_id)
     if not dataset or dataset.org_id != user.org_id:
         raise HTTPException(status_code=404, detail="Dataset not found")
+    return dataset
+
+
+@router.post("/{dataset_id}/refresh", response_model=DatasetOut)
+def refresh_dataset(
+    dataset_id: uuid.UUID, db: Session = Depends(get_db), user: User = Depends(get_current_user)
+) -> Dataset:
+    """Re-validates a dataset already on disk against GeoDataRead and updates
+    its cached metadata (row/location counts, locations, period<->date map).
+
+    Needed for datasets uploaded before a metadata field existed - e.g.
+    period_dates - since that's only computed at upload time otherwise, and
+    re-running this doesn't require the user to re-upload the file or redo
+    their column mapping / zip-conversion settings.
+    """
+    dataset = db.get(Dataset, dataset_id)
+    if not dataset or dataset.org_id != user.org_id:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+
+    records = load_records(dataset)
+    try:
+        r_result = r_client.read_data(data=records, mapping=mapping_for(dataset))
+    except RServiceError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    dataset.row_count = r_result["row_count"]
+    dataset.location_count = r_result["location_count"]
+    dataset.time_period_count = r_result["time_period_count"]
+    dataset.locations = r_result["locations"]
+    dataset.period_dates = r_result["period_dates"]
+    dataset.summary_json = r_result
+    db.commit()
+    db.refresh(dataset)
     return dataset
