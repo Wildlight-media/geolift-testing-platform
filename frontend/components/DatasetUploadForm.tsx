@@ -28,6 +28,7 @@ export type DatasetUploadDefaults = {
   date_format?: string;
   covariate_cols?: string[];
   convert_zip_to_dma?: boolean;
+  outcome_type?: string;
 };
 
 export default function DatasetUploadForm({
@@ -53,6 +54,7 @@ export default function DatasetUploadForm({
   const [dateFormat, setDateFormat] = useState(defaults?.date_format ?? "yyyy-mm-dd");
   const [covariateCols, setCovariateCols] = useState<string[]>([]);
   const [convertZipToDma, setConvertZipToDma] = useState(defaults?.convert_zip_to_dma ?? false);
+  const [outcomeType, setOutcomeType] = useState(defaults?.outcome_type ?? "revenue");
   const [error, setError] = useState<string | null>(null);
   const [zipMismatch, setZipMismatch] = useState<{ count: number; sample: string[] } | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -111,6 +113,7 @@ export default function DatasetUploadForm({
       form.set("date_format", dateFormat);
       form.set("covariate_cols", covariateCols.join(","));
       form.set("convert_zip_to_dma", String(convertZipToDma));
+      form.set("outcome_type", outcomeType);
       form.set("drop_unmapped_zips", String(dropUnmappedZips));
       form.set("file", file);
       await apiUpload(uploadUrl, form);
@@ -216,6 +219,28 @@ export default function DatasetUploadForm({
                 ))}
               </select>
             </div>
+          </div>
+
+          <div>
+            <label className="label">Outcome variable type</label>
+            <div className="flex gap-4 text-sm">
+              {[
+                { value: "revenue", label: "Revenue ($)" },
+                { value: "conversions", label: "Conversions (#)" },
+                { value: "other", label: "Other" },
+              ].map((opt) => (
+                <label key={opt.value} className="flex items-center gap-1.5">
+                  <input
+                    type="radio"
+                    name="outcome_type"
+                    checked={outcomeType === opt.value}
+                    onChange={() => setOutcomeType(opt.value)}
+                  />
+                  {opt.label}
+                </label>
+              ))}
+            </div>
+            <p className="text-xs text-slate-400 mt-1">Controls whether results show a $ amount or a plain count.</p>
           </div>
 
           {covariateOptions.length > 0 && (

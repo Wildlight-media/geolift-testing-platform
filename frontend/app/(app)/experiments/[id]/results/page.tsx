@@ -5,9 +5,11 @@ import { useParams } from "next/navigation";
 import { apiGet, apiPost, ApiError } from "@/lib/api";
 import type { Analysis, AnalysisResult, Dataset, Experiment, Report, TestConfig } from "@/lib/types";
 import { addDays, dateToPeriod } from "@/lib/periodDates";
+import { formatOutcome } from "@/lib/format";
 import StatTile from "@/components/StatTile";
 import LiftChart from "@/components/charts/LiftChart";
 import AttChart from "@/components/charts/AttChart";
+import CumulativeEffectChart from "@/components/charts/CumulativeEffectChart";
 import SearchableLocationPicker from "@/components/SearchableLocationPicker";
 import DatasetUploadForm from "@/components/DatasetUploadForm";
 
@@ -15,7 +17,7 @@ export default function ResultsPage() {
   const { id } = useParams<{ id: string }>();
   const [experiment, setExperiment] = useState<Experiment | null>(null);
   const [dataset, setDataset] = useState<Dataset | null>(null);
-  const [lastTestConfig, setLastTestConfig] = useState<TestConfig | null>(null);
+  const [testConfigs, setTestConfigs] = useState<TestConfig[]>([]);
   const [analyses, setAnalyses] = useState<Analysis[]>([]);
   const [activeAnalysis, setActiveAnalysis] = useState<Analysis | null>(null);
   const [report, setReport] = useState<Report | null>(null);
@@ -30,9 +32,7 @@ export default function ResultsPage() {
 
   useEffect(() => {
     apiGet<Experiment>(`/api/experiments/${id}`).then(loadDataset);
-    apiGet<TestConfig[]>(`/api/experiments/${id}/test-configs`).then((list) => {
-      if (list[0]) setLastTestConfig(list[0]);
-    });
+    apiGet<TestConfig[]>(`/api/experiments/${id}/test-configs`).then(setTestConfigs);
     apiGet<Analysis[]>(`/api/experiments/${id}/analyses`).then((list) => {
       setAnalyses(list);
       if (list[0]) watchAnalysis(list[0].id);
@@ -70,6 +70,8 @@ export default function ResultsPage() {
   }
 
   const result = activeAnalysis?.status === "succeeded" ? (activeAnalysis.result_json as AnalysisResult) : null;
+  const activeTestConfig = testConfigs.find((tc) => tc.id === activeAnalysis?.test_config_id) ?? null;
+  const outcomeType = dataset?.outcome_type ?? "revenue";
 
   return (
     <div className="space-y-6">
@@ -105,6 +107,7 @@ export default function ResultsPage() {
                   date_format: dataset.date_format,
                   covariate_cols: dataset.covariate_cols,
                   convert_zip_to_dma: dataset.converted_from_zip,
+                  outcome_type: dataset.outcome_type,
                 }}
                 onUploaded={() => {
                   setShowUploadForm(false);
@@ -119,12 +122,13 @@ export default function ResultsPage() {
       <TestConfigForm
         experimentId={id}
         dataset={dataset}
-        lastTestConfig={lastTestConfig}
-        onAnalysisStarted={(a) => {
-          setAnalyses((list) => [a, ...list]);
+        lastTestConfig={testConfigs[0] ?? null}
+        onAnalysisStarted={(testConfig, analysis) => {
+          setTestConfigs((list) => [testConfig, ...list]);
+          setAnalyses((list) => [analysis, ...list]);
           setReport(null);
           setShareUrl(null);
-          watchAnalysis(a.id);
+          watchAnalysis(analysis.id);
         }}
       />
 
@@ -138,77 +142,191 @@ export default function ResultsPage() {
       )}
 
       {result && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatTile label="Percent lift" value={result.summary.percent_lift !== null ? `${result.summary.percent_lift.toFixed(1)}%` : "—"} accent="#2563eb" />
-            <StatTile label="Incremental outcome" value={result.summary.incremental !== null ? result.summary.incremental.toLocaleString(undefined, { maximumFractionDigits: 0 }) : "—"} />
-            <StatTile label="P-value" value={result.summary.pvalue !== null ? result.summary.pvalue.toFixed(3) : "—"} />
-            <StatTile label="Average ATT" value={result.summary.att !== null ? result.summary.att.toFixed(2) : "—"} />
-          </div>
+        <ResultsView
+          result={result}
+          outcomeType={outcomeType}
+          spend={activeTestConfig?.spend ?? null}
+          report={report}
+          shareUrl={shareUrl}
+          experimentId={id}
+          onGenerateReport={generateReport}
+          onCreateShareLink={createShareLink}
+        />
+      )}
+    </div>
+  );
+}
 
-          {result.lift_series?.length > 0 && (
-            <div className="card p-6">
-              <div className="font-medium text-sm mb-2">Observed vs. synthetic control</div>
-              <LiftChart data={result.lift_series} />
-            </div>
-          )}
+function ResultsView({
+  result,
+  outcomeType,
+  spend,
+  report,
+  shareUrl,
+  experimentId,
+  onGenerateReport,
+  onCreateShareLink,
+}: {
+  result: AnalysisResult;
+  outcomeType: string;
+  spend: number | null;
+  report: Report | null;
+  shareUrl: string | null;
+  experimentId: string;
+  onGenerateReport: () => void;
+  onCreateShareLink: () => void;
+}) {
+  const { summary } = result;
+  const outcomeLabel = outcomeType === "revenue" ? "Revenue" : outcomeType === "conversions" ? "Conversions" : "Outcome";
 
-          {result.att_series?.length > 0 && (
-            <div className="card p-6">
-              <div className="font-medium text-sm mb-2">Average treatment effect over time</div>
-              <AttChart data={result.att_series} />
-            </div>
-          )}
+  const nPeriods =
+    summary.treatment_start !== null && summary.treatment_end !== null
+      ? summary.treatment_end - summary.treatment_start + 1
+      : null;
+  const totalLiftLower = nPeriods !== null && summary.lower_conf_int !== null ? summary.lower_conf_int * nPeriods : null;
+  const totalLiftUpper = nPeriods !== null && summary.upper_conf_int !== null ? summary.upper_conf_int * nPeriods : null;
+  const significant =
+    totalLiftLower !== null && totalLiftUpper !== null && (totalLiftLower > 0 || totalLiftUpper < 0);
+  const significanceBadge =
+    totalLiftLower !== null && totalLiftUpper !== null
+      ? { label: significant ? "Significant" : "Not significant", tone: significant ? ("positive" as const) : ("neutral" as const) }
+      : undefined;
+  const liftCiNote =
+    totalLiftLower !== null && totalLiftUpper !== null
+      ? `90% CI: (${formatOutcome(totalLiftLower, outcomeType)}, ${formatOutcome(totalLiftUpper, outcomeType)})`
+      : undefined;
 
-          {result.weights?.length > 0 && (
-            <div className="card p-6">
-              <div className="font-medium text-sm mb-2">Synthetic control weights</div>
-              <table className="w-full text-sm">
-                <thead className="text-xs text-slate-500 uppercase">
-                  <tr>
-                    <th className="text-left py-1">Location</th>
-                    <th className="text-left py-1">Weight</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {result.weights.map((w) => (
-                    <tr key={w.location} className="border-t border-slate-100">
-                      <td className="py-1">{w.location}</td>
-                      <td className="py-1">{w.weight.toFixed(3)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+  const treatmentWindow =
+    summary.treatment_start !== null && summary.treatment_end !== null
+      ? result.lift_series.filter((r) => r.time >= summary.treatment_start! && r.time <= summary.treatment_end!)
+      : [];
+  const testRevenue = treatmentWindow.reduce((sum, r) => sum + r.treatment_observed, 0);
+  const controlRevenue = treatmentWindow.reduce((sum, r) => sum + r.synthetic_control, 0);
 
-          <div className="card p-6 flex items-center gap-4">
-            <button className="btn-primary" onClick={generateReport}>
-              {report ? "Regenerate report" : "Generate client report (PDF)"}
-            </button>
-            {report && (
-              <a
-                className="btn-secondary"
-                href={`${process.env.NEXT_PUBLIC_API_URL}/api/experiments/${id}/reports/${report.id}/download`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Download PDF
-              </a>
-            )}
-            {report && (
-              <button className="btn-secondary" onClick={createShareLink}>
-                Create client share link
-              </button>
-            )}
-            {shareUrl && (
-              <a href={shareUrl} target="_blank" rel="noreferrer" className="text-sm text-brand-600 underline">
-                {shareUrl}
-              </a>
-            )}
-          </div>
+  const hasSpend = spend !== null && spend > 0;
+  const roi = hasSpend && summary.incremental !== null ? summary.incremental / spend! : null;
+  const roiLower = hasSpend && totalLiftLower !== null ? totalLiftLower / spend! : null;
+  const roiUpper = hasSpend && totalLiftUpper !== null ? totalLiftUpper / spend! : null;
+  const roiCiNote =
+    roiLower !== null && roiUpper !== null ? `90% CI: (${roiLower.toFixed(2)}x, ${roiUpper.toFixed(2)}x)` : undefined;
+  const confidencePositiveText =
+    hasSpend && summary.prob_positive_effect !== null
+      ? `${(summary.prob_positive_effect * 100).toFixed(1)}% confidence that iROAS > 0`
+      : null;
+
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <StatTile label={`Test ${outcomeLabel}`} value={formatOutcome(testRevenue, outcomeType)} />
+        <StatTile label={`Control (Modeled) ${outcomeLabel}`} value={formatOutcome(controlRevenue, outcomeType)} />
+        <StatTile
+          label="Lift in test geographies"
+          value={summary.incremental !== null ? formatOutcome(summary.incremental, outcomeType) : "—"}
+          accent="#2563eb"
+          sublabel={
+            summary.percent_lift !== null
+              ? `${Math.abs(summary.percent_lift).toFixed(1)}% ${summary.percent_lift >= 0 ? "increase" : "decrease"}`
+              : undefined
+          }
+          badge={significanceBadge}
+          note={liftCiNote}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <StatTile
+          label={`Change in ${outcomeLabel}`}
+          value={summary.incremental !== null ? formatOutcome(summary.incremental, outcomeType) : "—"}
+        />
+        <StatTile label="Spend added in test" value={hasSpend ? formatOutcome(spend!, "revenue") : "Enter spend above"} />
+        <StatTile
+          label="ROI"
+          value={roi !== null ? `${roi.toFixed(2)}x` : hasSpend ? "—" : "Enter spend above"}
+          badge={hasSpend ? significanceBadge : undefined}
+          note={hasSpend ? roiCiNote : undefined}
+        />
+      </div>
+      {confidencePositiveText && (
+        <p className="text-sm text-slate-600 -mt-2">
+          <span className="font-semibold text-brand-600">{confidencePositiveText}</span>
+        </p>
+      )}
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <StatTile label="Percent lift" value={summary.percent_lift !== null ? `${summary.percent_lift.toFixed(1)}%` : "—"} />
+        <StatTile label="Incremental outcome" value={summary.incremental !== null ? formatOutcome(summary.incremental, outcomeType) : "—"} />
+        <StatTile label="P-value" value={summary.pvalue !== null ? summary.pvalue.toFixed(3) : "—"} />
+        <StatTile label="Average ATT" value={summary.att !== null ? summary.att.toFixed(2) : "—"} />
+      </div>
+
+      {result.lift_series?.length > 0 && (
+        <div className="card p-6">
+          <div className="font-medium text-sm mb-2">Observed vs. synthetic control</div>
+          <LiftChart data={result.lift_series} />
         </div>
       )}
+
+      {result.att_series?.length > 0 && (
+        <div className="card p-6">
+          <div className="font-medium text-sm mb-2">Average treatment effect over time</div>
+          <AttChart data={result.att_series} />
+        </div>
+      )}
+
+      {result.cumulative_effect_series?.length > 0 && (
+        <div className="card p-6">
+          <div className="font-medium text-sm mb-2">Cumulative incremental effect</div>
+          <CumulativeEffectChart data={result.cumulative_effect_series} treatmentStart={summary.treatment_start ?? 0} />
+        </div>
+      )}
+
+      {result.weights?.length > 0 && (
+        <div className="card p-6">
+          <div className="font-medium text-sm mb-2">Synthetic control weights</div>
+          <table className="w-full text-sm">
+            <thead className="text-xs text-slate-500 uppercase">
+              <tr>
+                <th className="text-left py-1">Location</th>
+                <th className="text-left py-1">Weight</th>
+              </tr>
+            </thead>
+            <tbody>
+              {result.weights.map((w) => (
+                <tr key={w.location} className="border-t border-slate-100">
+                  <td className="py-1">{w.location}</td>
+                  <td className="py-1">{w.weight.toFixed(3)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <div className="card p-6 flex items-center gap-4">
+        <button className="btn-primary" onClick={onGenerateReport}>
+          {report ? "Regenerate report" : "Generate client report (PDF)"}
+        </button>
+        {report && (
+          <a
+            className="btn-secondary"
+            href={`${process.env.NEXT_PUBLIC_API_URL}/api/experiments/${experimentId}/reports/${report.id}/download`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Download PDF
+          </a>
+        )}
+        {report && (
+          <button className="btn-secondary" onClick={onCreateShareLink}>
+            Create client share link
+          </button>
+        )}
+        {shareUrl && (
+          <a href={shareUrl} target="_blank" rel="noreferrer" className="text-sm text-brand-600 underline">
+            {shareUrl}
+          </a>
+        )}
+      </div>
     </div>
   );
 }
@@ -232,7 +350,7 @@ function TestConfigForm({
   experimentId: string;
   dataset: Dataset | null;
   lastTestConfig: TestConfig | null;
-  onAnalysisStarted: (a: Analysis) => void;
+  onAnalysisStarted: (testConfig: TestConfig, analysis: Analysis) => void;
 }) {
   const periodDates = dataset?.period_dates ?? [];
   const minDate = periodDates[0]?.date;
@@ -246,11 +364,14 @@ function TestConfigForm({
   const [fixedEffects, setFixedEffects] = useState(lastTestConfig?.fixed_effects ?? true);
   const [alpha, setAlpha] = useState(lastTestConfig?.alpha ?? 0.1);
   const [confidenceIntervals, setConfidenceIntervals] = useState(lastTestConfig?.confidence_intervals ?? false);
+  const [spend, setSpend] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   // lastTestConfig arrives asynchronously (after dataset's initial fetch), so
-  // seed these once it lands rather than only at first render.
+  // seed these once it lands rather than only at first render. Spend and
+  // campaign dates are specific to each test period, so they are not
+  // pre-filled here - only carried-forward settings are.
   useEffect(() => {
     if (!lastTestConfig) return;
     setModel(lastTestConfig.model);
@@ -298,9 +419,10 @@ function TestConfigForm({
         fixed_effects: fixedEffects,
         alpha,
         confidence_intervals: confidenceIntervals,
+        spend: spend.trim() ? Number(spend) : null,
       });
       const analysis = await apiPost<Analysis>(`/api/experiments/${experimentId}/test-configs/${testConfig.id}/analyze`);
-      onAnalysisStarted(analysis);
+      onAnalysisStarted(testConfig, analysis);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Could not start analysis");
     } finally {
@@ -378,6 +500,18 @@ function TestConfigForm({
           <label className="label">Alpha</label>
           <input className="input" type="number" step="0.01" value={alpha} onChange={(e) => setAlpha(Number(e.target.value))} />
         </div>
+        <div>
+          <label className="label">Spend during test period ($, optional)</label>
+          <input
+            className="input"
+            type="number"
+            min={0}
+            step="0.01"
+            placeholder="e.g. 60000"
+            value={spend}
+            onChange={(e) => setSpend(e.target.value)}
+          />
+        </div>
         <div className="flex flex-col gap-2 justify-end pb-1">
           <label className="flex items-center gap-2 text-sm">
             <input type="checkbox" checked={fixedEffects} onChange={(e) => setFixedEffects(e.target.checked)} />
@@ -389,6 +523,9 @@ function TestConfigForm({
           </label>
         </div>
       </div>
+      <p className="text-xs text-slate-400 -mt-2">
+        Enter total media spend for this test window to see ROI/iROAS in the results below.
+      </p>
 
       {error && <p className="text-sm text-red-600">{error}</p>}
       {!submitting && missingFields.length > 0 && (

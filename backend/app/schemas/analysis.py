@@ -13,6 +13,7 @@ class TestConfigCreate(BaseModel):
     fixed_effects: bool = True
     alpha: float = 0.1
     confidence_intervals: bool = False
+    spend: float | None = None
 
 
 class TestConfigOut(BaseModel):
@@ -25,6 +26,7 @@ class TestConfigOut(BaseModel):
     fixed_effects: bool
     alpha: float
     confidence_intervals: bool
+    spend: float | None
     created_at: datetime
 
     model_config = {"from_attributes": True}

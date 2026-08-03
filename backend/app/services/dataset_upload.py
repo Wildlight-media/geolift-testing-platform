@@ -24,6 +24,7 @@ def process_dataset_upload(
     covariate_cols: str,
     convert_zip_to_dma: bool,
     drop_unmapped_zips: bool,
+    outcome_type: str = "revenue",
     org_id: uuid.UUID,
     uploaded_by_id: uuid.UUID,
 ) -> Dataset:
@@ -93,6 +94,7 @@ def process_dataset_upload(
         y_col=y_col,
         date_format=date_format,
         covariate_cols=covariates,
+        outcome_type=outcome_type,
         converted_from_zip=convert_zip_to_dma,
         dropped_zip_row_count=dropped_zip_row_count,
         dropped_zip_codes=dropped_zip_codes,

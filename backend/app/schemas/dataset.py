@@ -15,6 +15,7 @@ class DatasetColumnMapping(BaseModel):
     y_col: str = "Y"
     date_format: str = "yyyy-mm-dd"
     covariate_cols: list[str] = []
+    outcome_type: str = "revenue"
 
 
 class DatasetOut(BaseModel):
@@ -26,6 +27,7 @@ class DatasetOut(BaseModel):
     y_col: str
     date_format: str
     covariate_cols: list[str]
+    outcome_type: str
     converted_from_zip: bool
     dropped_zip_row_count: int
     dropped_zip_codes: list[str]

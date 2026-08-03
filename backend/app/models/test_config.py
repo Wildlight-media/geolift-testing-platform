@@ -21,3 +21,4 @@ class TestConfig(Base, UUIDMixin, TimestampMixin):
     fixed_effects: Mapped[bool] = mapped_column(Boolean, default=True)
     alpha: Mapped[float] = mapped_column(Float, default=0.1)
     confidence_intervals: Mapped[bool] = mapped_column(Boolean, default=False)
+    spend: Mapped[float | None] = mapped_column(Float, nullable=True)

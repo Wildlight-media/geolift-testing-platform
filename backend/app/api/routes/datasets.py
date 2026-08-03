@@ -26,6 +26,7 @@ def upload_dataset(
     covariate_cols: str = Form(""),
     convert_zip_to_dma: bool = Form(False),
     drop_unmapped_zips: bool = Form(False),
+    outcome_type: str = Form("revenue"),
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
@@ -40,6 +41,7 @@ def upload_dataset(
         covariate_cols=covariate_cols,
         convert_zip_to_dma=convert_zip_to_dma,
         drop_unmapped_zips=drop_unmapped_zips,
+        outcome_type=outcome_type,
         org_id=user.org_id,
         uploaded_by_id=user.id,
     )

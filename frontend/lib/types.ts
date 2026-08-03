@@ -15,6 +15,7 @@ export type Dataset = {
   y_col: string;
   date_format: string;
   covariate_cols: string[];
+  outcome_type: string;
   converted_from_zip: boolean;
   dropped_zip_row_count: number;
   dropped_zip_codes: string[];
@@ -100,6 +101,7 @@ export type TestConfig = {
   fixed_effects: boolean;
   alpha: number;
   confidence_intervals: boolean;
+  spend: number | null;
   created_at: string;
 };
 
@@ -114,10 +116,12 @@ export type AnalysisResult = {
     incremental: number | null;
     treatment_start: number | null;
     treatment_end: number | null;
+    prob_positive_effect: number | null;
     test_locations: string[];
   };
   att_series: { Time: number; Estimate: number; lower_bound: number | null; upper_bound: number | null }[];
   lift_series: { time: number; treatment_observed: number; synthetic_control: number }[];
+  cumulative_effect_series: { time: number; cumulative_estimate: number; lower_bound: number | null; upper_bound: number | null }[];
   weights: { location: string; weight: number }[];
 };
 
