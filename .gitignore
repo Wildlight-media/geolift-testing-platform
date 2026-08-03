@@ -16,3 +16,6 @@ backend/storage/
 # os
 .DS_Store
 Thumbs.db
+
+# local agent/session state
+.claude/
