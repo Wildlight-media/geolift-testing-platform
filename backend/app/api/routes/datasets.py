@@ -106,6 +106,7 @@ def upload_dataset(
         location_count=r_result["location_count"],
         time_period_count=r_result["time_period_count"],
         locations=r_result["locations"],
+        period_dates=r_result["period_dates"],
         summary_json=r_result,
     )
     db.add(dataset)

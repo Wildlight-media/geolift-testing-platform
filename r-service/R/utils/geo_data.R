@@ -15,6 +15,6 @@ read_geo_data <- function(body) {
     format = body$format %||% "yyyy-mm-dd",
     X = if (is.null(body$X)) c() else unlist(body$X),
     summary = FALSE,
-    keep_unix_time = FALSE
+    keep_unix_time = TRUE
   )
 }

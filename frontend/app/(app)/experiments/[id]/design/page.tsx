@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { apiGet, apiPost, ApiError } from "@/lib/api";
 import type { BestMarketRow, Dataset, Experiment, MarketSelectionParams, MarketSelectionResult, MarketSelectionRun } from "@/lib/types";
 import PowerCurveChart from "@/components/charts/PowerCurveChart";
+import SearchableLocationPicker from "@/components/SearchableLocationPicker";
 
 const DEFAULT_PARAMS: MarketSelectionParams = {
   treatment_periods: [15],
@@ -354,11 +355,19 @@ function ParamsForm({
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="label">Include markets (force into test group)</label>
-                <MarketPicker locations={locations} selected={params.include_markets} onToggle={(l) => toggleMarket("include_markets", l)} />
+                <SearchableLocationPicker
+                  locations={locations}
+                  selected={params.include_markets}
+                  onToggle={(l) => toggleMarket("include_markets", l)}
+                />
               </div>
               <div>
                 <label className="label">Exclude markets</label>
-                <MarketPicker locations={locations} selected={params.exclude_markets} onToggle={(l) => toggleMarket("exclude_markets", l)} />
+                <SearchableLocationPicker
+                  locations={locations}
+                  selected={params.exclude_markets}
+                  onToggle={(l) => toggleMarket("exclude_markets", l)}
+                />
               </div>
             </div>
           )}
@@ -370,18 +379,5 @@ function ParamsForm({
         {submitting ? "Starting..." : "Run market selection"}
       </button>
     </form>
-  );
-}
-
-function MarketPicker({ locations, selected, onToggle }: { locations: string[]; selected: string[]; onToggle: (l: string) => void }) {
-  return (
-    <div className="border border-slate-200 rounded-lg max-h-40 overflow-y-auto p-2 space-y-1">
-      {locations.map((loc) => (
-        <label key={loc} className="flex items-center gap-2 text-sm px-1 py-0.5 hover:bg-slate-50 rounded">
-          <input type="checkbox" checked={selected.includes(loc)} onChange={() => onToggle(loc)} />
-          {loc}
-        </label>
-      ))}
-    </div>
   );
 }

@@ -23,6 +23,7 @@ export type Dataset = {
   location_count: number | null;
   time_period_count: number | null;
   locations: string[];
+  period_dates: { period: number; date: string }[];
   summary_json: Record<string, unknown>;
   created_at: string;
 };

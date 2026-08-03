@@ -4,6 +4,11 @@ from datetime import datetime
 from pydantic import BaseModel
 
 
+class PeriodDate(BaseModel):
+    period: int
+    date: str
+
+
 class DatasetColumnMapping(BaseModel):
     location_col: str = "location"
     date_col: str = "date"
@@ -29,6 +34,7 @@ class DatasetOut(BaseModel):
     location_count: int | None
     time_period_count: int | None
     locations: list[str]
+    period_dates: list[PeriodDate]
     summary_json: dict
     created_at: datetime
 

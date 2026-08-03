@@ -32,4 +32,7 @@ class Dataset(Base, UUIDMixin, TimestampMixin):
     location_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
     time_period_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
     locations: Mapped[list] = mapped_column(JSONB, default=list)
+    # [{"period": 1, "date": "2024-01-01"}, ...] - lets the UI offer real
+    # date pickers instead of making users count time-period numbers by hand.
+    period_dates: Mapped[list] = mapped_column(JSONB, default=list)
     summary_json: Mapped[dict] = mapped_column(JSONB, default=dict)

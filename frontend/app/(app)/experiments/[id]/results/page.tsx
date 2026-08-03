@@ -4,9 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { apiGet, apiPost, ApiError } from "@/lib/api";
 import type { Analysis, AnalysisResult, Dataset, Experiment, Report, TestConfig } from "@/lib/types";
+import { addDays, dateToPeriod } from "@/lib/periodDates";
 import StatTile from "@/components/StatTile";
 import LiftChart from "@/components/charts/LiftChart";
 import AttChart from "@/components/charts/AttChart";
+import SearchableLocationPicker from "@/components/SearchableLocationPicker";
 
 export default function ResultsPage() {
   const { id } = useParams<{ id: string }>();
@@ -68,7 +70,7 @@ export default function ResultsPage() {
 
       <TestConfigForm
         experimentId={id}
-        locations={dataset?.locations ?? []}
+        dataset={dataset}
         onAnalysisStarted={(a) => {
           setAnalyses((list) => [a, ...list]);
           setReport(null);
@@ -174,16 +176,21 @@ function StatusBadge({ status }: { status: string }) {
 
 function TestConfigForm({
   experimentId,
-  locations,
+  dataset,
   onAnalysisStarted,
 }: {
   experimentId: string;
-  locations: string[];
+  dataset: Dataset | null;
   onAnalysisStarted: (a: Analysis) => void;
 }) {
+  const periodDates = dataset?.period_dates ?? [];
+  const minDate = periodDates[0]?.date;
+  const maxDate = periodDates[periodDates.length - 1]?.date;
+
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
-  const [treatmentStart, setTreatmentStart] = useState(90);
-  const [treatmentEnd, setTreatmentEnd] = useState(105);
+  const [campaignStart, setCampaignStart] = useState("");
+  const [campaignEnd, setCampaignEnd] = useState("");
+  const [cooldownDays, setCooldownDays] = useState(0);
   const [model, setModel] = useState("none");
   const [fixedEffects, setFixedEffects] = useState(true);
   const [alpha, setAlpha] = useState(0.1);
@@ -195,15 +202,20 @@ function TestConfigForm({
     setSelectedLocations((s) => (s.includes(loc) ? s.filter((l) => l !== loc) : [...s, loc]));
   }
 
+  const treatmentStartTime = campaignStart ? dateToPeriod(periodDates, campaignStart) : null;
+  const analysisEndDate = campaignEnd ? addDays(campaignEnd, cooldownDays) : "";
+  const treatmentEndTime = analysisEndDate ? dateToPeriod(periodDates, analysisEndDate) : null;
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (treatmentStartTime === null || treatmentEndTime === null) return;
     setSubmitting(true);
     setError(null);
     try {
       const testConfig = await apiPost<TestConfig>(`/api/experiments/${experimentId}/test-configs`, {
         locations: selectedLocations,
-        treatment_start_time: treatmentStart,
-        treatment_end_time: treatmentEnd,
+        treatment_start_time: treatmentStartTime,
+        treatment_end_time: treatmentEndTime,
         model,
         fixed_effects: fixedEffects,
         alpha,
@@ -222,25 +234,59 @@ function TestConfigForm({
     <form onSubmit={onSubmit} className="card p-6 space-y-4">
       <div>
         <label className="label">Test locations (the markets that actually ran the campaign)</label>
-        <div className="border border-slate-200 rounded-lg max-h-40 overflow-y-auto p-2 grid grid-cols-2 md:grid-cols-3 gap-1">
-          {locations.map((loc) => (
-            <label key={loc} className="flex items-center gap-2 text-sm px-1 py-0.5 hover:bg-slate-50 rounded">
-              <input type="checkbox" checked={selectedLocations.includes(loc)} onChange={() => toggle(loc)} />
-              {loc}
-            </label>
-          ))}
-        </div>
+        <SearchableLocationPicker locations={dataset?.locations ?? []} selected={selectedLocations} onToggle={toggle} />
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div>
-          <label className="label">Treatment start (time period)</label>
-          <input className="input" type="number" value={treatmentStart} onChange={(e) => setTreatmentStart(Number(e.target.value))} />
+          <label className="label">Campaign start date</label>
+          <input
+            className="input"
+            type="date"
+            min={minDate}
+            max={maxDate}
+            value={campaignStart}
+            onChange={(e) => setCampaignStart(e.target.value)}
+          />
         </div>
         <div>
-          <label className="label">Treatment end (time period)</label>
-          <input className="input" type="number" value={treatmentEnd} onChange={(e) => setTreatmentEnd(Number(e.target.value))} />
+          <label className="label">Campaign end date (spend stops)</label>
+          <input
+            className="input"
+            type="date"
+            min={minDate}
+            max={maxDate}
+            value={campaignEnd}
+            onChange={(e) => setCampaignEnd(e.target.value)}
+          />
         </div>
+        <div>
+          <label className="label">Cooldown period (days)</label>
+          <input
+            className="input"
+            type="number"
+            min={0}
+            value={cooldownDays}
+            onChange={(e) => setCooldownDays(Number(e.target.value))}
+          />
+        </div>
+        <div>
+          <label className="label">Analysis window</label>
+          <div className="input bg-slate-50 text-slate-500 flex items-center">
+            {treatmentStartTime !== null && treatmentEndTime !== null
+              ? `Periods ${treatmentStartTime}–${treatmentEndTime}`
+              : "Pick both dates"}
+          </div>
+        </div>
+      </div>
+      {cooldownDays > 0 && campaignEnd && (
+        <p className="text-xs text-slate-400 -mt-2">
+          Analyzing through {analysisEndDate} ({cooldownDays} day cooldown after spend stopped on {campaignEnd}) to
+          capture latent conversions.
+        </p>
+      )}
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div>
           <label className="label">Model</label>
           <select className="input" value={model} onChange={(e) => setModel(e.target.value)}>
@@ -267,7 +313,11 @@ function TestConfigForm({
       </div>
 
       {error && <p className="text-sm text-red-600">{error}</p>}
-      <button type="submit" disabled={submitting || selectedLocations.length === 0} className="btn-primary">
+      <button
+        type="submit"
+        disabled={submitting || selectedLocations.length === 0 || treatmentStartTime === null || treatmentEndTime === null}
+        className="btn-primary"
+      >
         {submitting ? "Running..." : "Run analysis"}
       </button>
     </form>
