@@ -5,6 +5,8 @@ RUN npm install
 
 FROM node:20-slim AS builder
 WORKDIR /srv/frontend
+ARG NEXT_PUBLIC_API_URL=http://localhost:8000
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 COPY --from=deps /srv/frontend/node_modules ./node_modules
 COPY . .
 RUN npm run build
