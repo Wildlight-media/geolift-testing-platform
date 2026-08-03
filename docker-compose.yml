@@ -33,8 +33,10 @@ services:
       PORT: 8001
     healthcheck:
       # rocker/r-ver has neither curl nor wget by default; bash's built-in
-      # /dev/tcp avoids depending on an external binary at all.
-      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8001 && printf 'GET /health HTTP/1.0\\r\\n\\r\\n' >&3 && head -c 12 <&3 | grep -q 200"]
+      # /dev/tcp avoids depending on an external binary at all. Must be
+      # invoked as `bash -c` directly (CMD form) rather than CMD-SHELL,
+      # since CMD-SHELL runs via /bin/sh (dash), which lacks /dev/tcp.
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/localhost/8001 && printf 'GET /health HTTP/1.0\\r\\n\\r\\n' >&3 && head -c 12 <&3 | grep -q 200"]
       interval: 15s
       timeout: 10s
       retries: 10
