@@ -206,6 +206,14 @@ function TestConfigForm({
   const analysisEndDate = campaignEnd ? addDays(campaignEnd, cooldownDays) : "";
   const treatmentEndTime = analysisEndDate ? dateToPeriod(periodDates, analysisEndDate) : null;
 
+  const missingFields = [
+    selectedLocations.length === 0 && "select at least one test location",
+    !campaignStart && "pick a campaign start date",
+    !campaignEnd && "pick a campaign end date",
+    campaignStart && treatmentStartTime === null && "campaign start date is outside this dataset's range",
+    campaignEnd && treatmentEndTime === null && "campaign end date (+ cooldown) is outside this dataset's range",
+  ].filter((v): v is string => Boolean(v));
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (treatmentStartTime === null || treatmentEndTime === null) return;
@@ -313,9 +321,12 @@ function TestConfigForm({
       </div>
 
       {error && <p className="text-sm text-red-600">{error}</p>}
+      {!submitting && missingFields.length > 0 && (
+        <p className="text-xs text-amber-600">Before you can run this: {missingFields.join(", ")}.</p>
+      )}
       <button
         type="submit"
-        disabled={submitting || selectedLocations.length === 0 || treatmentStartTime === null || treatmentEndTime === null}
+        disabled={submitting || missingFields.length > 0}
         className="btn-primary"
       >
         {submitting ? "Running..." : "Run analysis"}
