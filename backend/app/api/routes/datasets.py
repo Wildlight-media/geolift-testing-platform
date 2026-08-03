@@ -8,7 +8,7 @@ from app.db.session import get_db
 from app.models.dataset import Dataset
 from app.models.user import User
 from app.schemas.dataset import DatasetOut
-from app.services import r_client, storage
+from app.services import r_client, storage, zip_dma
 from app.services.dataset_loader import parse_csv_bytes
 from app.services.r_client import RServiceError
 
@@ -23,6 +23,7 @@ def upload_dataset(
     y_col: str = Form("Y"),
     date_format: str = Form("yyyy-mm-dd"),
     covariate_cols: str = Form(""),
+    convert_zip_to_dma: bool = Form(False),
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
@@ -41,6 +42,21 @@ def upload_dataset(
 
     if df[y_col].isna().any():
         raise HTTPException(status_code=400, detail=f"Column '{y_col}' has non-numeric values")
+
+    if convert_zip_to_dma:
+        df, unmapped = zip_dma.convert_zip_column_to_dma(df, location_col)
+        if unmapped:
+            sample = ", ".join(unmapped[:20])
+            more = f" (+{len(unmapped) - 20} more)" if len(unmapped) > 20 else ""
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    f"{len(unmapped)} zip code(s) in '{location_col}' didn't match the zip→DMA "
+                    f"crosswalk: {sample}{more}. Check for non-US zips or typos."
+                ),
+            )
+        df = zip_dma.aggregate_to_dma(df, location_col=location_col, date_col=date_col, sum_cols=[y_col, *covariates])
+        content = df.to_csv(index=False).encode("utf-8")
 
     mapping = {"date_id": date_col, "location_id": location_col, "Y_id": y_col, "format": date_format, "X": covariates}
 
@@ -62,6 +78,7 @@ def upload_dataset(
         y_col=y_col,
         date_format=date_format,
         covariate_cols=covariates,
+        converted_from_zip=convert_zip_to_dma,
         row_count=r_result["row_count"],
         location_count=r_result["location_count"],
         time_period_count=r_result["time_period_count"],

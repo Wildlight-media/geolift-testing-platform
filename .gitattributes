@@ -1,0 +1,1 @@
+backend/app/data/*.tsv -text eol=lf

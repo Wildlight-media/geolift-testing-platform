@@ -62,6 +62,9 @@ export default function DatasetsPage() {
                   <div className="font-semibold">{d.row_count ?? "—"}</div>
                 </div>
               </div>
+              {d.converted_from_zip && (
+                <span className="badge bg-blue-100 text-blue-700 mt-3">Converted from zip → DMA</span>
+              )}
             </div>
           ))}
         </div>
@@ -78,6 +81,7 @@ function UploadForm({ onUploaded }: { onUploaded: () => void }) {
   const [yCol, setYCol] = useState("Y");
   const [dateFormat, setDateFormat] = useState("yyyy-mm-dd");
   const [covariateCols, setCovariateCols] = useState("");
+  const [convertZipToDma, setConvertZipToDma] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -94,6 +98,7 @@ function UploadForm({ onUploaded }: { onUploaded: () => void }) {
       form.set("y_col", yCol);
       form.set("date_format", dateFormat);
       form.set("covariate_cols", covariateCols);
+      form.set("convert_zip_to_dma", String(convertZipToDma));
       form.set("file", file);
       await apiUpload("/api/datasets", form);
       onUploaded();
@@ -125,7 +130,7 @@ function UploadForm({ onUploaded }: { onUploaded: () => void }) {
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <div>
-          <label className="label">Location column</label>
+          <label className="label">Location column{convertZipToDma ? " (zip codes)" : ""}</label>
           <input className="input" value={locationCol} onChange={(e) => setLocationCol(e.target.value)} />
         </div>
         <div>
@@ -150,6 +155,22 @@ function UploadForm({ onUploaded }: { onUploaded: () => void }) {
           />
         </div>
       </div>
+
+      <label className="flex items-start gap-2 text-sm">
+        <input
+          type="checkbox"
+          className="mt-0.5"
+          checked={convertZipToDma}
+          onChange={(e) => setConvertZipToDma(e.target.checked)}
+        />
+        <span>
+          Convert zip codes to DMA (Nielsen market areas)
+          <span className="block text-xs text-slate-400">
+            Location column must contain 5-digit US zip codes. Rows are aggregated (summed) to the DMA level before
+            validation — the stored dataset becomes DMA-level, matching how media is actually bought.
+          </span>
+        </span>
+      </label>
 
       {error && <p className="text-sm text-red-600">{error}</p>}
       <button type="submit" disabled={submitting} className="btn-primary">

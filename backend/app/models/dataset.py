@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import ForeignKey, Integer, String
+from sqlalchemy import Boolean, ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -22,6 +22,7 @@ class Dataset(Base, UUIDMixin, TimestampMixin):
     y_col: Mapped[str] = mapped_column(String(255))
     date_format: Mapped[str] = mapped_column(String(64), default="yyyy-mm-dd")
     covariate_cols: Mapped[list] = mapped_column(JSONB, default=list)
+    converted_from_zip: Mapped[bool] = mapped_column(Boolean, default=False)
 
     # populated from the GeoDataRead validation response
     row_count: Mapped[int | None] = mapped_column(Integer, nullable=True)

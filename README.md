@@ -37,7 +37,13 @@ an experiment.
 ## Workflow
 
 1. **Datasets** — upload a CSV of location/date/outcome (+ optional covariates) data. It's validated against
-   `GeoLift::GeoDataRead` on upload.
+   `GeoLift::GeoDataRead` on upload. If your data is at zip-code level, check "convert zip codes to DMA" during
+   upload — rows are aggregated (summed) to Nielsen DMA before validation, since DMA is the level media is actually
+   bought at. The bundled crosswalk (`backend/app/data/zip_to_dma.tsv`, ~41k zips / 210 DMAs) is a public
+   approximation (zip centroid plotted against DMA boundaries, from
+   [this gist](https://gist.github.com/clarkenheim/023882f8d77741f4d5347f80d95bc259)), not licensed Nielsen data —
+   swap in your organization's own crosswalk in that file if you have one (same `zip_code\tdma_code\tdma_description`
+   TSV format) for the most accurate mapping to your actual media buys.
 2. **Design** — run `GeoLiftMarketSelection` with full control over every parameter (treatment durations, candidate
    market counts, effect sizes, budget, cpic, alpha, include/exclude markets, holdout range, etc.), then drill into
    any ranked candidate for its pre-treatment fit and power curve.
