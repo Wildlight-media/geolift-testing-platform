@@ -9,19 +9,29 @@ import StatTile from "@/components/StatTile";
 import LiftChart from "@/components/charts/LiftChart";
 import AttChart from "@/components/charts/AttChart";
 import SearchableLocationPicker from "@/components/SearchableLocationPicker";
+import DatasetUploadForm from "@/components/DatasetUploadForm";
 
 export default function ResultsPage() {
   const { id } = useParams<{ id: string }>();
+  const [experiment, setExperiment] = useState<Experiment | null>(null);
   const [dataset, setDataset] = useState<Dataset | null>(null);
+  const [lastTestConfig, setLastTestConfig] = useState<TestConfig | null>(null);
   const [analyses, setAnalyses] = useState<Analysis[]>([]);
   const [activeAnalysis, setActiveAnalysis] = useState<Analysis | null>(null);
   const [report, setReport] = useState<Report | null>(null);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
+  const [showUploadForm, setShowUploadForm] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  function loadDataset(exp: Experiment) {
+    setExperiment(exp);
+    apiGet<Dataset>(`/api/datasets/${exp.dataset_id}`).then(setDataset);
+  }
+
   useEffect(() => {
-    apiGet<Experiment>(`/api/experiments/${id}`).then((exp) => {
-      apiGet<Dataset>(`/api/datasets/${exp.dataset_id}`).then(setDataset);
+    apiGet<Experiment>(`/api/experiments/${id}`).then(loadDataset);
+    apiGet<TestConfig[]>(`/api/experiments/${id}/test-configs`).then((list) => {
+      if (list[0]) setLastTestConfig(list[0]);
     });
     apiGet<Analysis[]>(`/api/experiments/${id}/analyses`).then((list) => {
       setAnalyses(list);
@@ -68,9 +78,48 @@ export default function ResultsPage() {
         <p className="text-sm text-slate-500">Run the real post-test inference and build a client-ready report.</p>
       </div>
 
+      {dataset && (
+        <div className="card p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-sm font-medium">Dataset: {dataset.name}</div>
+              <p className="text-xs text-slate-500">
+                Uploading a fresh pull keeps this same experiment and its history — locations, model, and other
+                settings below carry forward automatically.
+              </p>
+            </div>
+            <button className="btn-secondary" onClick={() => setShowUploadForm((s) => !s)}>
+              {showUploadForm ? "Cancel" : "Upload updated data"}
+            </button>
+          </div>
+          {showUploadForm && (
+            <div className="mt-4">
+              <DatasetUploadForm
+                uploadUrl={`/api/experiments/${id}/dataset`}
+                showNameField
+                defaultName={dataset.name}
+                defaults={{
+                  location_col: dataset.location_col,
+                  date_col: dataset.date_col,
+                  y_col: dataset.y_col,
+                  date_format: dataset.date_format,
+                  covariate_cols: dataset.covariate_cols,
+                  convert_zip_to_dma: dataset.converted_from_zip,
+                }}
+                onUploaded={() => {
+                  setShowUploadForm(false);
+                  if (experiment) loadDataset(experiment);
+                }}
+              />
+            </div>
+          )}
+        </div>
+      )}
+
       <TestConfigForm
         experimentId={id}
         dataset={dataset}
+        lastTestConfig={lastTestConfig}
         onAnalysisStarted={(a) => {
           setAnalyses((list) => [a, ...list]);
           setReport(null);
@@ -177,26 +226,47 @@ function StatusBadge({ status }: { status: string }) {
 function TestConfigForm({
   experimentId,
   dataset,
+  lastTestConfig,
   onAnalysisStarted,
 }: {
   experimentId: string;
   dataset: Dataset | null;
+  lastTestConfig: TestConfig | null;
   onAnalysisStarted: (a: Analysis) => void;
 }) {
   const periodDates = dataset?.period_dates ?? [];
   const minDate = periodDates[0]?.date;
   const maxDate = periodDates[periodDates.length - 1]?.date;
 
-  const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
+  const [selectedLocations, setSelectedLocations] = useState<string[]>(lastTestConfig?.locations ?? []);
   const [campaignStart, setCampaignStart] = useState("");
   const [campaignEnd, setCampaignEnd] = useState("");
   const [cooldownDays, setCooldownDays] = useState(0);
-  const [model, setModel] = useState("none");
-  const [fixedEffects, setFixedEffects] = useState(true);
-  const [alpha, setAlpha] = useState(0.1);
-  const [confidenceIntervals, setConfidenceIntervals] = useState(false);
+  const [model, setModel] = useState(lastTestConfig?.model ?? "none");
+  const [fixedEffects, setFixedEffects] = useState(lastTestConfig?.fixed_effects ?? true);
+  const [alpha, setAlpha] = useState(lastTestConfig?.alpha ?? 0.1);
+  const [confidenceIntervals, setConfidenceIntervals] = useState(lastTestConfig?.confidence_intervals ?? false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  // lastTestConfig arrives asynchronously (after dataset's initial fetch), so
+  // seed these once it lands rather than only at first render.
+  useEffect(() => {
+    if (!lastTestConfig) return;
+    setModel(lastTestConfig.model);
+    setFixedEffects(lastTestConfig.fixed_effects);
+    setAlpha(lastTestConfig.alpha);
+    setConfidenceIntervals(lastTestConfig.confidence_intervals);
+  }, [lastTestConfig]);
+
+  // Re-derive selected locations whenever the prior config or the (possibly
+  // refreshed) dataset changes, dropping any location that no longer exists
+  // in the current dataset rather than silently submitting a stale one.
+  useEffect(() => {
+    if (!lastTestConfig || !dataset) return;
+    const valid = new Set(dataset.locations);
+    setSelectedLocations(lastTestConfig.locations.filter((l) => valid.has(l)));
+  }, [lastTestConfig, dataset]);
 
   function toggle(loc: string) {
     setSelectedLocations((s) => (s.includes(loc) ? s.filter((l) => l !== loc) : [...s, loc]));
