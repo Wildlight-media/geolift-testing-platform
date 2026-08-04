@@ -10,7 +10,7 @@ import httpx
 
 from app.core.config import settings
 
-TIMEOUT = httpx.Timeout(connect=10.0, read=1800.0, write=60.0, pool=10.0)
+TIMEOUT = httpx.Timeout(connect=10.0, read=3600.0, write=60.0, pool=10.0)
 
 
 class RServiceError(Exception):
