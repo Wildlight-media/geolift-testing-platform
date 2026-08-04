@@ -78,6 +78,7 @@ def run_analysis_job(analysis_id: str) -> None:
             "fixed_effects": test_config.fixed_effects,
             "alpha": test_config.alpha,
             "confidence_intervals": test_config.confidence_intervals,
+            "stat_test": test_config.stat_test,
         }
 
         try:

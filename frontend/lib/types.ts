@@ -102,6 +102,7 @@ export type TestConfig = {
   alpha: number;
   confidence_intervals: boolean;
   spend: number | null;
+  stat_test: string;
   created_at: string;
 };
 

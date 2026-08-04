@@ -14,6 +14,7 @@ class TestConfigCreate(BaseModel):
     alpha: float = 0.1
     confidence_intervals: bool = False
     spend: float | None = None
+    stat_test: str = "Total"
 
 
 class TestConfigOut(BaseModel):
@@ -27,6 +28,7 @@ class TestConfigOut(BaseModel):
     alpha: float
     confidence_intervals: bool
     spend: float | None
+    stat_test: str
     created_at: datetime
 
     model_config = {"from_attributes": True}

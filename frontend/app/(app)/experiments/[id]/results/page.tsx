@@ -382,6 +382,7 @@ function TestConfigForm({
   const [fixedEffects, setFixedEffects] = useState(lastTestConfig?.fixed_effects ?? true);
   const [alpha, setAlpha] = useState(lastTestConfig?.alpha ?? 0.1);
   const [confidenceIntervals, setConfidenceIntervals] = useState(lastTestConfig?.confidence_intervals ?? false);
+  const [statTest, setStatTest] = useState(lastTestConfig?.stat_test ?? "Total");
   const [spend, setSpend] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -396,6 +397,7 @@ function TestConfigForm({
     setFixedEffects(lastTestConfig.fixed_effects);
     setAlpha(lastTestConfig.alpha);
     setConfidenceIntervals(lastTestConfig.confidence_intervals);
+    setStatTest(lastTestConfig.stat_test);
   }, [lastTestConfig]);
 
   // Re-derive selected locations whenever the prior config or the (possibly
@@ -438,6 +440,7 @@ function TestConfigForm({
         alpha,
         confidence_intervals: confidenceIntervals,
         spend: spend.trim() ? Number(spend) : null,
+        stat_test: statTest,
       });
       const analysis = await apiPost<Analysis>(`/api/experiments/${experimentId}/test-configs/${testConfig.id}/analyze`);
       onAnalysisStarted(testConfig, analysis);
@@ -541,6 +544,20 @@ function TestConfigForm({
           </label>
         </div>
       </div>
+
+      <div>
+        <label className="label">Test direction (hypothesis)</label>
+        <select className="input" value={statTest} onChange={(e) => setStatTest(e.target.value)}>
+          <option value="Total">Two-sided (default) - test for any effect, positive or negative</option>
+          <option value="Positive">One-sided - I expect a positive lift</option>
+          <option value="Negative">One-sided - I expect a negative lift</option>
+        </select>
+        <p className="text-xs text-slate-400 mt-1">
+          If you're confident the campaign can only help (the vast majority of ad-lift tests), a one-sided test gives
+          more statistical power to detect a real effect at the same significance level.
+        </p>
+      </div>
+
       <p className="text-xs text-slate-400 -mt-2">
         Enter total media spend for this test window to see ROI/iROAS in the results below.
       </p>

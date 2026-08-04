@@ -28,7 +28,11 @@ market_selection_run_handler <- function(body) {
     print = FALSE,
     run_stochastic_process = body$run_stochastic_process %||% FALSE,
     parallel = TRUE,
-    parallel_setup = "sequential",
+    # "sequential" ignores the container's cores despite parallel=TRUE.
+    # GeoLift only accepts "sequential"/"parallel" here (not a future
+    # backend name directly) - it picks the actual future::plan() backend
+    # internally once "parallel" is set.
+    parallel_setup = "parallel",
     side_of_test = body$side_of_test %||% "two_sided"
   )
 
@@ -65,7 +69,11 @@ market_selection_detail_handler <- function(body) {
     fixed_effects = fixed_effects,
     ProgressBar = FALSE,
     parallel = TRUE,
-    parallel_setup = "sequential",
+    # "sequential" ignores the container's cores despite parallel=TRUE.
+    # GeoLift only accepts "sequential"/"parallel" here (not a future
+    # backend name directly) - it picks the actual future::plan() backend
+    # internally once "parallel" is set.
+    parallel_setup = "parallel",
     side_of_test = body$side_of_test %||% "two_sided"
   )
 

@@ -19,7 +19,11 @@ power_run_handler <- function(body) {
     fixed_effects = body$fixed_effects %||% TRUE,
     ProgressBar = FALSE,
     parallel = TRUE,
-    parallel_setup = "sequential",
+    # "sequential" ignores the container's cores despite parallel=TRUE.
+    # GeoLift only accepts "sequential"/"parallel" here (not a future
+    # backend name directly) - it picks the actual future::plan() backend
+    # internally once "parallel" is set.
+    parallel_setup = "parallel",
     side_of_test = body$side_of_test %||% "two_sided"
   )
 

@@ -18,7 +18,11 @@ analyze_run_handler <- function(body) {
     alpha = body$alpha %||% 0.1,
     model = body$model %||% "none",
     fixed_effects = body$fixed_effects %||% TRUE,
-    ConfidenceIntervals = body$confidence_intervals %||% FALSE
+    ConfidenceIntervals = body$confidence_intervals %||% FALSE,
+    # "Total" (two-sided, default) | "Positive" | "Negative" - a one-sided
+    # test gives more power to detect a real effect in the expected
+    # direction, which "Total" doesn't take advantage of.
+    stat_test = body$stat_test %||% "Total"
   )
 
   inference <- gl$inference

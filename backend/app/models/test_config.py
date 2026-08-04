@@ -22,3 +22,6 @@ class TestConfig(Base, UUIDMixin, TimestampMixin):
     alpha: Mapped[float] = mapped_column(Float, default=0.1)
     confidence_intervals: Mapped[bool] = mapped_column(Boolean, default=False)
     spend: Mapped[float | None] = mapped_column(Float, nullable=True)
+    # "Total" (two-sided) | "Positive" | "Negative" - GeoLift's stat_test arg,
+    # which test statistic the significance test is built around.
+    stat_test: Mapped[str] = mapped_column(String(16), default="Total")
