@@ -214,6 +214,15 @@ function ResultsView({
       ? `${(summary.prob_positive_effect * 100).toFixed(1)}% confidence that iROAS > 0`
       : null;
 
+  // augsynth's regularized fit assigns every donor market some nonzero
+  // weight, but most round to ~0 - default to hiding those so the table
+  // reads as "which markets actually matter" rather than listing everyone.
+  const WEIGHT_THRESHOLD = 0.0005;
+  const [showAllWeights, setShowAllWeights] = useState(false);
+  const sortedWeights = [...result.weights].sort((a, b) => Math.abs(b.weight) - Math.abs(a.weight));
+  const meaningfulWeights = sortedWeights.filter((w) => Math.abs(w.weight) >= WEIGHT_THRESHOLD);
+  const visibleWeights = showAllWeights ? sortedWeights : meaningfulWeights;
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -282,7 +291,16 @@ function ResultsView({
 
       {result.weights?.length > 0 && (
         <div className="card p-6">
-          <div className="font-medium text-sm mb-2">Synthetic control weights</div>
+          <div className="flex items-center justify-between mb-2">
+            <div className="font-medium text-sm">Synthetic control weights</div>
+            {meaningfulWeights.length < result.weights.length && (
+              <button type="button" className="text-xs text-brand-600 underline" onClick={() => setShowAllWeights((s) => !s)}>
+                {showAllWeights
+                  ? `Hide near-zero weights (${meaningfulWeights.length} of ${result.weights.length} matter)`
+                  : `Show all ${result.weights.length} locations`}
+              </button>
+            )}
+          </div>
           <table className="w-full text-sm">
             <thead className="text-xs text-slate-500 uppercase">
               <tr>
@@ -291,7 +309,7 @@ function ResultsView({
               </tr>
             </thead>
             <tbody>
-              {result.weights.map((w) => (
+              {visibleWeights.map((w) => (
                 <tr key={w.location} className="border-t border-slate-100">
                   <td className="py-1">{w.location}</td>
                   <td className="py-1">{w.weight.toFixed(3)}</td>
