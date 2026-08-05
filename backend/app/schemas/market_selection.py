@@ -56,3 +56,24 @@ class MarketSelectionDetailRequest(BaseModel):
     locations: list[str]
     duration: int
     effect_size: list[float] | None = None
+
+
+class CandidateSimulationCreate(BaseModel):
+    locations: list[str]
+    duration: int
+    effect_sizes: list[float] = Field(..., min_length=1)
+
+
+class CandidateSimulationOut(BaseModel):
+    id: uuid.UUID
+    market_selection_run_id: uuid.UUID
+    locations: list[str]
+    duration: int
+    effect_sizes: list[float]
+    status: str
+    result_json: dict
+    error: str | None
+    created_at: datetime
+    finished_at: datetime | None
+
+    model_config = {"from_attributes": True}

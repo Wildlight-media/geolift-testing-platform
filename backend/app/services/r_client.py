@@ -58,6 +58,15 @@ def run_analyze(*, data: list[dict], mapping: dict, params: dict) -> dict:
     return _post("/analyze/run", {"data": data, **mapping, **params})
 
 
+def market_selection_simulate(
+    *, data: list[dict], mapping: dict, locations: list[str], duration: int, effect_sizes: list[float], params: dict
+) -> dict:
+    return _post(
+        "/market-selection/simulate",
+        {"data": data, **mapping, "locations": locations, "duration": duration, "effect_sizes": effect_sizes, **params},
+    )
+
+
 def health() -> dict:
     try:
         response = httpx.get(f"{settings.R_SERVICE_URL}/health", timeout=10.0)

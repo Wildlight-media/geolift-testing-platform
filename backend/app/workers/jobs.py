@@ -9,7 +9,7 @@ from app.db.session import SessionLocal
 from app.models.analysis import Analysis
 from app.models.dataset import Dataset
 from app.models.experiment import Experiment
-from app.models.market_selection import MarketSelectionResult, MarketSelectionRun
+from app.models.market_selection import CandidateSimulation, MarketSelectionResult, MarketSelectionRun
 from app.models.test_config import TestConfig
 from app.services import r_client
 from app.services.dataset_loader import load_records, mapping_for
@@ -51,6 +51,50 @@ def run_market_selection_job(run_id: str) -> None:
         run.status = "succeeded"
         run.finished_at = datetime.utcnow()
         experiment.status = "market_selection_done"
+        db.commit()
+    finally:
+        db.close()
+
+
+def run_candidate_simulation_job(simulation_id: str) -> None:
+    db = SessionLocal()
+    try:
+        simulation = db.get(CandidateSimulation, uuid.UUID(simulation_id))
+        if simulation is None:
+            return
+
+        simulation.status = "running"
+        db.commit()
+
+        run = db.get(MarketSelectionRun, simulation.market_selection_run_id)
+        experiment = db.get(Experiment, run.experiment_id)
+        dataset = db.get(Dataset, experiment.dataset_id)
+
+        # Only the modeling params matter here (GeoLift() itself, not the
+        # power/investment simulation) - cpic/side_of_test/lookback_window
+        # from the parent run aren't used by this endpoint.
+        params = {k: v for k, v in run.params_json.items() if k in {"alpha", "model", "fixed_effects"}}
+
+        try:
+            records = load_records(dataset)
+            result = r_client.market_selection_simulate(
+                data=records,
+                mapping=mapping_for(dataset),
+                locations=simulation.locations,
+                duration=simulation.duration,
+                effect_sizes=simulation.effect_sizes,
+                params=params,
+            )
+        except (RServiceError, Exception) as exc:  # noqa: BLE001 - surface any failure to the UI
+            simulation.status = "failed"
+            simulation.error = str(exc)
+            simulation.finished_at = datetime.utcnow()
+            db.commit()
+            return
+
+        simulation.result_json = result
+        simulation.status = "succeeded"
+        simulation.finished_at = datetime.utcnow()
         db.commit()
     finally:
         db.close()

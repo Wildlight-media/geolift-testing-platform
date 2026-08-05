@@ -3,11 +3,13 @@ library(plumber)
 source("R/utils/serialize.R")
 source("R/utils/geo_data.R")
 source("R/utils/patches.R")
+source("R/utils/geolift_extract.R")
 source("R/endpoints/health.R")
 source("R/endpoints/data.R")
 source("R/endpoints/market_selection.R")
 source("R/endpoints/power.R")
 source("R/endpoints/analyze.R")
+source("R/endpoints/simulate.R")
 
 # Every non-health route takes a parsed JSON body and returns a plain list;
 # this wraps them so an R error becomes a 400 JSON response instead of
@@ -31,6 +33,7 @@ root <- pr() |>
   pr_post("/market-selection/run", wrap(market_selection_run_handler)) |>
   pr_post("/market-selection/detail", wrap(market_selection_detail_handler)) |>
   pr_post("/power/run", wrap(power_run_handler)) |>
-  pr_post("/analyze/run", wrap(analyze_run_handler))
+  pr_post("/analyze/run", wrap(analyze_run_handler)) |>
+  pr_post("/market-selection/simulate", wrap(simulate_run_handler))
 
 root |> pr_run(host = "0.0.0.0", port = as.integer(Sys.getenv("PORT", 8001)))

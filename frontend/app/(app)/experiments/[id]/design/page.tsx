@@ -3,8 +3,18 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { apiGet, apiPost, ApiError } from "@/lib/api";
-import type { BestMarketRow, Dataset, Experiment, MarketSelectionParams, MarketSelectionResult, MarketSelectionRun } from "@/lib/types";
+import type {
+  BestMarketRow,
+  CandidateSimulation,
+  Dataset,
+  Experiment,
+  MarketSelectionParams,
+  MarketSelectionResult,
+  MarketSelectionRun,
+} from "@/lib/types";
 import PowerCurveChart from "@/components/charts/PowerCurveChart";
+import ControlLiftTestBars from "@/components/charts/ControlLiftTestBars";
+import CumulativeEffectChart from "@/components/charts/CumulativeEffectChart";
 import SearchableLocationPicker from "@/components/SearchableLocationPicker";
 import RangeSlider from "@/components/RangeSlider";
 import { formatOutcome } from "@/lib/format";
@@ -82,7 +92,9 @@ export default function DesignPage() {
   const [result, setResult] = useState<MarketSelectionResult | null>(null);
   const [selected, setSelected] = useState<BestMarketRow | null>(null);
   const [detail, setDetail] = useState<Record<string, unknown> | null>(null);
+  const [simulation, setSimulation] = useState<CandidateSimulation | null>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const simPollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     apiGet<Experiment>(`/api/experiments/${id}`).then((exp) => {
@@ -91,6 +103,7 @@ export default function DesignPage() {
     refreshRuns();
     return () => {
       if (pollRef.current) clearInterval(pollRef.current);
+      if (simPollRef.current) clearInterval(simPollRef.current);
     };
   }, [id]);
 
@@ -122,6 +135,8 @@ export default function DesignPage() {
     if (!activeRun) return;
     setSelected(row);
     setDetail(null);
+    if (simPollRef.current) clearInterval(simPollRef.current);
+    setSimulation(null);
     const locations = row.location.split(",").map((s) => s.trim());
     try {
       const res = await apiPost<Record<string, unknown>>(`/api/experiments/${id}/market-selection/${activeRun.id}/detail`, {
@@ -132,6 +147,36 @@ export default function DesignPage() {
     } catch {
       setDetail(null);
     }
+  }
+
+  async function startSimulation() {
+    if (!activeRun || !selected || !detail) return;
+    const powerCurve = (detail.power_curve as Record<string, unknown>[]) ?? [];
+    const recommended = pickPlanTier(powerCurve, 0.8);
+    const effectSizes = recommended ? [0, recommended.liftPct / 100] : [0];
+    const locations = selected.location.split(",").map((s) => s.trim());
+    const sim = await apiPost<CandidateSimulation>(`/api/experiments/${id}/market-selection/${activeRun.id}/simulate`, {
+      locations,
+      duration: selected.duration,
+      effect_sizes: effectSizes,
+    });
+    setSimulation(sim);
+    watchSimulation(sim.id);
+  }
+
+  function watchSimulation(simulationId: string) {
+    if (simPollRef.current) clearInterval(simPollRef.current);
+    if (!activeRun) return;
+    const poll = () => {
+      apiGet<CandidateSimulation>(`/api/experiments/${id}/market-selection/${activeRun.id}/simulate/${simulationId}`).then((sim) => {
+        setSimulation(sim);
+        if (sim.status === "succeeded" || sim.status === "failed") {
+          if (simPollRef.current) clearInterval(simPollRef.current);
+        }
+      });
+    };
+    poll();
+    simPollRef.current = setInterval(poll, 5000);
   }
 
   return (
@@ -234,8 +279,85 @@ export default function DesignPage() {
               <p className="text-sm text-slate-400">Loading detail...</p>
             )}
           </div>
+
+          <div className="card p-6">
+            <div className="flex items-center justify-between mb-2">
+              <div>
+                <div className="font-medium text-sm">Simulated example</div>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Runs the real GeoLift inference against this candidate&apos;s own historical data with a hypothetical
+                  effect injected, so you can see what the test would plausibly look like before it runs. On large
+                  datasets this can take a long time (same as a real analysis) - feel free to navigate away, it&apos;ll
+                  still be here when you come back.
+                </p>
+              </div>
+              <button
+                type="button"
+                className="btn-secondary shrink-0"
+                disabled={!detail || simulation?.status === "queued" || simulation?.status === "running"}
+                onClick={startSimulation}
+              >
+                {simulation?.status === "queued" || simulation?.status === "running" ? "Simulating..." : "Simulate this test"}
+              </button>
+            </div>
+            {simulation && (
+              <SimulationPanels simulation={simulation} outcomeType={dataset?.outcome_type ?? "revenue"} />
+            )}
+          </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function SimulationPanels({ simulation, outcomeType }: { simulation: CandidateSimulation; outcomeType: string }) {
+  if (simulation.status === "failed") {
+    return <p className="text-sm text-red-600 mt-3">{simulation.error ?? "Simulation failed"}</p>;
+  }
+  if (simulation.status !== "succeeded" || !("scenarios" in simulation.result_json)) {
+    return <p className="text-sm text-slate-400 mt-3">Running simulation - this may take a while...</p>;
+  }
+
+  const scenarios = simulation.result_json.scenarios;
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+      {scenarios.map(({ effect_size, result }) => {
+        const summary = result.summary;
+        const treatmentWindow =
+          summary.treatment_start !== null && summary.treatment_end !== null
+            ? result.lift_series.filter((r) => r.time >= summary.treatment_start! && r.time <= summary.treatment_end!)
+            : [];
+        const testValue = treatmentWindow.reduce((sum, r) => sum + r.treatment_observed, 0);
+        const controlValue = treatmentWindow.reduce((sum, r) => sum + r.synthetic_control, 0);
+        const liftValue = summary.incremental ?? testValue - controlValue;
+
+        return (
+          <div key={effect_size} className="border border-slate-100 rounded-lg p-4">
+            <div className="text-sm text-slate-600 mb-2">
+              {effect_size === 0 ? (
+                <>Simulated results with no effect: {formatOutcome(liftValue, outcomeType)}</>
+              ) : (
+                <>
+                  Simulated results with {(effect_size * 100).toFixed(1)}% increase in test: {formatOutcome(liftValue, outcomeType)}
+                </>
+              )}
+              {summary.lower_conf_int !== null && summary.upper_conf_int !== null && (
+                <span className="text-slate-400">
+                  {" "}
+                  ({formatOutcome(summary.lower_conf_int, outcomeType)}, {formatOutcome(summary.upper_conf_int, outcomeType)})
+                </span>
+              )}
+            </div>
+            <ControlLiftTestBars control={controlValue} lift={liftValue} test={testValue} outcomeType={outcomeType} />
+            {result.cumulative_effect_series?.length > 0 && (
+              <div className="mt-4">
+                <CumulativeEffectChart data={result.cumulative_effect_series} treatmentStart={summary.treatment_start ?? 0} />
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

@@ -7,9 +7,11 @@ from app.api.deps import get_current_user
 from app.api.routes.experiments import get_owned_experiment
 from app.db.session import get_db
 from app.models.dataset import Dataset
-from app.models.market_selection import MarketSelectionResult, MarketSelectionRun
+from app.models.market_selection import CandidateSimulation, MarketSelectionResult, MarketSelectionRun
 from app.models.user import User
 from app.schemas.market_selection import (
+    CandidateSimulationCreate,
+    CandidateSimulationOut,
     MarketSelectionDetailRequest,
     MarketSelectionResultOut,
     MarketSelectionRunCreate,
@@ -18,7 +20,7 @@ from app.schemas.market_selection import (
 from app.services import r_client
 from app.services.dataset_loader import load_records, mapping_for
 from app.services.r_client import RServiceError
-from app.workers.jobs import run_market_selection_job
+from app.workers.jobs import run_candidate_simulation_job, run_market_selection_job
 from app.workers.queue import job_queue
 
 router = APIRouter(prefix="/api/experiments/{experiment_id}/market-selection", tags=["market-selection"])
@@ -124,3 +126,56 @@ def get_candidate_detail(
         )
     except RServiceError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@router.post("/{run_id}/simulate", response_model=CandidateSimulationOut)
+def start_candidate_simulation(
+    experiment_id: uuid.UUID,
+    run_id: uuid.UUID,
+    payload: CandidateSimulationCreate,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> CandidateSimulation:
+    """Kicks off a pre-test 'what would this look like' preview for one
+    candidate market combination. This runs the real GeoLift() pipeline
+    against a copy of the real data with a hypothetical effect injected -
+    on a large real dataset this can take as long as a real analyze run
+    (confirmed: ~27 minutes with confidence intervals on), so it's a
+    background job polled like MarketSelectionRun, not a synchronous call.
+    """
+    experiment = get_owned_experiment(experiment_id, db, user)
+    run = db.get(MarketSelectionRun, run_id)
+    if not run or run.experiment_id != experiment.id:
+        raise HTTPException(status_code=404, detail="Run not found")
+
+    simulation = CandidateSimulation(
+        market_selection_run_id=run.id,
+        locations=payload.locations,
+        duration=payload.duration,
+        effect_sizes=payload.effect_sizes,
+        status="queued",
+    )
+    db.add(simulation)
+    db.commit()
+    db.refresh(simulation)
+
+    job = job_queue.enqueue(run_candidate_simulation_job, str(simulation.id))
+    simulation.rq_job_id = job.id
+    db.commit()
+    db.refresh(simulation)
+    return simulation
+
+
+@router.get("/{run_id}/simulate/{simulation_id}", response_model=CandidateSimulationOut)
+def get_candidate_simulation(
+    experiment_id: uuid.UUID,
+    run_id: uuid.UUID,
+    simulation_id: uuid.UUID,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> CandidateSimulation:
+    get_owned_experiment(experiment_id, db, user)
+    simulation = db.get(CandidateSimulation, simulation_id)
+    if not simulation or simulation.market_selection_run_id != run_id:
+        raise HTTPException(status_code=404, detail="Simulation not found")
+    return simulation

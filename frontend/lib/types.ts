@@ -91,6 +91,19 @@ export type MarketSelectionResult = {
   power_curves_json: Record<string, unknown>[];
 };
 
+export type CandidateSimulation = {
+  id: string;
+  market_selection_run_id: string;
+  locations: string[];
+  duration: number;
+  effect_sizes: number[];
+  status: "queued" | "running" | "succeeded" | "failed";
+  result_json: { scenarios: { effect_size: number; result: AnalysisResult }[] } | Record<string, never>;
+  error: string | null;
+  created_at: string;
+  finished_at: string | null;
+};
+
 export type TestConfig = {
   id: string;
   experiment_id: string;
