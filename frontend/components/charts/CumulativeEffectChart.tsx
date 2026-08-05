@@ -8,10 +8,15 @@ export default function CumulativeEffectChart({
   data,
   treatmentStart,
   color = "#2563eb",
+  bandColor = "#64748b",
 }: {
   data: Row[];
   treatmentStart: number;
   color?: string;
+  // Confidence band fill - defaults to a neutral gray (independent of the
+  // line color) to match the standard convention for these charts: a
+  // colored observed/estimate line over a gray uncertainty band.
+  bandColor?: string;
 }) {
   const hasBands = data.length > 0 && data.every((d) => d.lower_bound !== null && d.upper_bound !== null);
   const chartData = data.map((d) => ({
@@ -32,7 +37,7 @@ export default function CumulativeEffectChart({
         <YAxis tick={{ fontSize: 12 }} />
         <Tooltip />
         <ReferenceLine y={0} stroke="#94a3b8" />
-        {hasBands && <Area dataKey="range" stroke="none" fill={color} fillOpacity={0.15} isAnimationActive={false} />}
+        {hasBands && <Area dataKey="range" stroke="none" fill={bandColor} fillOpacity={0.25} isAnimationActive={false} />}
         <Line type="monotone" dataKey="cumulative_estimate" stroke={color} strokeWidth={2} dot={false} />
       </ComposedChart>
     </ResponsiveContainer>
