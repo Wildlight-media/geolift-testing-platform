@@ -7,6 +7,7 @@ import type { BestMarketRow, Dataset, Experiment, MarketSelectionParams, MarketS
 import PowerCurveChart from "@/components/charts/PowerCurveChart";
 import SearchableLocationPicker from "@/components/SearchableLocationPicker";
 import RangeSlider from "@/components/RangeSlider";
+import { formatOutcome } from "@/lib/format";
 
 const DEFAULT_PARAMS: MarketSelectionParams = {
   treatment_periods: [15],
@@ -46,6 +47,31 @@ function generateNValues(min: number, max: number, count = 5): number[] {
   const step = (max - min) / (count - 1);
   const values = Array.from({ length: count }, (_, i) => Math.round(min + i * step));
   return Array.from(new Set(values)).sort((a, b) => a - b);
+}
+
+type PlanTier = { investment: number; liftPct: number; liftDollars: number };
+
+// Reads two points straight off the same power curve GeoLiftPower already
+// returns for a candidate - the smallest effect size that clears each power
+// bar. No new computation: Investment and EffectSize are already in the
+// data, this just picks the rows that matter for a plain-English summary.
+function pickPlanTier(powerCurve: Record<string, unknown>[], minPower: number): PlanTier | null {
+  const candidates = powerCurve
+    .map((row) => ({
+      effectSize: Number(row.EffectSize),
+      power: Number(row.power),
+      investment: Number(row.Investment),
+      cpic: Number(row.cpic),
+    }))
+    .filter((r) => !Number.isNaN(r.effectSize) && !Number.isNaN(r.power) && r.power >= minPower && r.effectSize > 0)
+    .sort((a, b) => a.effectSize - b.effectSize);
+
+  const best = candidates[0];
+  if (!best) return null;
+  // Investment is defined as cpic * incremental_revenue, so the expected
+  // revenue itself is just Investment / cpic - no separate computation.
+  const liftDollars = best.cpic > 0 ? best.investment / best.cpic : best.investment;
+  return { investment: best.investment, liftPct: best.effectSize * 100, liftDollars };
 }
 
 export default function DesignPage() {
@@ -184,15 +210,81 @@ export default function DesignPage() {
       )}
 
       {selected && (
-        <div className="card p-6">
-          <div className="font-medium text-sm mb-4">Candidate detail: {selected.location}</div>
+        <div className="space-y-6">
           {detail ? (
-            <PowerCurveChart data={(detail.power_curve as Record<string, unknown>[]) ?? []} xKey="EffectSize" yKey="power" />
-          ) : (
-            <p className="text-sm text-slate-400">Loading detail...</p>
-          )}
+            <TestingPlanCard
+              selected={selected}
+              powerCurve={(detail.power_curve as Record<string, unknown>[]) ?? []}
+              outcomeType={dataset?.outcome_type ?? "revenue"}
+            />
+          ) : null}
+
+          <div className="card p-6">
+            <div className="font-medium text-sm mb-4">Candidate detail: {selected.location}</div>
+            {detail ? (
+              <PowerCurveChart data={(detail.power_curve as Record<string, unknown>[]) ?? []} xKey="EffectSize" yKey="power" />
+            ) : (
+              <p className="text-sm text-slate-400">Loading detail...</p>
+            )}
+          </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function TestingPlanCard({
+  selected,
+  powerCurve,
+  outcomeType,
+}: {
+  selected: BestMarketRow;
+  powerCurve: Record<string, unknown>[];
+  outcomeType: string;
+}) {
+  const locationCount = selected.location.split(",").filter((s) => s.trim()).length;
+  const baseline = pickPlanTier(powerCurve, 0.8);
+  const high = pickPlanTier(powerCurve, 0.95);
+
+  if (!baseline && !high) return null;
+
+  return (
+    <div className="card p-0 overflow-hidden">
+      <div className="p-4 border-b border-slate-100 font-medium text-sm">Testing plan recommendations</div>
+      <div className="p-6">
+        <div className="grid grid-cols-2 gap-4 mb-5">
+          <div className="rounded-lg bg-brand-700 text-white flex items-center justify-center py-8 text-2xl font-semibold">
+            {selected.duration} days
+          </div>
+          <div className="rounded-lg bg-brand-100 text-brand-900 flex items-center justify-center py-8 text-2xl font-semibold">
+            {locationCount} location{locationCount === 1 ? "" : "s"}
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {high && (
+            <div>
+              <div className="font-semibold text-sm mb-1">High Confidence Plan</div>
+              <p className="text-sm text-slate-600">{formatOutcome(high.investment, "revenue")} additional investment in test geos</p>
+              <p className="text-sm text-slate-600">
+                {high.liftPct.toFixed(1)}% additional {outcomeType === "revenue" ? "revenue" : "outcome"} expected in test geos (
+                {formatOutcome(high.liftDollars, outcomeType)})
+              </p>
+              <p className="text-xs text-slate-400 mt-1">Detectable at 95% power</p>
+            </div>
+          )}
+          {baseline && (
+            <div>
+              <div className="font-semibold text-sm mb-1">Baseline Confidence Plan</div>
+              <p className="text-sm text-slate-600">{formatOutcome(baseline.investment, "revenue")} additional investment in test geos</p>
+              <p className="text-sm text-slate-600">
+                {baseline.liftPct.toFixed(1)}% additional {outcomeType === "revenue" ? "revenue" : "outcome"} expected in test geos (
+                {formatOutcome(baseline.liftDollars, outcomeType)})
+              </p>
+              <p className="text-xs text-slate-400 mt-1">Detectable at 80% power (this is the MDE)</p>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
