@@ -252,8 +252,14 @@ function TestingPlanCard({
   const locationCount = selected.location.split(",").filter((s) => s.trim()).length;
   const baseline = pickPlanTier(powerCurve, 0.8);
   const high = pickPlanTier(powerCurve, 0.95);
+  // Only worth showing as two separate tiers if they actually land on
+  // different effect sizes - a loose alpha or a lookback window of 1 (a
+  // single simulated trial) often makes every tested effect size clear
+  // both power bars identically, which just reads as a confusing duplicate.
+  const showBothTiers = !!(baseline && high && Math.abs(baseline.liftPct - high.liftPct) > 0.01);
 
   if (!baseline && !high) return null;
+  const single = baseline ?? high;
 
   return (
     <div className="card p-0 overflow-hidden">
@@ -267,31 +273,39 @@ function TestingPlanCard({
             {locationCount} location{locationCount === 1 ? "" : "s"}
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {high && (
-            <div>
-              <div className="font-semibold text-sm mb-1">High Confidence Plan</div>
-              <p className="text-sm text-slate-600">{formatOutcome(high.investment, "revenue")} additional investment in test geos</p>
-              <p className="text-sm text-slate-600">
-                {high.liftPct.toFixed(1)}% additional {outcomeType === "revenue" ? "revenue" : "outcome"} expected in test geos (
-                {formatOutcome(high.liftDollars, outcomeType)})
-              </p>
-              <p className="text-xs text-slate-400 mt-1">Detectable at 95% power</p>
-            </div>
-          )}
-          {baseline && (
-            <div>
-              <div className="font-semibold text-sm mb-1">Baseline Confidence Plan</div>
-              <p className="text-sm text-slate-600">{formatOutcome(baseline.investment, "revenue")} additional investment in test geos</p>
-              <p className="text-sm text-slate-600">
-                {baseline.liftPct.toFixed(1)}% additional {outcomeType === "revenue" ? "revenue" : "outcome"} expected in test geos (
-                {formatOutcome(baseline.liftDollars, outcomeType)})
-              </p>
-              <p className="text-xs text-slate-400 mt-1">Detectable at 80% power (this is the MDE)</p>
-            </div>
-          )}
-        </div>
+        {showBothTiers ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <PlanTierBlock label="High Confidence Plan" tier={high!} note="Detectable at 95% power" outcomeType={outcomeType} />
+            <PlanTierBlock label="Baseline Confidence Plan" tier={baseline!} note="Detectable at 80% power (this is the MDE)" outcomeType={outcomeType} />
+          </div>
+        ) : (
+          single && <PlanTierBlock label="Recommended Plan" tier={single} note="Detectable at 80% power (this is the MDE)" outcomeType={outcomeType} />
+        )}
       </div>
+    </div>
+  );
+}
+
+function PlanTierBlock({
+  label,
+  tier,
+  note,
+  outcomeType,
+}: {
+  label: string;
+  tier: PlanTier;
+  note: string;
+  outcomeType: string;
+}) {
+  return (
+    <div>
+      <div className="font-semibold text-sm mb-1">{label}</div>
+      <p className="text-sm text-slate-600">{formatOutcome(tier.investment, "revenue")} additional investment in test geos</p>
+      <p className="text-sm text-slate-600">
+        {tier.liftPct.toFixed(1)}% additional {outcomeType === "revenue" ? "revenue" : "outcome"} expected in test geos (
+        {formatOutcome(tier.liftDollars, outcomeType)})
+      </p>
+      <p className="text-xs text-slate-400 mt-1">{note}</p>
     </div>
   );
 }
