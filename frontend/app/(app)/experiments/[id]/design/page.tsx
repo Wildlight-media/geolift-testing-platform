@@ -169,7 +169,14 @@ export default function DesignPage() {
 
       {result && (
         <div className="card p-0 overflow-hidden">
-          <div className="p-4 border-b border-slate-100 font-medium text-sm">Ranked candidate markets</div>
+          <div className="p-4 border-b border-slate-100 font-medium text-sm flex items-center justify-between">
+            <span>Ranked candidate markets</span>
+            {result.best_markets_json.length > 25 && (
+              <span className="text-xs text-slate-400 font-normal">
+                Showing top 25 of {result.best_markets_json.length}
+              </span>
+            )}
+          </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-slate-50 text-slate-500 text-xs uppercase">
@@ -185,7 +192,7 @@ export default function DesignPage() {
                 </tr>
               </thead>
               <tbody>
-                {result.best_markets_json.map((row, i) => (
+                {result.best_markets_json.slice(0, 25).map((row, i) => (
                   <tr
                     key={i}
                     onClick={() => onSelectCandidate(row)}
