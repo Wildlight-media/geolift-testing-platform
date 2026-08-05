@@ -6,6 +6,7 @@ import { apiGet, apiPost, ApiError } from "@/lib/api";
 import type { BestMarketRow, Dataset, Experiment, MarketSelectionParams, MarketSelectionResult, MarketSelectionRun } from "@/lib/types";
 import PowerCurveChart from "@/components/charts/PowerCurveChart";
 import SearchableLocationPicker from "@/components/SearchableLocationPicker";
+import RangeSlider from "@/components/RangeSlider";
 
 const DEFAULT_PARAMS: MarketSelectionParams = {
   treatment_periods: [15],
@@ -34,6 +35,17 @@ function parseNumberList(input: string): number[] {
     .filter(Boolean)
     .map(Number)
     .filter((n) => !Number.isNaN(n));
+}
+
+// Spreads N (test market count) evenly across the chosen [min, max] range
+// rather than making the user type out specific counts - similar in spirit
+// to GeoLift's own default (deciles across all locations) but scoped to
+// whatever range the slider is set to.
+function generateNValues(min: number, max: number, count = 5): number[] {
+  if (min >= max) return [min];
+  const step = (max - min) / (count - 1);
+  const values = Array.from({ length: count }, (_, i) => Math.round(min + i * step));
+  return Array.from(new Set(values)).sort((a, b) => a - b);
 }
 
 export default function DesignPage() {
@@ -206,7 +218,9 @@ function ParamsForm({
 }) {
   const [params, setParams] = useState<MarketSelectionParams>(DEFAULT_PARAMS);
   const [treatmentPeriodsText, setTreatmentPeriodsText] = useState("15");
-  const [nText, setNText] = useState("2, 3, 4");
+  const [nMin, setNMin] = useState(2);
+  const [nMax, setNMax] = useState(4);
+  const nValues = generateNValues(nMin, nMax);
   const [effectSizeText, setEffectSizeText] = useState(DEFAULT_PARAMS.effect_size.join(", "));
   const [holdoutText, setHoldoutText] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -233,7 +247,7 @@ function ParamsForm({
       const finalParams: MarketSelectionParams = {
         ...params,
         treatment_periods: parseNumberList(treatmentPeriodsText),
-        N: parseNumberList(nText),
+        N: nValues,
         effect_size: parseNumberList(effectSizeText),
         holdout: parseNumberList(holdoutText),
       };
@@ -257,7 +271,19 @@ function ParamsForm({
         </div>
         <div>
           <label className="label">N (test market counts)</label>
-          <input className="input" value={nText} onChange={(e) => setNText(e.target.value)} placeholder="e.g. 2, 3, 4" />
+          <div className="input h-auto py-3">
+            <RangeSlider
+              min={2}
+              max={Math.max(locations.length, 2)}
+              valueMin={nMin}
+              valueMax={nMax}
+              onChange={(lo, hi) => {
+                setNMin(lo);
+                setNMax(hi);
+              }}
+            />
+          </div>
+          <p className="text-xs text-slate-400 mt-1">Testing N = {nValues.join(", ")}</p>
         </div>
         <div>
           <label className="label">Effect sizes to simulate</label>

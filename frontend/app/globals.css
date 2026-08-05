@@ -33,3 +33,29 @@ body {
 .badge {
   @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
 }
+
+/* Dual-handle range slider: two overlapping native range inputs sharing a
+   track. Each input's own track is made invisible (background: transparent,
+   pointer-events: none) so only its thumb is interactive; a separate div
+   underneath renders the shared track + highlighted fill between handles. */
+.range-slider-track {
+  @apply absolute left-0 right-0 top-5 h-1.5 rounded-full bg-slate-200;
+}
+.range-slider-fill {
+  @apply absolute top-0 h-1.5 rounded-full bg-brand-600;
+}
+.range-slider-input {
+  @apply absolute left-0 right-0 top-5 h-1.5 m-0 appearance-none bg-transparent pointer-events-none;
+}
+.range-slider-input::-webkit-slider-thumb {
+  @apply appearance-none w-4 h-4 rounded-full bg-white border-2 border-brand-600 shadow pointer-events-auto cursor-pointer;
+}
+.range-slider-input::-moz-range-thumb {
+  @apply w-4 h-4 rounded-full bg-white border-2 border-brand-600 shadow pointer-events-auto cursor-pointer;
+}
+.range-slider-input::-webkit-slider-runnable-track {
+  @apply bg-transparent;
+}
+.range-slider-input::-moz-range-track {
+  @apply bg-transparent;
+}
