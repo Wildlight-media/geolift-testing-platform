@@ -13,7 +13,13 @@ from app.services import storage
 def parse_csv_bytes(content: bytes, *, y_col: str, covariate_cols: list[str]) -> pd.DataFrame:
     df = pd.read_csv(io.BytesIO(content), dtype=str)
     for col in [y_col, *covariate_cols]:
-        df[col] = pd.to_numeric(df[col], errors="coerce")
+        # Real-world revenue/covariate exports routinely format values with
+        # thousands-separator commas and/or a leading currency symbol (e.g.
+        # "1,321.20", "$1,321.20") once the number crosses 1,000 - strip both
+        # before the numeric conversion so those rows aren't dropped as
+        # "non-numeric" further down the pipeline.
+        cleaned = df[col].str.replace(",", "", regex=False).str.replace(r"^\$", "", regex=True)
+        df[col] = pd.to_numeric(cleaned, errors="coerce")
     return df
 
 
