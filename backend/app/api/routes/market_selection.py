@@ -1,6 +1,10 @@
 import uuid
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
+from rq.command import send_stop_job_command
+from rq.exceptions import InvalidJobOperation, NoSuchJobError
+from rq.job import Job
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
@@ -21,7 +25,7 @@ from app.services import r_client
 from app.services.dataset_loader import load_records, mapping_for
 from app.services.r_client import RServiceError
 from app.workers.jobs import run_candidate_simulation_job, run_market_selection_job
-from app.workers.queue import job_queue
+from app.workers.queue import job_queue, redis_conn
 
 router = APIRouter(prefix="/api/experiments/{experiment_id}/market-selection", tags=["market-selection"])
 
@@ -79,6 +83,53 @@ def get_run(
     run = db.get(MarketSelectionRun, run_id)
     if not run or run.experiment_id != experiment_id:
         raise HTTPException(status_code=404, detail="Run not found")
+    return run
+
+
+@router.post("/{run_id}/cancel", response_model=MarketSelectionRunOut)
+def cancel_run(
+    experiment_id: uuid.UUID,
+    run_id: uuid.UUID,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> MarketSelectionRun:
+    """Cancels a queued or in-progress run.
+
+    A queued job is removed outright before it ever reaches r-service - no
+    compute wasted, fully effective. A job already running is trickier:
+    r-service (plain plumber, no concurrency) processes one request at a
+    time, so its actual R computation can't be interrupted mid-flight
+    without restarting the container - something this endpoint deliberately
+    doesn't do itself (that needs Docker socket access, which we specifically
+    avoid granting app containers). What this does instead: immediately stop
+    the *worker* from waiting on that request (freeing it to pick up the
+    next queued job right away) and mark the run failed/cancelled so the UI
+    reflects it instantly. The abandoned R computation may keep running
+    briefly in the background until r-service is next restarted.
+    """
+    get_owned_experiment(experiment_id, db, user)
+    run = db.get(MarketSelectionRun, run_id)
+    if not run or run.experiment_id != experiment_id:
+        raise HTTPException(status_code=404, detail="Run not found")
+
+    if run.status not in ("queued", "running"):
+        raise HTTPException(status_code=400, detail=f"Run is already {run.status}, nothing to cancel")
+
+    if run.rq_job_id:
+        try:
+            job = Job.fetch(run.rq_job_id, connection=redis_conn)
+            if job.get_status() == "queued":
+                job.cancel()
+            elif job.get_status() == "started":
+                send_stop_job_command(redis_conn, run.rq_job_id)
+        except (NoSuchJobError, InvalidJobOperation):
+            pass  # already gone from Redis one way or another - just fix the DB row below
+
+    run.status = "failed"
+    run.error = "Cancelled by user"
+    run.finished_at = datetime.now(timezone.utc)
+    db.commit()
+    db.refresh(run)
     return run
 
 

@@ -133,6 +133,12 @@ export default function DesignPage() {
     pollRef.current = setInterval(poll, 4000);
   }
 
+  async function cancelRun(runId: string) {
+    if (pollRef.current) clearInterval(pollRef.current);
+    const run = await apiPost<MarketSelectionRun>(`/api/experiments/${id}/market-selection/${runId}/cancel`, {});
+    setActiveRun(run);
+  }
+
   async function onSelectCandidate(row: BestMarketRow) {
     if (!activeRun) return;
     setSelected(row);
@@ -208,8 +214,25 @@ export default function DesignPage() {
             <span className="text-sm font-medium">
               Run status: <StatusBadge status={activeRun.status} />
             </span>
-            {activeRun.status === "running" && <span className="text-xs text-slate-400">Simulating candidate markets — this can take a few minutes...</span>}
+            <div className="flex items-center gap-3">
+              {activeRun.status === "running" && <span className="text-xs text-slate-400">Simulating candidate markets — this can take a few minutes...</span>}
+              {(activeRun.status === "queued" || activeRun.status === "running") && (
+                <button
+                  type="button"
+                  className="text-xs text-red-600 hover:underline"
+                  onClick={() => cancelRun(activeRun.id)}
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
           </div>
+          {activeRun.status === "running" && (
+            <p className="text-xs text-slate-400 mt-1">
+              Cancelling a run already in progress stops it from blocking new runs, but the in-flight computation
+              may keep using resources briefly in the background.
+            </p>
+          )}
           {activeRun.error && <p className="text-sm text-red-600 mt-2">{activeRun.error}</p>}
         </div>
       )}
