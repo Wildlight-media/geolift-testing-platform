@@ -237,54 +237,76 @@ export default function DesignPage() {
         </div>
       )}
 
-      {result && (
-        <div className="card p-0 overflow-hidden">
-          <div className="p-4 border-b border-slate-100 font-medium text-sm flex items-center justify-between">
-            <span>Ranked candidate markets</span>
-            {result.best_markets_json.length > 25 && (
+      {result && (() => {
+        // GeoLift's own "rank" only weighs MDE/power/abs-lift-at-zero - it has
+        // no idea whether the synthetic control actually fits well, so it
+        // regularly surfaces candidates with a great-looking MDE that's
+        // really just a leaky/loose fit (empirically: well-calibrated
+        // candidates land ~0.50-0.62 on this metric; anything much above
+        // that has repeatedly turned out to be a false bargain when checked
+        // directly against real data). Sort by fit quality first so those
+        // don't show up as the "best" options by default.
+        const IMBALANCE_WARN_THRESHOLD = 0.65;
+        const sorted = [...result.best_markets_json].sort(
+          (a, b) => a.AvgScaledL2Imbalance - b.AvgScaledL2Imbalance
+        );
+        const shown = sorted.slice(0, 25);
+        return (
+          <div className="card p-0 overflow-hidden">
+            <div className="p-4 border-b border-slate-100 font-medium text-sm flex items-center justify-between">
+              <span>Ranked candidate markets</span>
               <span className="text-xs text-slate-400 font-normal">
-                Showing top 25 of {result.best_markets_json.length}
+                {result.best_markets_json.length > 25 && `Showing top 25 of ${result.best_markets_json.length} · `}
+                sorted by fit quality, not the tool&apos;s native rank
               </span>
-            )}
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-slate-50 text-slate-500 text-xs uppercase">
-                <tr>
-                  <th className="text-left px-4 py-2">Rank</th>
-                  <th className="text-left px-4 py-2">Markets</th>
-                  <th className="text-left px-4 py-2">Duration</th>
-                  <th className="text-left px-4 py-2">Effect size</th>
-                  <th className="text-left px-4 py-2">Power</th>
-                  <th className="text-left px-4 py-2">Investment</th>
-                  <th className="text-left px-4 py-2">MDE</th>
-                  <th className="text-left px-4 py-2">Holdout</th>
-                </tr>
-              </thead>
-              <tbody>
-                {result.best_markets_json.slice(0, 25).map((row, i) => (
-                  <tr
-                    key={i}
-                    onClick={() => onSelectCandidate(row)}
-                    className={`border-t border-slate-100 cursor-pointer hover:bg-brand-50 ${
-                      selected === row ? "bg-brand-50" : ""
-                    }`}
-                  >
-                    <td className="px-4 py-2 font-medium">{row.rank}</td>
-                    <td className="px-4 py-2">{row.location}</td>
-                    <td className="px-4 py-2">{row.duration}</td>
-                    <td className="px-4 py-2">{(row.EffectSize * 100).toFixed(1)}%</td>
-                    <td className="px-4 py-2">{(row.Power * 100).toFixed(0)}%</td>
-                    <td className="px-4 py-2">{row.Investment?.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
-                    <td className="px-4 py-2">{row.Average_MDE?.toFixed(2)}</td>
-                    <td className="px-4 py-2">{(row.Holdout * 100).toFixed(0)}%</td>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-slate-50 text-slate-500 text-xs uppercase">
+                  <tr>
+                    <th className="text-left px-4 py-2">Rank</th>
+                    <th className="text-left px-4 py-2">Markets</th>
+                    <th className="text-left px-4 py-2">Duration</th>
+                    <th className="text-left px-4 py-2">Effect size</th>
+                    <th className="text-left px-4 py-2">Power</th>
+                    <th className="text-left px-4 py-2">Investment</th>
+                    <th className="text-left px-4 py-2">MDE</th>
+                    <th className="text-left px-4 py-2">Holdout</th>
+                    <th className="text-left px-4 py-2">Fit quality</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {shown.map((row, i) => {
+                    const loose = row.AvgScaledL2Imbalance > IMBALANCE_WARN_THRESHOLD;
+                    return (
+                      <tr
+                        key={i}
+                        onClick={() => onSelectCandidate(row)}
+                        className={`border-t border-slate-100 cursor-pointer hover:bg-brand-50 ${
+                          selected === row ? "bg-brand-50" : ""
+                        }`}
+                      >
+                        <td className="px-4 py-2 font-medium">{row.rank}</td>
+                        <td className="px-4 py-2">{row.location}</td>
+                        <td className="px-4 py-2">{row.duration}</td>
+                        <td className="px-4 py-2">{(row.EffectSize * 100).toFixed(1)}%</td>
+                        <td className="px-4 py-2">{(row.Power * 100).toFixed(0)}%</td>
+                        <td className="px-4 py-2">{row.Investment?.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+                        <td className="px-4 py-2">{row.Average_MDE?.toFixed(2)}</td>
+                        <td className="px-4 py-2">{(row.Holdout * 100).toFixed(0)}%</td>
+                        <td className={`px-4 py-2 ${loose ? "text-amber-600 font-medium" : ""}`} title={loose ? "Higher than the range we've found trustworthy - verify with a direct null-effect check before trusting this candidate" : undefined}>
+                          {row.AvgScaledL2Imbalance?.toFixed(2)}
+                          {loose && " ⚠"}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {selected && (
         <div className="space-y-6">
