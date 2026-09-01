@@ -242,24 +242,45 @@ export default function DesignPage() {
         // no idea whether the synthetic control actually fits well, so it
         // regularly surfaces candidates with a great-looking MDE that's
         // really just a leaky/loose fit (empirically: well-calibrated
-        // candidates land ~0.50-0.62 on this metric; anything much above
-        // that has repeatedly turned out to be a false bargain when checked
-        // directly against real data). Sort by fit quality first so those
-        // don't show up as the "best" options by default.
-        const IMBALANCE_WARN_THRESHOLD = 0.65;
-        const sorted = [...result.best_markets_json].sort(
-          (a, b) => a.AvgScaledL2Imbalance - b.AvgScaledL2Imbalance
+        // candidates land ~0.50-0.62 on this metric; much above that has
+        // repeatedly turned out to be a false bargain when checked directly).
+        //
+        // Sorting by imbalance alone backfires the other direction, though:
+        // a handful of tiny, near-zero-revenue markets can trivially post a
+        // very low imbalance score simply because there's almost no signal
+        // to be imbalanced about - the tradeoff is a degenerate MDE (we've
+        // seen candidates "requiring" 50-100%+ lift to register, which is
+        // meaningless in practice). So this filters out both failure modes
+        // - poor fit AND unusably large/negative MDE, or a group too small
+        // a share of total revenue to matter - before deferring to the
+        // tool's own rank among what's left.
+        const IMBALANCE_MAX = 0.65;
+        const MDE_MAX = 0.25;
+        const MIN_REVENUE_SHARE = 0.03; // i.e. Holdout <= 97%
+        const usable = result.best_markets_json.filter(
+          (r) =>
+            r.AvgScaledL2Imbalance <= IMBALANCE_MAX &&
+            Math.abs(r.Average_MDE) <= MDE_MAX &&
+            1 - r.Holdout >= MIN_REVENUE_SHARE
         );
+        const sorted = [...usable].sort((a, b) => a.rank - b.rank);
         const shown = sorted.slice(0, 25);
+        const filteredOutCount = result.best_markets_json.length - usable.length;
         return (
           <div className="card p-0 overflow-hidden">
             <div className="p-4 border-b border-slate-100 font-medium text-sm flex items-center justify-between">
               <span>Ranked candidate markets</span>
               <span className="text-xs text-slate-400 font-normal">
-                {result.best_markets_json.length > 25 && `Showing top 25 of ${result.best_markets_json.length} · `}
-                sorted by fit quality, not the tool&apos;s native rank
+                {shown.length > 0 && sorted.length > 25 && `Showing top 25 of ${sorted.length} usable · `}
+                {filteredOutCount > 0 && `${filteredOutCount} filtered out for a poor fit, unusably large MDE, or too small a revenue share`}
               </span>
             </div>
+            {shown.length === 0 ? (
+              <p className="p-4 text-sm text-slate-500">
+                None of the {result.best_markets_json.length} candidates this run found passed our fit/MDE/revenue-share
+                filters - the raw list is still available, but every option needs a closer manual look before trusting it.
+              </p>
+            ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead className="bg-slate-50 text-slate-500 text-xs uppercase">
@@ -277,7 +298,7 @@ export default function DesignPage() {
                 </thead>
                 <tbody>
                   {shown.map((row, i) => {
-                    const loose = row.AvgScaledL2Imbalance > IMBALANCE_WARN_THRESHOLD;
+                    const loose = row.AvgScaledL2Imbalance > IMBALANCE_MAX * 0.85; // approaching the cutoff, worth a second look
                     return (
                       <tr
                         key={i}
@@ -304,6 +325,7 @@ export default function DesignPage() {
                 </tbody>
               </table>
             </div>
+            )}
           </div>
         );
       })()}
