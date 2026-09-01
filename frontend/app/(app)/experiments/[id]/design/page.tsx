@@ -23,7 +23,9 @@ const DEFAULT_PARAMS: MarketSelectionParams = {
   treatment_periods: [15],
   N: [2, 3, 4],
   effect_size: [-0.2, -0.15, -0.1, -0.05, 0, 0.05, 0.1, 0.15, 0.2],
-  lookback_window: 1,
+  // 1 (GeoLift's own default) only evaluates a single historical window,
+  // collapsing Power to a binary 0%/100% instead of a real probability.
+  lookback_window: 3,
   include_markets: [],
   exclude_markets: [],
   holdout: [],

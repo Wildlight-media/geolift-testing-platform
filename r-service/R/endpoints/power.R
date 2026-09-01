@@ -9,7 +9,7 @@ power_run_handler <- function(body) {
     locations = unlist(body$locations),
     effect_size = unlist(body$effect_size) %||% seq(0, 1, 0.05),
     treatment_periods = unlist(body$treatment_periods),
-    lookback_window = body$lookback_window %||% 1,
+    lookback_window = body$lookback_window %||% 3,
     cpic = body$cpic %||% 0,
     Y_id = "Y",
     location_id = "location",

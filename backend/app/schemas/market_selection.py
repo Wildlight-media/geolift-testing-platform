@@ -4,14 +4,20 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 
 # Mirrors every user-adjustable parameter of GeoLift::GeoLiftMarketSelection.
-# Defaults match the R function's own defaults.
+# Defaults match the R function's own defaults, except lookback_window (see
+# below).
 
 
 class MarketSelectionParams(BaseModel):
     treatment_periods: list[int] = Field(..., min_length=1, description="Candidate test durations")
     N: list[int] = Field(..., min_length=1, description="Candidate number of test markets")
     effect_size: list[float] = Field(default_factory=lambda: [round(-0.2 + 0.05 * i, 2) for i in range(9)])
-    lookback_window: int = 1
+    # GeoLift's own default is 1, but that only evaluates a single historical
+    # window - the resulting Power column collapses to a binary 0%/100%
+    # (whichever side of alpha that one window's p-value happened to land
+    # on) rather than a real probability. Defaulting to 3 here trades some
+    # runtime for a genuine, non-degenerate power estimate.
+    lookback_window: int = 3
     include_markets: list[str] = []
     exclude_markets: list[str] = []
     holdout: list[float] = []
