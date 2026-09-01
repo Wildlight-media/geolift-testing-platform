@@ -534,7 +534,7 @@ function ParamsForm({
           <div className="input h-auto py-3">
             <RangeSlider
               min={2}
-              max={Math.max(locations.length, 2)}
+              max={Math.min(Math.max(locations.length, 2), 50)}
               valueMin={nMin}
               valueMax={nMax}
               onChange={(lo, hi) => {
