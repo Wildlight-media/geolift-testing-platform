@@ -300,6 +300,11 @@ export default function DesignPage() {
         const searchMatches = searchTerm ? sorted.filter((r) => r.location.toLowerCase().includes(searchTerm)) : null;
         const shown = searchMatches ?? sorted.slice(0, 25);
         const filteredOutCount = result.best_markets_json.length - usable.length;
+        // Investment = cpic * baseline_Y * EffectSize (GeoLift's own formula),
+        // so baseline treatment-group revenue backs out directly from what's
+        // already in each row - no extra R call needed.
+        const cpic = activeRun?.params_json.cpic ?? 1;
+        const baselineRevenue = (row: BestMarketRow) => (cpic > 0 && row.EffectSize !== 0 ? row.Investment / (cpic * row.EffectSize) : null);
         return (
           <div className="card p-0 overflow-hidden">
             <div className="p-4 border-b border-slate-100 flex items-center justify-between gap-4">
@@ -332,6 +337,7 @@ export default function DesignPage() {
                   <tr>
                     <th className="text-left px-4 py-2">Rank</th>
                     <th className="text-left px-4 py-2">Markets</th>
+                    <th className="text-left px-4 py-2">Baseline revenue</th>
                     <th className="text-left px-4 py-2">Duration</th>
                     <th className="text-left px-4 py-2">Effect size</th>
                     <th className="text-left px-4 py-2">Power</th>
@@ -343,6 +349,7 @@ export default function DesignPage() {
                 </thead>
                 <tbody>
                   {shown.map((row, i) => {
+                    const baseline = baselineRevenue(row);
                     return (
                       <tr
                         key={i}
@@ -353,6 +360,9 @@ export default function DesignPage() {
                       >
                         <td className="px-4 py-2 font-medium">{row.rank}</td>
                         <td className="px-4 py-2">{row.location}</td>
+                        <td className="px-4 py-2">
+                          {baseline !== null ? `$${baseline.toLocaleString(undefined, { maximumFractionDigits: 0 })}` : "—"}
+                        </td>
                         <td className="px-4 py-2">{row.duration}</td>
                         <td className="px-4 py-2">{(row.EffectSize * 100).toFixed(1)}%</td>
                         <td className="px-4 py-2">{(row.Power * 100).toFixed(0)}%</td>
