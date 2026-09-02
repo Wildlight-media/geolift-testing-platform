@@ -77,6 +77,28 @@ market_selection_detail_handler <- function(body) {
     side_of_test = body$side_of_test %||% "two_sided"
   )
 
+  # GeoLiftPower returns one row PER LOOKBACK WINDOW - with lookback_window=3
+  # that's 3 raw rows per effect size, each an individual pass/fail simulation
+  # (power is strictly 0 or 1 on any single row, never fractional). Left
+  # un-aggregated, both the chart and the "Recommended Plan" summary see a
+  # meaningless step function and can key off a single window agreeing
+  # rather than a genuine majority. GeoLiftMarketSelection's own bulk search
+  # averages across windows internally (power = mean(significant)) before
+  # reporting anything - mirror that here so the detail view for one
+  # candidate is calibrated the same way the ranked list already is.
+  power_df <- power_df %>%
+    dplyr::group_by(EffectSize) %>%
+    dplyr::summarize(
+      power = mean(power),
+      pvalue = mean(pvalue),
+      Investment = mean(Investment),
+      ScaledL2Imbalance = mean(ScaledL2Imbalance),
+      cpic = dplyr::first(cpic),
+      duration = dplyr::first(duration),
+      .groups = "drop"
+    ) %>%
+    dplyr::arrange(EffectSize)
+
   weights <- tryCatch(
     GeoLift::GetWeights(
       Y_id = "Y",
