@@ -93,6 +93,7 @@ export default function DesignPage() {
   const [activeRun, setActiveRun] = useState<MarketSelectionRun | null>(null);
   const [result, setResult] = useState<MarketSelectionResult | null>(null);
   const [selected, setSelected] = useState<BestMarketRow | null>(null);
+  const [candidateSearch, setCandidateSearch] = useState("");
   const [detail, setDetail] = useState<Record<string, unknown> | null>(null);
   const [simulation, setSimulation] = useState<CandidateSimulation | null>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -271,30 +272,58 @@ export default function DesignPage() {
         const IMBALANCE_MAX = 0.65;
         const MDE_MAX = 0.25;
         const MIN_REVENUE_SHARE = 0.03; // i.e. Holdout <= 97%
+        // For each market combination GeoLift keeps whichever direction
+        // (positive or negative) was easier to detect - a spend-increase
+        // test only cares about the positive-lift reading, but sorting by
+        // |EffectSize| alone treats a "-5% is easy to detect" combination
+        // as equally good as a genuine +5% one, and in practice the
+        // negative-direction rows dominate almost the entire list. Since
+        // every test built on this platform so far has been a spend
+        // increase, default to positive effect sizes only.
         const usable = result.best_markets_json.filter(
           (r) =>
+            r.EffectSize > 0 &&
             r.AvgScaledL2Imbalance <= IMBALANCE_MAX &&
             Math.abs(r.Average_MDE) <= MDE_MAX &&
             1 - r.Holdout >= MIN_REVENUE_SHARE
         );
         const sorted = [...usable].sort(
-          (a, b) => Math.abs(a.EffectSize) - Math.abs(b.EffectSize) || a.AvgScaledL2Imbalance - b.AvgScaledL2Imbalance
+          (a, b) => a.EffectSize - b.EffectSize || a.AvgScaledL2Imbalance - b.AvgScaledL2Imbalance
         );
-        const shown = sorted.slice(0, 25);
+        // A specific known-good candidate (e.g. one already verified by hand)
+        // can easily sit well past rank 25 among a big tie group at the same
+        // tested effect size - searching by market name finds it directly
+        // rather than hoping the generic sort surfaces it. Search runs over
+        // every candidate that passed the sanity filters, not just the
+        // default top 25 view.
+        const searchTerm = candidateSearch.trim().toLowerCase();
+        const searchMatches = searchTerm ? sorted.filter((r) => r.location.toLowerCase().includes(searchTerm)) : null;
+        const shown = searchMatches ?? sorted.slice(0, 25);
         const filteredOutCount = result.best_markets_json.length - usable.length;
         return (
           <div className="card p-0 overflow-hidden">
-            <div className="p-4 border-b border-slate-100 font-medium text-sm flex items-center justify-between">
-              <span>Ranked candidate markets</span>
-              <span className="text-xs text-slate-400 font-normal">
-                {shown.length > 0 && sorted.length > 25 && `Showing top 25 of ${sorted.length} usable · `}
-                {filteredOutCount > 0 && `${filteredOutCount} filtered out for a poor fit, unusably large MDE, or too small a revenue share`}
-              </span>
+            <div className="p-4 border-b border-slate-100 flex items-center justify-between gap-4">
+              <span className="font-medium text-sm">Ranked candidate markets</span>
+              <input
+                className="input text-sm py-1 w-64"
+                placeholder="Search by market name..."
+                value={candidateSearch}
+                onChange={(e) => setCandidateSearch(e.target.value)}
+              />
+            </div>
+            <div className="px-4 pb-2 text-xs text-slate-400">
+              {searchMatches
+                ? `${searchMatches.length} match${searchMatches.length === 1 ? "" : "es"} for "${candidateSearch}" of ${sorted.length} usable`
+                : `${sorted.length > 25 ? `Showing top 25 of ${sorted.length} usable` : `${sorted.length} usable`}${
+                    filteredOutCount > 0 ? ` · ${filteredOutCount} filtered out for a poor fit, wrong direction, unusably large MDE, or too small a revenue share` : ""
+                  }`}
             </div>
             {shown.length === 0 ? (
               <p className="p-4 text-sm text-slate-500">
-                None of the {result.best_markets_json.length} candidates this run found passed our fit/MDE/revenue-share
-                filters - the raw list is still available, but every option needs a closer manual look before trusting it.
+                {searchMatches
+                  ? `No usable candidates match "${candidateSearch}".`
+                  : `None of the ${result.best_markets_json.length} candidates this run found passed our fit/MDE/revenue-share
+                filters - the raw list is still available, but every option needs a closer manual look before trusting it.`}
               </p>
             ) : (
             <div className="overflow-x-auto">
