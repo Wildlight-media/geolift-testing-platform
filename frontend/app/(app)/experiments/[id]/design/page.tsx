@@ -252,8 +252,22 @@ export default function DesignPage() {
         // seen candidates "requiring" 50-100%+ lift to register, which is
         // meaningless in practice). So this filters out both failure modes
         // - poor fit AND unusably large/negative MDE, or a group too small
-        // a share of total revenue to matter - before deferring to the
-        // tool's own rank among what's left.
+        // a share of total revenue to matter.
+        //
+        // Deliberately NOT falling back to the tool's own "rank" among
+        // what's left, either - confirmed directly this session that it's
+        // actively misleading, not just naive. Once every remaining
+        // candidate already clears power at the *smallest* tested positive
+        // effect size (the common case when that grid bottoms out at, say,
+        // 10%), rank's only tiebreaker is "abs_lift_in_zero" - how precisely
+        // the detected lift happened to land on that exact tested value.
+        // That's incidental noise, not a quality signal: a candidate whose
+        // true MDE is much smaller (say 4%) can rank near the bottom purely
+        // because its detected lift at the 10% test point wasn't a
+        // suspiciously tight match to 10.0 - even though it's genuinely
+        // more sensitive than almost everything ranked above it. Sorting by
+        // the tested effect size itself, with fit quality as the tiebreak,
+        // is a more honest ordering of what's actually left after filtering.
         const IMBALANCE_MAX = 0.65;
         const MDE_MAX = 0.25;
         const MIN_REVENUE_SHARE = 0.03; // i.e. Holdout <= 97%
@@ -263,7 +277,9 @@ export default function DesignPage() {
             Math.abs(r.Average_MDE) <= MDE_MAX &&
             1 - r.Holdout >= MIN_REVENUE_SHARE
         );
-        const sorted = [...usable].sort((a, b) => a.rank - b.rank);
+        const sorted = [...usable].sort(
+          (a, b) => Math.abs(a.EffectSize) - Math.abs(b.EffectSize) || a.AvgScaledL2Imbalance - b.AvgScaledL2Imbalance
+        );
         const shown = sorted.slice(0, 25);
         const filteredOutCount = result.best_markets_json.length - usable.length;
         return (
@@ -298,7 +314,6 @@ export default function DesignPage() {
                 </thead>
                 <tbody>
                   {shown.map((row, i) => {
-                    const loose = row.AvgScaledL2Imbalance > IMBALANCE_MAX * 0.85; // approaching the cutoff, worth a second look
                     return (
                       <tr
                         key={i}
@@ -315,9 +330,8 @@ export default function DesignPage() {
                         <td className="px-4 py-2">{row.Investment?.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
                         <td className="px-4 py-2">{row.Average_MDE?.toFixed(2)}</td>
                         <td className="px-4 py-2">{(row.Holdout * 100).toFixed(0)}%</td>
-                        <td className={`px-4 py-2 ${loose ? "text-amber-600 font-medium" : ""}`} title={loose ? "Higher than the range we've found trustworthy - verify with a direct null-effect check before trusting this candidate" : undefined}>
+                        <td className="px-4 py-2">
                           {row.AvgScaledL2Imbalance?.toFixed(2)}
-                          {loose && " ⚠"}
                         </td>
                       </tr>
                     );
