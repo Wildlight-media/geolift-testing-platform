@@ -70,6 +70,7 @@ key), `FRONTEND_URL` (used to build share links), `NEXT_PUBLIC_API_URL` (baked i
 3. Point DNS A records for `APP_DOMAIN` and `API_DOMAIN` at the server. Caddy issues certificates on first start.
 4. Fresh install: `docker compose up -d --build`. Moving from another server: copy the Postgres dump and the
    storage archive over and run `bash deploy/restore.sh <dump> <storage.tgz>`.
+
 ## Verified working end to end
 
 The full flow — register → upload dataset → run market selection → run post-test analysis → generate PDF → create
