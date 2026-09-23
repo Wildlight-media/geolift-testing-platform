@@ -23,6 +23,7 @@ from app.schemas.market_selection import (
 )
 from app.services import r_client
 from app.services.dataset_loader import load_records, mapping_for
+from app.services.replay import apply_planned_start
 from app.services.r_client import RServiceError
 from app.workers.jobs import run_candidate_simulation_job, run_market_selection_job
 from app.workers.queue import job_queue, redis_conn
@@ -162,6 +163,18 @@ def get_candidate_detail(
 
     dataset = db.get(Dataset, experiment.dataset_id)
     records = load_records(dataset)
+    # Same seasonal replay the run used, so the detail power curve is
+    # calibrated on the same window as the ranked table.
+    try:
+        records, _window = apply_planned_start(
+            records,
+            date_col=dataset.date_col,
+            date_format=dataset.date_format,
+            planned_start=run.params_json.get("planned_start_date"),
+            duration=payload.duration,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     params = {k: v for k, v in run.params_json.items() if k in _DETAIL_PARAM_KEYS}
     if payload.effect_size:

@@ -1,7 +1,7 @@
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 # Mirrors every user-adjustable parameter of GeoLift::GeoLiftMarketSelection.
 # Defaults match the R function's own defaults, except lookback_window (see
@@ -31,6 +31,21 @@ class MarketSelectionParams(BaseModel):
     correlations: bool = False
     side_of_test: str = "two_sided"
     run_stochastic_process: bool = False
+    # Planned real-world test start (ISO date). When set, every simulation
+    # for this run is replayed on the most recent full occurrence of that
+    # calendar window in the data instead of the last N days - see
+    # services/replay.py. Not a GeoLift parameter; handled before R is called.
+    planned_start_date: str | None = None
+
+    @field_validator("planned_start_date")
+    @classmethod
+    def _valid_iso_date(cls, v: str | None) -> str | None:
+        if v in (None, ""):
+            return None
+        try:
+            return date.fromisoformat(v).isoformat()
+        except ValueError as exc:
+            raise ValueError("planned_start_date must be an ISO date (YYYY-MM-DD)") from exc
 
 
 class MarketSelectionRunCreate(BaseModel):

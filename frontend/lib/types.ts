@@ -56,6 +56,12 @@ export type MarketSelectionParams = {
   correlations: boolean;
   side_of_test: string;
   run_stochastic_process: boolean;
+  // Planned real-world start (ISO date). Simulations replay on the most
+  // recent historical occurrence of that calendar window instead of the
+  // last N days of data.
+  planned_start_date?: string | null;
+  // Set by the backend once a planned start resolves to a concrete window.
+  simulated_window?: { start: string; end: string };
 };
 
 export type MarketSelectionRun = {

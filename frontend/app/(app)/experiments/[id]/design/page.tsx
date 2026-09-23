@@ -38,6 +38,7 @@ const DEFAULT_PARAMS: MarketSelectionParams = {
   dtw: 0,
   correlations: false,
   side_of_test: "two_sided",
+  planned_start_date: null,
   run_stochastic_process: false,
 };
 
@@ -232,6 +233,13 @@ export default function DesignPage() {
             <p className="text-xs text-slate-400 mt-1">
               Cancelling a run already in progress stops it from blocking new runs, but the in-flight computation
               may keep using resources briefly in the background.
+            </p>
+          )}
+          {activeRun.params_json.simulated_window && (
+            <p className="text-xs text-slate-500 mt-1">
+              Seasonal replay: simulated on {activeRun.params_json.simulated_window.start} to{" "}
+              {activeRun.params_json.simulated_window.end} (planned start {activeRun.params_json.planned_start_date}).
+              Power and investment figures reflect that window&apos;s baseline, not the most recent data.
             </p>
           )}
           {activeRun.error && <p className="text-sm text-red-600 mt-2">{activeRun.error}</p>}
@@ -625,6 +633,19 @@ function ParamsForm({
         <div>
           <label className="label">Treatment periods (durations)</label>
           <input className="input" value={treatmentPeriodsText} onChange={(e) => setTreatmentPeriodsText(e.target.value)} placeholder="e.g. 10, 15" />
+        </div>
+        <div>
+          <label className="label">Planned test start (optional)</label>
+          <input
+            className="input"
+            type="date"
+            value={params.planned_start_date ?? ""}
+            onChange={(e) => update("planned_start_date", e.target.value || null)}
+          />
+          <p className="text-xs text-slate-400 mt-1">
+            Simulates the test on the same calendar window in your history (e.g. a Jan 15 start replays last Jan 15
+            onward) instead of the most recent days — use this when the test season differs from the latest data.
+          </p>
         </div>
         <div>
           <label className="label">N (test market counts)</label>

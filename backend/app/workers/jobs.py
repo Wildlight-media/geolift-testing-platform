@@ -13,7 +13,11 @@ from app.models.market_selection import CandidateSimulation, MarketSelectionResu
 from app.models.test_config import TestConfig
 from app.services import r_client
 from app.services.dataset_loader import load_records, mapping_for
+from app.services.replay import apply_planned_start
 from app.services.r_client import RServiceError
+
+# Params that live on the run but are handled in Python before R is called.
+_NON_R_PARAMS = {"planned_start_date", "simulated_window"}
 
 
 def run_market_selection_job(run_id: str) -> None:
@@ -31,9 +35,22 @@ def run_market_selection_job(run_id: str) -> None:
 
         try:
             records = load_records(dataset)
-            result = r_client.run_market_selection(
-                data=records, mapping=mapping_for(dataset), params=run.params_json
+            # Seasonal replay: simulate on the planned window's most recent
+            # historical occurrence rather than the last N days. Anchored on
+            # the longest requested duration; shorter ones share the same end
+            # date (GeoLift places every simulated test at the end of the data).
+            records, window = apply_planned_start(
+                records,
+                date_col=dataset.date_col,
+                date_format=dataset.date_format,
+                planned_start=run.params_json.get("planned_start_date"),
+                duration=max(run.params_json["treatment_periods"]),
             )
+            if window:
+                run.params_json = {**run.params_json, "simulated_window": window}
+                db.commit()
+            r_params = {k: v for k, v in run.params_json.items() if k not in _NON_R_PARAMS}
+            result = r_client.run_market_selection(data=records, mapping=mapping_for(dataset), params=r_params)
         except (RServiceError, Exception) as exc:  # noqa: BLE001 - surface any failure to the UI
             run.status = "failed"
             run.error = str(exc)
@@ -77,6 +94,13 @@ def run_candidate_simulation_job(simulation_id: str) -> None:
 
         try:
             records = load_records(dataset)
+            records, _window = apply_planned_start(
+                records,
+                date_col=dataset.date_col,
+                date_format=dataset.date_format,
+                planned_start=run.params_json.get("planned_start_date"),
+                duration=simulation.duration,
+            )
             result = r_client.market_selection_simulate(
                 data=records,
                 mapping=mapping_for(dataset),
