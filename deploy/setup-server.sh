@@ -3,7 +3,7 @@
 # Run as root:  bash setup-server.sh
 # Installs Docker, opens only SSH/80/443, and creates a read-only GitHub deploy
 # key. Add the printed public key at:
-#   github.com/wildlightmedia/geolift-testing-platform -> Settings -> Deploy keys
+#   github.com/Wildlight-media/geolift-testing-platform -> Settings -> Deploy keys
 set -euo pipefail
 
 apt-get update -qq

@@ -66,7 +66,7 @@ key), `FRONTEND_URL` (used to build share links), `NEXT_PUBLIC_API_URL` (baked i
 
 1. Create an Ubuntu 24.04 VM (2 vCPU / 4 GB is enough) and copy `deploy/setup-server.sh` to it. Run it as root; it
    installs Docker, opens only SSH/80/443, and prints a deploy key to add to the GitHub repo (read-only).
-2. `git clone git@github.com:wildlightmedia/geolift-testing-platform.git /root/geolift`, then create `.env`.
+2. `git clone git@github.com:Wildlight-media/geolift-testing-platform.git /root/geolift`, then create `.env`.
 3. Point DNS A records for `APP_DOMAIN` and `API_DOMAIN` at the server. Caddy issues certificates on first start.
 4. Fresh install: `docker compose up -d --build`. Moving from another server: copy the Postgres dump and the
    storage archive over and run `bash deploy/restore.sh <dump> <storage.tgz>`.
