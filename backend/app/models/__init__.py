@@ -1,6 +1,7 @@
 from app.models.analysis import Analysis
 from app.models.dataset import Dataset
 from app.models.experiment import Experiment
+from app.models.lead import Lead
 from app.models.market_selection import CandidateSimulation, MarketSelectionResult, MarketSelectionRun
 from app.models.organization import Organization
 from app.models.report import Report
@@ -12,6 +13,7 @@ __all__ = [
     "CandidateSimulation",
     "Dataset",
     "Experiment",
+    "Lead",
     "MarketSelectionResult",
     "MarketSelectionRun",
     "Organization",

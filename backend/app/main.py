@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import analyze, auth, datasets, experiments, market_selection, organizations, public, reports
+from app.api.routes import analyze, auth, datasets, experiments, leads, market_selection, organizations, public, reports
 from app.core.config import settings
 
 app = FastAPI(title="Geo Lift Platform API")
@@ -22,6 +22,7 @@ app.include_router(market_selection.router)
 app.include_router(analyze.router)
 app.include_router(reports.router)
 app.include_router(public.router)
+app.include_router(leads.router)
 
 
 @app.get("/health")

@@ -1,6 +1,25 @@
-# Hostnames come from .env (APP_DOMAIN / API_DOMAIN) so moving the app to a
-# new domain is a config change, not a code change. Caddy obtains and renews
-# TLS certificates automatically once DNS for both names points at this host.
+# Hostnames come from .env (SITE_DOMAIN / APP_DOMAIN / API_DOMAIN) so moving to a new domain is
+# a config change, not a code change. Caddy obtains and renews TLS certificates automatically
+# once DNS for each name points at this host.
+
+# Public marketing homepage (static files in ./site). The fit-check form posts to /api/leads
+# on this same origin, forwarded to the backend, so it needs no CORS configuration.
+{$SITE_DOMAIN} {
+	encode zstd gzip
+	handle /api/leads* {
+		reverse_proxy backend:8000
+	}
+	handle {
+		root * /srv/site
+		file_server
+	}
+	header /assets/* Cache-Control "public, max-age=3600"
+}
+
+www.{$SITE_DOMAIN} {
+	redir https://{$SITE_DOMAIN}{uri} permanent
+}
+
 {$APP_DOMAIN} {
 	reverse_proxy frontend:3000
 }

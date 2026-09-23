@@ -1,0 +1,1003 @@
+{
+ "provisional": true,
+ "test": {
+  "n_markets": "10",
+  "share_fmt": "17% of revenue",
+  "days_fmt": "45 days",
+  "window_fmt": "Apr 6 \u2013 May 20, 2026",
+  "summary": "Test: CTV added in 10 markets \u00b7 45 days",
+  "markets": [
+   {
+    "name": "Tampa-St. Petersburg (Sarasota)",
+    "share": 0.029103219001966316
+   },
+   {
+    "name": "Orlando-Daytona Beach-Melbourne",
+    "share": 0.018487633150012478
+   },
+   {
+    "name": "Phoenix (Prescott)",
+    "share": 0.019454989414194514
+   },
+   {
+    "name": "Houston",
+    "share": 0.026729450810683213
+   },
+   {
+    "name": "Dallas-Fort Worth",
+    "share": 0.02748517114057672
+   },
+   {
+    "name": "Charlotte",
+    "share": 0.0075822371836099895
+   },
+   {
+    "name": "Nashville",
+    "share": 0.005510902383989999
+   },
+   {
+    "name": "Denver",
+    "share": 0.014613098351975013
+   },
+   {
+    "name": "Kansas City",
+    "share": 0.007620503720404105
+   },
+   {
+    "name": "Salt Lake City",
+    "share": 0.009805688125965899
+   }
+  ]
+ },
+ "design": {
+  "mde": 0.05,
+  "mde_fmt": "5%",
+  "spend_fmt": "$60,000",
+  "spend_meta": "\u2248 $1,333/day across test markets",
+  "power": [
+   {
+    "lift": 0,
+    "power": 0.0
+   },
+   {
+    "lift": 0.05,
+    "power": 0.87
+   },
+   {
+    "lift": 0.1,
+    "power": 1
+   },
+   {
+    "lift": 0.15,
+    "power": 1
+   },
+   {
+    "lift": 0.2,
+    "power": 1
+   }
+  ],
+  "fit_series": [
+   {
+    "label": "Dec 7",
+    "test": 7011,
+    "control": 6528
+   },
+   {
+    "label": "Dec 8",
+    "test": 10048,
+    "control": 8837
+   },
+   {
+    "label": "Dec 9",
+    "test": 5758,
+    "control": 6446
+   },
+   {
+    "label": "Dec 10",
+    "test": 5235,
+    "control": 5078
+   },
+   {
+    "label": "Dec 11",
+    "test": 2698,
+    "control": 3035
+   },
+   {
+    "label": "Dec 12",
+    "test": 3585,
+    "control": 5298
+   },
+   {
+    "label": "Dec 13",
+    "test": 6765,
+    "control": 8594
+   },
+   {
+    "label": "Dec 14",
+    "test": 9791,
+    "control": 9836
+   },
+   {
+    "label": "Dec 15",
+    "test": 9737,
+    "control": 10322
+   },
+   {
+    "label": "Dec 16",
+    "test": 7540,
+    "control": 6279
+   },
+   {
+    "label": "Dec 17",
+    "test": 6639,
+    "control": 5986
+   },
+   {
+    "label": "Dec 18",
+    "test": 5698,
+    "control": 4886
+   },
+   {
+    "label": "Dec 19",
+    "test": 7436,
+    "control": 7083
+   },
+   {
+    "label": "Dec 20",
+    "test": 6452,
+    "control": 6589
+   },
+   {
+    "label": "Dec 21",
+    "test": 7734,
+    "control": 6903
+   },
+   {
+    "label": "Dec 22",
+    "test": 5761,
+    "control": 6032
+   },
+   {
+    "label": "Dec 23",
+    "test": 6589,
+    "control": 7758
+   },
+   {
+    "label": "Dec 24",
+    "test": 5407,
+    "control": 6746
+   },
+   {
+    "label": "Dec 25",
+    "test": 7792,
+    "control": 6849
+   },
+   {
+    "label": "Dec 26",
+    "test": 6381,
+    "control": 7000
+   },
+   {
+    "label": "Dec 27",
+    "test": 7327,
+    "control": 7651
+   },
+   {
+    "label": "Dec 28",
+    "test": 6365,
+    "control": 5625
+   },
+   {
+    "label": "Dec 29",
+    "test": 5093,
+    "control": 5562
+   },
+   {
+    "label": "Dec 30",
+    "test": 6018,
+    "control": 4928
+   },
+   {
+    "label": "Dec 31",
+    "test": 5965,
+    "control": 5388
+   },
+   {
+    "label": "Jan 1",
+    "test": 4819,
+    "control": 4453
+   },
+   {
+    "label": "Jan 2",
+    "test": 6321,
+    "control": 5464
+   },
+   {
+    "label": "Jan 3",
+    "test": 6179,
+    "control": 5877
+   },
+   {
+    "label": "Jan 4",
+    "test": 8840,
+    "control": 7473
+   },
+   {
+    "label": "Jan 5",
+    "test": 8335,
+    "control": 8625
+   },
+   {
+    "label": "Jan 6",
+    "test": 6289,
+    "control": 6631
+   },
+   {
+    "label": "Jan 7",
+    "test": 6308,
+    "control": 8033
+   },
+   {
+    "label": "Jan 8",
+    "test": 6977,
+    "control": 6385
+   },
+   {
+    "label": "Jan 9",
+    "test": 7283,
+    "control": 5829
+   },
+   {
+    "label": "Jan 10",
+    "test": 4522,
+    "control": 4419
+   },
+   {
+    "label": "Jan 11",
+    "test": 4201,
+    "control": 5202
+   },
+   {
+    "label": "Jan 12",
+    "test": 8719,
+    "control": 7053
+   },
+   {
+    "label": "Jan 13",
+    "test": 6195,
+    "control": 9761
+   },
+   {
+    "label": "Jan 14",
+    "test": 8557,
+    "control": 7848
+   },
+   {
+    "label": "Jan 15",
+    "test": 5350,
+    "control": 6749
+   },
+   {
+    "label": "Jan 16",
+    "test": 7165,
+    "control": 8016
+   },
+   {
+    "label": "Jan 17",
+    "test": 8253,
+    "control": 7631
+   },
+   {
+    "label": "Jan 18",
+    "test": 7633,
+    "control": 7754
+   },
+   {
+    "label": "Jan 19",
+    "test": 6988,
+    "control": 5846
+   },
+   {
+    "label": "Jan 20",
+    "test": 6609,
+    "control": 6191
+   },
+   {
+    "label": "Jan 21",
+    "test": 8095,
+    "control": 6576
+   },
+   {
+    "label": "Jan 22",
+    "test": 5449,
+    "control": 5657
+   },
+   {
+    "label": "Jan 23",
+    "test": 6542,
+    "control": 5206
+   },
+   {
+    "label": "Jan 24",
+    "test": 3296,
+    "control": 4972
+   },
+   {
+    "label": "Jan 25",
+    "test": 5848,
+    "control": 6580
+   },
+   {
+    "label": "Jan 26",
+    "test": 6457,
+    "control": 6441
+   },
+   {
+    "label": "Jan 27",
+    "test": 8563,
+    "control": 8042
+   },
+   {
+    "label": "Jan 28",
+    "test": 7615,
+    "control": 8190
+   },
+   {
+    "label": "Jan 29",
+    "test": 10185,
+    "control": 9439
+   },
+   {
+    "label": "Jan 30",
+    "test": 9277,
+    "control": 9114
+   },
+   {
+    "label": "Jan 31",
+    "test": 7401,
+    "control": 6344
+   },
+   {
+    "label": "Feb 1",
+    "test": 8081,
+    "control": 7929
+   },
+   {
+    "label": "Feb 2",
+    "test": 8340,
+    "control": 7269
+   },
+   {
+    "label": "Feb 3",
+    "test": 12150,
+    "control": 11455
+   },
+   {
+    "label": "Feb 4",
+    "test": 8964,
+    "control": 9802
+   },
+   {
+    "label": "Feb 5",
+    "test": 7398,
+    "control": 7710
+   },
+   {
+    "label": "Feb 6",
+    "test": 6390,
+    "control": 6591
+   },
+   {
+    "label": "Feb 7",
+    "test": 6871,
+    "control": 7217
+   },
+   {
+    "label": "Feb 8",
+    "test": 8297,
+    "control": 9486
+   },
+   {
+    "label": "Feb 9",
+    "test": 7700,
+    "control": 7552
+   },
+   {
+    "label": "Feb 10",
+    "test": 9053,
+    "control": 7763
+   },
+   {
+    "label": "Feb 11",
+    "test": 7690,
+    "control": 7794
+   },
+   {
+    "label": "Feb 12",
+    "test": 9164,
+    "control": 9097
+   },
+   {
+    "label": "Feb 13",
+    "test": 8301,
+    "control": 10200
+   },
+   {
+    "label": "Feb 14",
+    "test": 8232,
+    "control": 10950
+   },
+   {
+    "label": "Feb 15",
+    "test": 9336,
+    "control": 8719
+   },
+   {
+    "label": "Feb 16",
+    "test": 9316,
+    "control": 9802
+   },
+   {
+    "label": "Feb 17",
+    "test": 6999,
+    "control": 7519
+   },
+   {
+    "label": "Feb 18",
+    "test": 4187,
+    "control": 3498
+   },
+   {
+    "label": "Feb 19",
+    "test": 2282,
+    "control": 2553
+   },
+   {
+    "label": "Feb 20",
+    "test": 1353,
+    "control": 2641
+   },
+   {
+    "label": "Feb 21",
+    "test": 5422,
+    "control": 4746
+   },
+   {
+    "label": "Feb 22",
+    "test": 6897,
+    "control": 6485
+   },
+   {
+    "label": "Feb 23",
+    "test": 6704,
+    "control": 5855
+   },
+   {
+    "label": "Feb 24",
+    "test": 4987,
+    "control": 5393
+   },
+   {
+    "label": "Feb 25",
+    "test": 4412,
+    "control": 4937
+   },
+   {
+    "label": "Feb 26",
+    "test": 5559,
+    "control": 5799
+   },
+   {
+    "label": "Feb 27",
+    "test": 5617,
+    "control": 5842
+   },
+   {
+    "label": "Feb 28",
+    "test": 3742,
+    "control": 4294
+   },
+   {
+    "label": "Mar 1",
+    "test": 4924,
+    "control": 4235
+   },
+   {
+    "label": "Mar 2",
+    "test": 4237,
+    "control": 4728
+   },
+   {
+    "label": "Mar 3",
+    "test": 8095,
+    "control": 7463
+   },
+   {
+    "label": "Mar 4",
+    "test": 6392,
+    "control": 7563
+   },
+   {
+    "label": "Mar 5",
+    "test": 8037,
+    "control": 8237
+   },
+   {
+    "label": "Mar 6",
+    "test": 7340,
+    "control": 7275
+   },
+   {
+    "label": "Mar 7",
+    "test": 6603,
+    "control": 7058
+   },
+   {
+    "label": "Mar 8",
+    "test": 6407,
+    "control": 7055
+   },
+   {
+    "label": "Mar 9",
+    "test": 6218,
+    "control": 6288
+   },
+   {
+    "label": "Mar 10",
+    "test": 6153,
+    "control": 5329
+   },
+   {
+    "label": "Mar 11",
+    "test": 4675,
+    "control": 4692
+   },
+   {
+    "label": "Mar 12",
+    "test": 4016,
+    "control": 3995
+   },
+   {
+    "label": "Mar 13",
+    "test": 6721,
+    "control": 6092
+   },
+   {
+    "label": "Mar 14",
+    "test": 7891,
+    "control": 6917
+   },
+   {
+    "label": "Mar 15",
+    "test": 6391,
+    "control": 5932
+   },
+   {
+    "label": "Mar 16",
+    "test": 5127,
+    "control": 4691
+   },
+   {
+    "label": "Mar 17",
+    "test": 5065,
+    "control": 4960
+   },
+   {
+    "label": "Mar 18",
+    "test": 6890,
+    "control": 6592
+   },
+   {
+    "label": "Mar 19",
+    "test": 8526,
+    "control": 7182
+   },
+   {
+    "label": "Mar 20",
+    "test": 5552,
+    "control": 7058
+   },
+   {
+    "label": "Mar 21",
+    "test": 6016,
+    "control": 5255
+   },
+   {
+    "label": "Mar 22",
+    "test": 6398,
+    "control": 6077
+   },
+   {
+    "label": "Mar 23",
+    "test": 5418,
+    "control": 6177
+   },
+   {
+    "label": "Mar 24",
+    "test": 5066,
+    "control": 5290
+   },
+   {
+    "label": "Mar 25",
+    "test": 2733,
+    "control": 3113
+   },
+   {
+    "label": "Mar 26",
+    "test": 2101,
+    "control": 2469
+   },
+   {
+    "label": "Mar 27",
+    "test": 2174,
+    "control": 2483
+   },
+   {
+    "label": "Mar 28",
+    "test": 2057,
+    "control": 1976
+   },
+   {
+    "label": "Mar 29",
+    "test": 4380,
+    "control": 4401
+   },
+   {
+    "label": "Mar 30",
+    "test": 6062,
+    "control": 4530
+   },
+   {
+    "label": "Mar 31",
+    "test": 7245,
+    "control": 7887
+   },
+   {
+    "label": "Apr 1",
+    "test": 6859,
+    "control": 6436
+   },
+   {
+    "label": "Apr 2",
+    "test": 6275,
+    "control": 5586
+   },
+   {
+    "label": "Apr 3",
+    "test": 5169,
+    "control": 4965
+   },
+   {
+    "label": "Apr 4",
+    "test": 5340,
+    "control": 5568
+   },
+   {
+    "label": "Apr 5",
+    "test": 3520,
+    "control": 3707
+   }
+  ],
+  "fit_note": "Last 120 days before launch. Average daily gap between test and control: 3.1%.",
+  "donors": [
+   {
+    "name": "Atlanta",
+    "weight": 0.14
+   },
+   {
+    "name": "Los Angeles",
+    "weight": 0.11
+   },
+   {
+    "name": "Miami-Fort Lauderdale",
+    "weight": 0.09
+   },
+   {
+    "name": "San Antonio",
+    "weight": 0.07
+   },
+   {
+    "name": "Chicago",
+    "weight": 0.06
+   }
+  ],
+  "donor_note": "Top 5 of 27 markets in the weighted control.",
+  "placebo_verdict": "Passed",
+  "placebo_note": "No false lift in 5 past 45-day windows (largest: 1.9%)."
+ },
+ "readout": {
+  "summary": "Test: CTV added in 10 markets \u00b7 45 days",
+  "test": 313896.9444,
+  "control": 282790.04,
+  "lift": 31106.9044,
+  "spend": 60000,
+  "roi": 0.5184484066666667,
+  "roi_ci_low": 0.55,
+  "roi_ci_high": 1.9,
+  "significant": true,
+  "reported_roas": 3.4,
+  "test_fmt": "$313.9K",
+  "control_fmt": "$282.8K",
+  "lift_fmt": "$31.1K",
+  "lift_pct_fmt": "+11%",
+  "spend_fmt": "$60,000",
+  "roi_fmt": "0.52x",
+  "reported_roas_fmt": "3.4x",
+  "sig_label": "Significant",
+  "lift_ci_fmt": "90% CI $18.2K\u2013$110.4K",
+  "roi_ci_fmt": "90% CI 0.55x\u20131.90x",
+  "cumulative": [
+   {
+    "test": 3776,
+    "control": 3402,
+    "lo": 3393,
+    "hi": 3411
+   },
+   {
+    "test": 6555,
+    "control": 5905,
+    "lo": 5883,
+    "hi": 5928
+   },
+   {
+    "test": 11381,
+    "control": 10253,
+    "lo": 10206,
+    "hi": 10301
+   },
+   {
+    "test": 17705,
+    "control": 15950,
+    "lo": 15865,
+    "hi": 16036
+   },
+   {
+    "test": 25917,
+    "control": 23348,
+    "lo": 23208,
+    "hi": 23488
+   },
+   {
+    "test": 33355,
+    "control": 30050,
+    "lo": 29852,
+    "hi": 30247
+   },
+   {
+    "test": 39292,
+    "control": 35398,
+    "lo": 35147,
+    "hi": 35649
+   },
+   {
+    "test": 44313,
+    "control": 39921,
+    "lo": 39618,
+    "hi": 40224
+   },
+   {
+    "test": 50631,
+    "control": 45613,
+    "lo": 45246,
+    "hi": 45980
+   },
+   {
+    "test": 58719,
+    "control": 52900,
+    "lo": 52451,
+    "hi": 53349
+   },
+   {
+    "test": 64503,
+    "control": 58111,
+    "lo": 57593,
+    "hi": 58628
+   },
+   {
+    "test": 69438,
+    "control": 62557,
+    "lo": 61976,
+    "hi": 63139
+   },
+   {
+    "test": 72273,
+    "control": 65110,
+    "lo": 64481,
+    "hi": 65740
+   },
+   {
+    "test": 80127,
+    "control": 72186,
+    "lo": 71462,
+    "hi": 72911
+   },
+   {
+    "test": 87769,
+    "control": 79071,
+    "lo": 78250,
+    "hi": 79893
+   },
+   {
+    "test": 96231,
+    "control": 86694,
+    "lo": 85764,
+    "hi": 87625
+   },
+   {
+    "test": 103483,
+    "control": 93228,
+    "lo": 92197,
+    "hi": 94260
+   },
+   {
+    "test": 109268,
+    "control": 98440,
+    "lo": 97319,
+    "hi": 99560
+   },
+   {
+    "test": 116315,
+    "control": 104788,
+    "lo": 103563,
+    "hi": 106014
+   },
+   {
+    "test": 122588,
+    "control": 110439,
+    "lo": 109114,
+    "hi": 111765
+   },
+   {
+    "test": 127741,
+    "control": 115082,
+    "lo": 113667,
+    "hi": 116497
+   },
+   {
+    "test": 134037,
+    "control": 120754,
+    "lo": 119234,
+    "hi": 122274
+   },
+   {
+    "test": 141658,
+    "control": 127620,
+    "lo": 125978,
+    "hi": 129262
+   },
+   {
+    "test": 148897,
+    "control": 134141,
+    "lo": 132378,
+    "hi": 135905
+   },
+   {
+    "test": 157054,
+    "control": 141490,
+    "lo": 139592,
+    "hi": 143389
+   },
+   {
+    "test": 168095,
+    "control": 151437,
+    "lo": 149365,
+    "hi": 153509
+   },
+   {
+    "test": 178730,
+    "control": 161018,
+    "lo": 158773,
+    "hi": 163263
+   },
+   {
+    "test": 186626,
+    "control": 168131,
+    "lo": 165744,
+    "hi": 170519
+   },
+   {
+    "test": 193222,
+    "control": 174073,
+    "lo": 171558,
+    "hi": 176589
+   },
+   {
+    "test": 198792,
+    "control": 179092,
+    "lo": 176460,
+    "hi": 181724
+   },
+   {
+    "test": 204474,
+    "control": 184211,
+    "lo": 181459,
+    "hi": 186963
+   },
+   {
+    "test": 211748,
+    "control": 190764,
+    "lo": 187868,
+    "hi": 193659
+   },
+   {
+    "test": 217350,
+    "control": 195811,
+    "lo": 192793,
+    "hi": 198830
+   },
+   {
+    "test": 222701,
+    "control": 200632,
+    "lo": 197493,
+    "hi": 203771
+   },
+   {
+    "test": 230150,
+    "control": 207342,
+    "lo": 204051,
+    "hi": 210634
+   },
+   {
+    "test": 239091,
+    "control": 215397,
+    "lo": 211930,
+    "hi": 218865
+   },
+   {
+    "test": 247370,
+    "control": 222856,
+    "lo": 219218,
+    "hi": 226493
+   },
+   {
+    "test": 254762,
+    "control": 229515,
+    "lo": 225719,
+    "hi": 233312
+   },
+   {
+    "test": 263673,
+    "control": 237543,
+    "lo": 233562,
+    "hi": 241523
+   },
+   {
+    "test": 275538,
+    "control": 248233,
+    "lo": 244020,
+    "hi": 252445
+   },
+   {
+    "test": 284671,
+    "control": 256461,
+    "lo": 252054,
+    "hi": 260867
+   },
+   {
+    "test": 295073,
+    "control": 265832,
+    "lo": 261209,
+    "hi": 270454
+   },
+   {
+    "test": 302870,
+    "control": 272855,
+    "lo": 268054,
+    "hi": 277656
+   },
+   {
+    "test": 308340,
+    "control": 277784,
+    "lo": 272840,
+    "hi": 282728
+   },
+   {
+    "test": 313897,
+    "control": 282790,
+    "lo": 277700,
+    "hi": 287880
+   }
+  ],
+  "plain": "CTV caused about $1.2 of revenue for every $1 spent in the test markets. The platform reported $3.40."
+ }
+}

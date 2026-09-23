@@ -97,6 +97,7 @@ services:
   caddy:
     image: caddy:2-alpine
     environment:
+      SITE_DOMAIN: ${SITE_DOMAIN:?set SITE_DOMAIN in .env}
       APP_DOMAIN: ${APP_DOMAIN:?set APP_DOMAIN in .env}
       API_DOMAIN: ${API_DOMAIN:?set API_DOMAIN in .env}
     ports:
@@ -104,6 +105,7 @@ services:
       - "443:443"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./site:/srv/site:ro
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
