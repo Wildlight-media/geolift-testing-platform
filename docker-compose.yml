@@ -48,7 +48,7 @@ services:
   backend:
     build: ./backend
     # No host port mapping - reached only via Caddy at http://backend:8000
-    # over the internal Docker network (api.keynesctv.com). Same reasoning
+    # over the internal Docker network (API_DOMAIN in .env). Same reasoning
     # as postgres/redis/r-service above.
     environment:
       DATABASE_URL: postgresql+psycopg://geolift:geolift@postgres:5432/geolift
@@ -90,12 +90,15 @@ services:
       args:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
     # No host port mapping - reached only via Caddy at http://frontend:3000
-    # over the internal Docker network (app.keynesctv.com).
+    # over the internal Docker network (APP_DOMAIN in .env).
     depends_on:
       - backend
 
   caddy:
     image: caddy:2-alpine
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN:?set APP_DOMAIN in .env}
+      API_DOMAIN: ${API_DOMAIN:?set API_DOMAIN in .env}
     ports:
       - "80:80"
       - "443:443"

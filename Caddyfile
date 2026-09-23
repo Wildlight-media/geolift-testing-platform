@@ -1,7 +1,10 @@
-app.keynesctv.com {
+# Hostnames come from .env (APP_DOMAIN / API_DOMAIN) so moving the app to a
+# new domain is a config change, not a code change. Caddy obtains and renews
+# TLS certificates automatically once DNS for both names points at this host.
+{$APP_DOMAIN} {
 	reverse_proxy frontend:3000
 }
 
-api.keynesctv.com {
+{$API_DOMAIN} {
 	reverse_proxy backend:8000
 }

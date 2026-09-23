@@ -58,9 +58,18 @@ an experiment.
 
 ## Environment variables
 
-Copy `.env.example` to `.env` at the repo root before deploying anywhere real — it sets `JWT_SECRET` (auth signing
-key) and `FRONTEND_URL` (used to build share links). Docker Compose picks these up automatically.
+Copy `.env.example` to `.env` at the repo root before deploying anywhere real. It sets `JWT_SECRET` (auth signing
+key), `FRONTEND_URL` (used to build share links), `NEXT_PUBLIC_API_URL` (baked into the frontend build), and
+`APP_DOMAIN` / `API_DOMAIN` (the hostnames Caddy serves over HTTPS). Docker Compose picks these up automatically.
 
+## Deploying to a server
+
+1. Create an Ubuntu 24.04 VM (2 vCPU / 4 GB is enough) and copy `deploy/setup-server.sh` to it. Run it as root; it
+   installs Docker, opens only SSH/80/443, and prints a deploy key to add to the GitHub repo (read-only).
+2. `git clone git@github.com:wildlightmedia/geolift-testing-platform.git /root/geolift`, then create `.env`.
+3. Point DNS A records for `APP_DOMAIN` and `API_DOMAIN` at the server. Caddy issues certificates on first start.
+4. Fresh install: `docker compose up -d --build`. Moving from another server: copy the Postgres dump and the
+   storage archive over and run `bash deploy/restore.sh <dump> <storage.tgz>`.
 ## Verified working end to end
 
 The full flow — register → upload dataset → run market selection → run post-test analysis → generate PDF → create
@@ -87,5 +96,4 @@ Along the way this surfaced and fixed:
   instead (`SHARE_LINK_EXPIRE_DAYS` in `backend/app/core/config.py`).
 - File storage is local disk (a Docker volume). Swap `backend/app/services/storage.py` for S3/GCS before running
   on more than one backend instance.
-- Not yet hardened: limited error/empty states beyond the basics, no seed/demo dataset script, no deployment
-  guide for a remote host (this README covers local Docker Compose only).
+- Not yet hardened: limited error/empty states beyond the basics, no seed/demo dataset script.
