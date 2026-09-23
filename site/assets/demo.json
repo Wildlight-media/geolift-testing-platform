@@ -709,7 +709,122 @@
   "max_cpa_fmt": "$169",
   "breakeven_cpa_fmt": "$92",
   "headroom_fmt": "1.8x",
-  "mde_meta": "80%+ chance of detecting it"
+  "mde_meta": "80%+ chance of detecting it",
+  "donors_all": [
+   {
+    "name": "Atlanta",
+    "weight": 0.14
+   },
+   {
+    "name": "Los Angeles",
+    "weight": 0.11
+   },
+   {
+    "name": "Miami-Fort Lauderdale",
+    "weight": 0.09
+   },
+   {
+    "name": "San Antonio",
+    "weight": 0.07
+   },
+   {
+    "name": "Chicago",
+    "weight": 0.06
+   },
+   {
+    "name": "New York",
+    "weight": 0.045
+   },
+   {
+    "name": "Philadelphia",
+    "weight": 0.0431
+   },
+   {
+    "name": "Washington, D.C. (Hagerstown)",
+    "weight": 0.0412
+   },
+   {
+    "name": "Boston (Manchester)",
+    "weight": 0.0393
+   },
+   {
+    "name": "San Francisco-Oakland-San Jose",
+    "weight": 0.0374
+   },
+   {
+    "name": "Seattle-Tacoma",
+    "weight": 0.0355
+   },
+   {
+    "name": "Minneapolis-St. Paul",
+    "weight": 0.0336
+   },
+   {
+    "name": "Detroit",
+    "weight": 0.0317
+   },
+   {
+    "name": "Sacramento-Stockton-Modesto",
+    "weight": 0.0298
+   },
+   {
+    "name": "Portland, OR",
+    "weight": 0.0279
+   },
+   {
+    "name": "Cleveland-Akron (Canton)",
+    "weight": 0.026
+   },
+   {
+    "name": "Pittsburgh",
+    "weight": 0.0241
+   },
+   {
+    "name": "St. Louis",
+    "weight": 0.0222
+   },
+   {
+    "name": "Indianapolis",
+    "weight": 0.0203
+   },
+   {
+    "name": "Columbus, OH",
+    "weight": 0.0184
+   },
+   {
+    "name": "Cincinnati",
+    "weight": 0.0165
+   },
+   {
+    "name": "Milwaukee",
+    "weight": 0.0146
+   },
+   {
+    "name": "Raleigh-Durham (Fayetteville)",
+    "weight": 0.0127
+   },
+   {
+    "name": "Baltimore",
+    "weight": 0.0108
+   },
+   {
+    "name": "San Diego",
+    "weight": 0.0089
+   },
+   {
+    "name": "Las Vegas",
+    "weight": 0.007
+   },
+   {
+    "name": "Jacksonville",
+    "weight": 0.0051
+   }
+  ],
+  "record": {
+   "locked": "Apr 2, 2026 · 4 days before launch",
+   "metric": "Revenue, test markets, 45 days + 14 post",
+   "markets": "10 test · 27 control, fixed"
+  }
  },
  "readout": {
   "summary": "Test: CTV added in 10 markets · 45 days",

@@ -8,359 +8,416 @@
 <meta property="og:title" content="Incrementality Testing — Wildlight Media">
 <meta property="og:description" content="Platforms report the sales they touched. A geo-lift test measures the sales your spend actually caused.">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://incrementalitytest.com/">
 <meta property="og:image" content="https://incrementalitytest.com/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="assets/favicon.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/wildlight.css">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,300;0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
+<nav aria-label="Main" style="position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:14px clamp(20px,4vw,64px);background:rgba(18,20,19,.96);border-bottom:1px solid rgba(255,255,255,.12)">
+<a href="#top" aria-label="Wildlight Media — home" style="display:flex;align-items:center;gap:14px;text-decoration:none"><img src="assets/wim-logo-white.png" alt="Wildlight Media" style="height:26px;width:auto;display:block"><span style="font:400 10px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:rgba(239,242,243,.6);padding-left:14px;border-left:1px solid rgba(239,242,243,.2)">Incrementality testing</span></a>
+<div style="display:flex;align-items:center;gap:clamp(14px,2vw,30px)">
 
-<nav class="nav" aria-label="Main">
-  <a href="#top" class="brand" aria-label="Wildlight Media — home"><img src="assets/wim-logo-white.png" alt="Wildlight Media" width="66" height="26"><span class="brand-sub">Incrementality Testing</span></a>
-  <div class="nav-links">
-    <a href="#why">Why test</a>
-    <a href="#tests">What to test</a>
-    <a href="#design">Sample design</a>
-    <a href="#readout">Sample readout</a>
-    <a href="#faq">FAQ</a>
-    <a href="#check" class="btn btn-primary">See if you can test</a>
-  </div>
+<div class="nav-links-wide" style="display:flex;align-items:center;gap:clamp(14px,2vw,28px)">
+<a href="#why" style="font:400 13px/1 'IBM Plex Sans',sans-serif;color:rgba(255,255,255,.72);text-decoration:none" class="hv1">Why test</a>
+<a href="#tests" style="font:400 13px/1 'IBM Plex Sans',sans-serif;color:rgba(255,255,255,.72);text-decoration:none" class="hv1">What to test</a>
+<a href="#design" style="font:400 13px/1 'IBM Plex Sans',sans-serif;color:rgba(255,255,255,.72);text-decoration:none" class="hv1">Sample design</a>
+<a href="#readout" style="font:400 13px/1 'IBM Plex Sans',sans-serif;color:rgba(255,255,255,.72);text-decoration:none" class="hv1">Sample readout</a>
+<a href="#faq" style="font:400 13px/1 'IBM Plex Sans',sans-serif;color:rgba(255,255,255,.72);text-decoration:none" class="hv1">FAQ</a>
+</div>
+
+<a href="#check" style="font:500 13px/1 'IBM Plex Sans',sans-serif;color:#06100F;background:#67E8F9;border-radius:2px;padding:11px 18px;text-decoration:none;white-space:nowrap" class="hv2">See if you can test</a>
+</div>
 </nav>
 
-<!-- HERO -->
-<header id="top" class="section dark grid-bg hero">
-  <div class="wrap hero-grid">
-    <div class="hero-copy">
-      <span class="eyebrow"><span class="dot"></span>Incrementality testing · Geo-lift</span>
-      <h1 class="h1 hero-h1">Every channel claims the sale. Find out which one caused it.</h1>
-      <p class="lead">We design, run, and read geo-lift tests. Media runs in some markets, the rest are held out, and you get the revenue your spend actually caused. Every test is sized before launch, so the answer comes back readable.</p>
-      <div class="hero-cta">
-        <a href="#check" class="btn btn-primary">See if your brand can run a test</a>
-        <a href="#readout" class="text-link">See a sample readout</a>
-      </div>
-      <ul class="proof-strip">
-        <li><span class="sq"></span>Sized before a dollar goes out</li>
-        <li><span class="sq"></span>Measured on your own sales data</li>
-        <li><span class="sq"></span>A readout in 6 to 8 weeks</li>
-      </ul>
-    </div>
-    <figure class="hero-panel" aria-label="Illustrative test readout: platform-reported revenue compared with measured revenue against a holdout control">
-      <div class="hp-head"><span>Live read — CTV test</span><span class="tag tag-muted">Illustrative</span></div>
-      <div class="hp-chart" id="hero-chart"></div>
-      <ul class="hp-legend">
-        <li><i class="ln" style="background:#F97316"></i>Platform-reported</li>
-        <li><i class="ln" style="background:#EFF2F3"></i>Measured, test markets</li>
-        <li><i class="ln dash"></i>Control, holdout markets</li>
-      </ul>
-      <div class="hp-stats">
-        <div><span class="label">Platform claimed</span><span class="hp-val orange" data-k="readout.reported_roas_fmt">—</span><span class="hp-sub">ROAS</span></div>
-        <div><span class="label">Test measured</span><span class="hp-val" data-k="readout.roi_fmt">—</span><span class="hp-sub">Incremental ROAS</span></div>
-      </div>
-    </figure>
-  </div>
+<header id="top" data-screen-label="Hero" style="padding:clamp(56px,7vw,104px) clamp(20px,4vw,64px) clamp(56px,7vw,96px);background-color:#0E1518;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:64px 64px;color:#EFF2F3">
+<div style="max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:clamp(40px,5vw,72px);align-items:center">
+<div style="display:flex;flex-direction:column;gap:26px">
+<span style="display:inline-flex;align-items:center;gap:10px;font:400 11px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:rgba(239,242,243,.7)"><span style="width:8px;height:8px;border-radius:50%;background:rgba(239,242,243,.6)"></span>Incrementality testing · Geo-lift</span>
+<h1 style="font:500 clamp(40px,5.4vw,70px)/1.02 Archivo,Helvetica,sans-serif;letter-spacing:-.025em;max-width:14ch;color:#EFF2F3">Every channel claims the sale. Find out which one caused it.</h1>
+<p style="font:400 clamp(16px,1.35vw,18.5px)/1.65 'IBM Plex Sans',sans-serif;color:rgba(239,242,243,.78);max-width:54ch">We design, run, and read geo-lift tests. Media runs in some markets, the rest are held out, and you get the revenue your spend actually caused. Every test is sized before launch, so the answer comes back readable.</p>
+<div style="display:flex;flex-wrap:wrap;align-items:center;gap:22px 28px">
+<a href="#check" style="font:500 15px/1 'IBM Plex Sans',sans-serif;color:#06100F;background:#67E8F9;border-radius:2px;padding:18px 32px;text-decoration:none" class="hv2">See if your brand can run a test</a>
+<a href="#readout" style="font:400 14px/1.2 'IBM Plex Sans',sans-serif;color:rgba(239,242,243,.8);border-bottom:1px solid rgba(239,242,243,.35);padding-bottom:4px;text-decoration:none" class="hv3">See a sample readout</a>
+</div>
+<ul style="list-style:none;margin:8px 0 0;padding:18px 0 0;border-top:1px solid rgba(239,242,243,.16);display:flex;flex-wrap:wrap;gap:12px 28px">
+<li style="display:flex;align-items:center;gap:10px;font:400 12px/1.4 'IBM Plex Mono',monospace;letter-spacing:.04em;color:rgba(239,242,243,.72)"><span style="width:6px;height:6px;background:rgba(239,242,243,.6)"></span>Sized before a dollar goes out</li>
+<li style="display:flex;align-items:center;gap:10px;font:400 12px/1.4 'IBM Plex Mono',monospace;letter-spacing:.04em;color:rgba(239,242,243,.72)"><span style="width:6px;height:6px;background:rgba(239,242,243,.6)"></span>Measured on your own sales data</li>
+<li style="display:flex;align-items:center;gap:10px;font:400 12px/1.4 'IBM Plex Mono',monospace;letter-spacing:.04em;color:rgba(239,242,243,.72)"><span style="width:6px;height:6px;background:rgba(239,242,243,.6)"></span>A readout in 6 to 8 weeks</li>
+</ul>
+</div>
+
+<div data-region="hero" style="display:contents"></div>
+</div>
 </header>
 
-<!-- 01 THE GAP -->
-<section class="section light" aria-labelledby="gap-h">
-  <div class="wrap split">
-    <div class="split-copy">
-      <span class="label">01 — The gap</span>
-      <h2 id="gap-h" class="h2">Reported ROAS and incremental ROAS are different numbers.</h2>
-      <p class="body">Attribution gives an ad credit for every sale it was near. Plenty of those customers were already coming: they searched the brand, clicked a retargeting ad on the way, and bought what they'd have bought anyway. The only way to separate caused from correlated is to hold markets out and compare.</p>
-      <p class="aside">In the sample test below, the platform credited the campaign with <span data-k="readout.reported_roas_fmt">—</span> ROAS. The holdout measured <span data-k="readout.roi_fmt">—</span>.</p>
-    </div>
-    <figure class="gap-chart" id="gap-chart" aria-label="Platform-reported ROAS compared with measured incremental ROAS"></figure>
-  </div>
+<section aria-labelledby="gap-h" data-screen-label="01 The gap" style="padding:clamp(56px,7vw,96px) clamp(20px,4vw,64px);background:#EFF2F3;border-bottom:1px solid rgba(14,21,24,.12)">
+<div style="max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:clamp(36px,5vw,72px);align-items:center">
+<div style="display:flex;flex-direction:column;gap:18px">
+<span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#697478">01 — The gap</span>
+<h2 id="gap-h" style="font:400 clamp(26px,3.4vw,44px)/1.12 Archivo,Helvetica,sans-serif;letter-spacing:-.015em;color:#0E1518">Reported ROAS and incremental ROAS are different numbers.</h2>
+<p style="font:400 15.5px/1.65 'IBM Plex Sans',sans-serif;color:#3B4448;max-width:58ch">Attribution gives an ad credit for every sale it was near. Plenty of those customers were already coming: they searched the brand, clicked a retargeting ad on the way, and bought what they'd have bought anyway. The only way to separate caused from correlated is to hold markets out and compare.</p>
+<p style="font:italic 400 16px/1.65 Archivo,Helvetica,sans-serif;color:#3B4448">In the sample test below, the platform credited the campaign with <span data-k="readout.reported_roas_fmt">3.4x</span> ROAS. The holdout measured <span data-k="readout.roi_fmt">1.20x</span>.</p>
+</div>
+<div data-region="gap" style="display:contents"></div>
+</div>
 </section>
 
-<!-- 02 WHY TEST -->
-<section id="why" class="section light-2" aria-labelledby="why-h">
-  <div class="wrap">
-    <div class="section-head">
-      <span class="label">02 — Why run one</span>
-      <h2 id="why-h" class="h2 small">One test changes how the next year of budget gets spent.</h2>
-    </div>
-    <div class="value-grid">
-      <div class="value">
-        <span class="idx">01</span>
-        <h3 class="h3">Cut spend that isn't causing sales.</h3>
-        <p class="body">Most programs have a line item riding on sales that would have happened anyway. It looks great in-platform and does nothing for revenue. A test finds it.</p>
-      </div>
-      <div class="value">
-        <span class="idx">02</span>
-        <h3 class="h3">Scale what works without guessing.</h3>
-        <p class="body">Know the incremental return before you raise a budget cap, not after. A measured iROAS turns "let's try a bit more" into a plan.</p>
-      </div>
-      <div class="value">
-        <span class="idx">03</span>
-        <h3 class="h3">Give finance a number it can use.</h3>
-        <p class="body">One measured result with a confidence interval beats three dashboards each claiming the same sale. It's the number to put in the plan.</p>
-      </div>
-      <div class="value">
-        <span class="idx">04</span>
-        <h3 class="h3">Test channels platforms can't measure.</h3>
-        <p class="body">CTV, podcasts, out-of-home, and upper-funnel video rarely get fair credit in click-based attribution. A geo test measures them the same way it measures search.</p>
-      </div>
-    </div>
+<section id="why" aria-labelledby="why-h" data-screen-label="02 Why run one" style="padding:clamp(56px,7vw,96px) clamp(20px,4vw,64px);background:#FAFBFC;border-bottom:1px solid rgba(14,21,24,.12)">
+<div style="max-width:1180px;margin:0 auto">
+<div style="display:flex;flex-direction:column;gap:14px;margin-bottom:clamp(32px,4vw,52px)">
+<span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#697478">02 — Why run one</span>
+<h2 id="why-h" style="font:400 clamp(24px,2.6vw,32px)/1.15 Archivo,Helvetica,sans-serif;letter-spacing:-.01em;color:#0E1518;max-width:30ch">One test changes how the next year of budget gets spent.</h2>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:0 clamp(24px,3vw,40px);border-top:1px solid rgba(14,21,24,.28)">
 
-    <div class="scenarios">
-      <p class="label">What that looks like <span class="tag tag-amber">Composite scenarios</span></p>
-      <ol class="ruled">
-        <li><span class="idx">A</span><p class="body">A brand's Meta and Google buyers were each hitting their own channel targets, but nobody was checking whether the combined spend was incremental. A geo-lift test showed a chunk of a six-figure monthly program was paying for sales that would have happened anyway, and the budget moved to a real test elsewhere.</p></li>
-        <li><span class="idx">B</span><p class="body">A brand had capped its best campaign at the same budget for two years out of caution. An incrementality read showed it still paying back well past that ceiling, so scaling it funded itself within weeks.</p></li>
-      </ol>
-      <p class="chart-note">Based on patterns we see often, not any single client's numbers.</p>
-    </div>
-  </div>
+<div style="display:flex;flex-direction:column;gap:14px;padding:22px 0 28px;border-bottom:1px solid rgba(14,21,24,.14)">
+<div style="height:96px;display:flex;flex-direction:column;justify-content:center;gap:8px">
+<div style="display:flex;height:16px"><div style="width:42%;background:#0E1518"></div><div style="flex:1;border:1px solid #F97316;background:repeating-linear-gradient(135deg,rgba(249,115,22,.28) 0 4px,transparent 4px 8px)"></div></div>
+<div style="display:flex;justify-content:space-between;font:400 10px/1.3 'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#697478"><span>Caused</span><span>Would have happened anyway</span></div>
+</div>
+<span style="font:400 12px/1.8 'IBM Plex Mono',monospace;color:#0E7490">01</span>
+<h3 style="font:400 clamp(19px,1.7vw,22px)/1.25 Archivo,Helvetica,sans-serif;color:#0E1518">Cut spend that isn't causing sales.</h3>
+<p style="font:400 15px/1.6 'IBM Plex Sans',sans-serif;color:#3B4448">Most programs have a line item riding on sales that would have happened anyway. It looks great in-platform and does nothing for revenue. A test finds it.</p>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:14px;padding:22px 0 28px;border-bottom:1px solid rgba(14,21,24,.14)">
+<div style="height:96px;position:relative">
+<svg viewBox="0 0 240 90" preserveAspectRatio="none" style="position:absolute;inset:0 0 18px;width:100%;height:calc(100% - 18px);overflow:visible">
+<line x1="0" x2="240" y1="72" y2="72" stroke="rgba(14,21,24,.28)" vector-effect="non-scaling-stroke"></line>
+<path d="M0 72 C 50 30, 120 12, 240 6" fill="none" stroke="#0E1518" stroke-width="2" vector-effect="non-scaling-stroke"></path>
+<line x1="84" x2="84" y1="0" y2="72" stroke="#697478" stroke-dasharray="3 3" vector-effect="non-scaling-stroke"></line>
+</svg>
+<span style="position:absolute;left:60%;top:13%;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;background:#0E7490"></span>
+<div style="position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;font:400 10px/1.3 'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#697478"><span style="margin-left:26%">Old cap</span><span style="color:#0E7490">Still paying back</span></div>
+</div>
+<span style="font:400 12px/1.8 'IBM Plex Mono',monospace;color:#0E7490">02</span>
+<h3 style="font:400 clamp(19px,1.7vw,22px)/1.25 Archivo,Helvetica,sans-serif;color:#0E1518">Scale what works without guessing.</h3>
+<p style="font:400 15px/1.6 'IBM Plex Sans',sans-serif;color:#3B4448">Know the incremental return before you raise a budget cap, not after. A measured iROAS turns "let's try a bit more" into a plan.</p>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:14px;padding:22px 0 28px;border-bottom:1px solid rgba(14,21,24,.14)">
+<div style="height:96px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:5px 10px;align-content:center;font:400 10px/1 'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#697478">
+<span>Meta</span><div style="height:8px;background:#F97316"></div>
+<span>Google</span><div style="height:8px;background:#F97316"></div>
+<span>Email</span><div style="height:8px;background:#F97316"></div>
+<span style="color:#0E1518">Test</span><div style="position:relative;height:8px"><div style="position:absolute;left:0;top:0;bottom:0;width:36%;background:#0E1518"></div><div style="position:absolute;top:3.5px;height:1px;left:24%;width:24%;background:#0E1518"></div><div style="position:absolute;top:0;height:8px;width:1px;left:48%;background:#0E1518"></div></div>
+</div>
+<span style="font:400 12px/1.8 'IBM Plex Mono',monospace;color:#0E7490">03</span>
+<h3 style="font:400 clamp(19px,1.7vw,22px)/1.25 Archivo,Helvetica,sans-serif;color:#0E1518">Give finance a number it can use.</h3>
+<p style="font:400 15px/1.6 'IBM Plex Sans',sans-serif;color:#3B4448">One measured result with a confidence interval beats three dashboards each claiming the same sale. It's the number to put in the plan.</p>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:14px;padding:22px 0 28px;border-bottom:1px solid rgba(14,21,24,.14)">
+<div style="height:96px;display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:end">
+<div style="display:flex;flex-direction:column;gap:6px"><div style="height:62px;display:flex;align-items:flex-end;border-bottom:1px solid rgba(14,21,24,.28)"><div style="width:100%;height:3px;background:#F97316"></div></div><span style="font:400 10px/1.3 'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#697478">CTV, by clicks</span></div>
+<div style="display:flex;flex-direction:column;gap:6px"><div style="height:62px;display:flex;align-items:flex-end;border-bottom:1px solid rgba(14,21,24,.28)"><div style="width:100%;height:44px;background:#0E1518"></div></div><span style="font:400 10px/1.3 'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#0E1518">CTV, by geo test</span></div>
+</div>
+<span style="font:400 12px/1.8 'IBM Plex Mono',monospace;color:#0E7490">04</span>
+<h3 style="font:400 clamp(19px,1.7vw,22px)/1.25 Archivo,Helvetica,sans-serif;color:#0E1518">Test channels platforms can't measure.</h3>
+<p style="font:400 15px/1.6 'IBM Plex Sans',sans-serif;color:#3B4448">CTV, podcasts, out-of-home, and upper-funnel video rarely get fair credit in click-based attribution. A geo test measures them the same way it measures search.</p>
+</div>
+
+</div>
+<p style="margin-top:12px;font:400 11px/1.5 'IBM Plex Mono',monospace;color:#697478">Diagrams are illustrative.</p>
+
+<div style="margin-top:clamp(40px,5vw,64px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:clamp(24px,4vw,56px);align-items:start">
+<div style="display:flex;flex-direction:column;gap:12px">
+<span style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#697478">What that looks like <span style="font:400 10px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;padding:4px 8px;color:#B45309;border:1px solid rgba(180,83,9,.4)">Composite scenarios</span></span>
+<p style="font:400 13px/1.55 'IBM Plex Sans',sans-serif;color:#556065;max-width:36ch">Based on patterns we see often, not any single client's numbers.</p>
+</div>
+<ol style="list-style:none;margin:0;padding:0;border-top:1px solid rgba(14,21,24,.28);grid-column:span 2">
+<li style="display:flex;gap:16px;padding:18px 0;border-bottom:1px solid rgba(14,21,24,.14)"><span style="font:400 12px/1.8 'IBM Plex Mono',monospace;color:#0E7490;min-width:22px">A</span><p style="font:400 15.5px/1.65 'IBM Plex Sans',sans-serif;color:#3B4448;max-width:68ch">A brand's Meta and Google buyers were each hitting their own channel targets, but nobody was checking whether the combined spend was incremental. A geo-lift test showed a chunk of a six-figure monthly program was paying for sales that would have happened anyway, and the budget moved to a real test elsewhere.</p></li>
+<li style="display:flex;gap:16px;padding:18px 0;border-bottom:1px solid rgba(14,21,24,.14)"><span style="font:400 12px/1.8 'IBM Plex Mono',monospace;color:#0E7490;min-width:22px">B</span><p style="font:400 15.5px/1.65 'IBM Plex Sans',sans-serif;color:#3B4448;max-width:68ch">A brand had capped its best campaign at the same budget for two years out of caution. An incrementality read showed it still paying back well past that ceiling, so scaling it funded itself within weeks.</p></li>
+</ol>
+</div>
+</div>
 </section>
 
-<!-- 03 WHAT YOU CAN TEST -->
-<section id="tests" class="section light" aria-labelledby="tests-h">
-  <div class="wrap">
-    <div class="section-head">
-      <span class="label">03 — What you can test</span>
-      <h2 id="tests-h" class="h2 small">Any channel you can turn up or down by market.</h2>
-      <p class="body">If spend can be changed in some markets and left alone in others, it can be tested, including the channels click-based attribution handles worst.</p>
-    </div>
-    <div class="usecase-grid">
-      <div class="usecase"><span class="label">CTV and streaming</span><p class="body">The channel attribution misses most. Measured on sales in the markets that saw it, not on view-through claims.</p></div>
-      <div class="usecase"><span class="label">Paid social at a higher budget</span><p class="body">Before you double Meta or TikTok, find out whether the next dollar still pays back.</p></div>
-      <div class="usecase"><span class="label">Branded search</span><p class="body">How much of it would have come in anyway? Pull it back in a few markets and watch what happens to total sales.</p></div>
-      <div class="usecase"><span class="label">YouTube and upper-funnel video</span><p class="body">Awareness spend that never gets credit for a click, measured on the revenue it moves.</p></div>
-      <div class="usecase"><span class="label">Offline media</span><p class="body">Direct mail, radio, podcasts, and out-of-home. If it runs by market, it can be read by market.</p></div>
-      <div class="usecase"><span class="label">New-customer acquisition</span><p class="body">Point the same test at first orders only, when the question is growth rather than total sales.</p></div>
-    </div>
-    <div class="multicell">
-      <div>
-        <span class="label">Two channels at once <span class="tag tag-teal">Multi-cell</span></span>
-        <h3 class="h3">One test window, three answers.</h3>
-        <p class="body">Run two channels in separate groups of markets against one shared holdout. You learn what each channel adds on its own and which one earns more per dollar, without two tests months apart under different conditions.</p>
-      </div>
-      <ul class="cells" aria-label="Multi-cell design">
-        <li><span class="cell-sw a"></span><span><strong>Cell A</strong> — CTV</span></li>
-        <li><span class="cell-sw b"></span><span><strong>Cell B</strong> — second channel</span></li>
-        <li><span class="cell-sw h"></span><span><strong>Holdout</strong> — neither</span></li>
-        <li class="cell-note">Splitting markets splits statistical power. We check each cell can be read on its own before recommending it.</li>
-      </ul>
-    </div>
-  </div>
+<section id="tests" aria-labelledby="tests-h" data-screen-label="03 What you can test" style="padding:clamp(56px,7vw,96px) clamp(20px,4vw,64px);background:#EFF2F3;border-bottom:1px solid rgba(14,21,24,.12)">
+<div style="max-width:1180px;margin:0 auto">
+<div style="display:flex;flex-direction:column;gap:14px;margin-bottom:clamp(32px,4vw,52px)">
+<span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#697478">03 — What you can test</span>
+<h2 id="tests-h" style="font:400 clamp(24px,2.6vw,32px)/1.15 Archivo,Helvetica,sans-serif;letter-spacing:-.01em;color:#0E1518">Any channel you can turn up or down by market.</h2>
+<p style="font:400 15.5px/1.65 'IBM Plex Sans',sans-serif;color:#3B4448;max-width:60ch">If spend can be changed in some markets and left alone in others, it can be tested, including the channels click-based attribution handles worst.</p>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:0 clamp(24px,3vw,40px);border-top:1px solid rgba(14,21,24,.28)">
+<div style="display:flex;flex-direction:column;gap:8px;padding:20px 0 24px;border-bottom:1px solid rgba(14,21,24,.14)"><span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#0E1518">CTV and streaming</span><p style="font:400 15px/1.6 'IBM Plex Sans',sans-serif;color:#3B4448">The channel attribution misses most. Measured on sales in the markets that saw it, not on view-through claims.</p></div>
+<div style="display:flex;flex-direction:column;gap:8px;padding:20px 0 24px;border-bottom:1px solid rgba(14,21,24,.14)"><span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#0E1518">Paid social at a higher budget</span><p style="font:400 15px/1.6 'IBM Plex Sans',sans-serif;color:#3B4448">Before you double Meta or TikTok, find out whether the next dollar still pays back.</p></div>
+<div style="display:flex;flex-direction:column;gap:8px;padding:20px 0 24px;border-bottom:1px solid rgba(14,21,24,.14)"><span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#0E1518">Branded search</span><p style="font:400 15px/1.6 'IBM Plex Sans',sans-serif;color:#3B4448">How much of it would have come in anyway? Pull it back in a few markets and watch what happens to total sales.</p></div>
+<div style="display:flex;flex-direction:column;gap:8px;padding:20px 0 24px;border-bottom:1px solid rgba(14,21,24,.14)"><span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#0E1518">YouTube and upper-funnel video</span><p style="font:400 15px/1.6 'IBM Plex Sans',sans-serif;color:#3B4448">Awareness spend that never gets credit for a click, measured on the revenue it moves.</p></div>
+<div style="display:flex;flex-direction:column;gap:8px;padding:20px 0 24px;border-bottom:1px solid rgba(14,21,24,.14)"><span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#0E1518">Offline media</span><p style="font:400 15px/1.6 'IBM Plex Sans',sans-serif;color:#3B4448">Direct mail, radio, podcasts, and out-of-home. If it runs by market, it can be read by market.</p></div>
+<div style="display:flex;flex-direction:column;gap:8px;padding:20px 0 24px;border-bottom:1px solid rgba(14,21,24,.14)"><span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#0E1518">New-customer acquisition</span><p style="font:400 15px/1.6 'IBM Plex Sans',sans-serif;color:#3B4448">Point the same test at first orders only, when the question is growth rather than total sales.</p></div>
+</div>
+
+<div style="margin-top:clamp(36px,4vw,56px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:clamp(24px,4vw,56px);align-items:center;padding:clamp(20px,2.6vw,32px);border:1px solid rgba(14,21,24,.2);background:#FAFBFC">
+<div style="display:flex;flex-direction:column;gap:12px">
+<span style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#697478">Two channels at once <span style="font:400 10px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;padding:4px 8px;color:#0E7490;border:1px solid rgba(14,116,144,.4)">Multi-cell</span></span>
+<h3 style="font:400 clamp(20px,2vw,26px)/1.2 Archivo,Helvetica,sans-serif;color:#0E1518">One test window, three answers.</h3>
+<p style="font:400 15.5px/1.65 'IBM Plex Sans',sans-serif;color:#3B4448;max-width:56ch">Run two channels in separate groups of markets against one shared holdout. You learn what each channel adds on its own and which one earns more per dollar, without two tests months apart under different conditions.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:14px">
+<div aria-hidden="true" style="display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:4px">
+<span style="aspect-ratio:1;background:#0E1518"></span><span style="aspect-ratio:1;border:1px solid #697478"></span><span style="aspect-ratio:1;background:#0E7490"></span><span style="aspect-ratio:1;border:1px solid #697478"></span><span style="aspect-ratio:1;background:#0E1518"></span><span style="aspect-ratio:1;border:1px solid #697478"></span><span style="aspect-ratio:1;border:1px solid #697478"></span><span style="aspect-ratio:1;background:#0E7490"></span><span style="aspect-ratio:1;border:1px solid #697478"></span><span style="aspect-ratio:1;background:#0E1518"></span><span style="aspect-ratio:1;border:1px solid #697478"></span><span style="aspect-ratio:1;background:#0E7490"></span>
+<span style="aspect-ratio:1;border:1px solid #697478"></span><span style="aspect-ratio:1;background:#0E7490"></span><span style="aspect-ratio:1;border:1px solid #697478"></span><span style="aspect-ratio:1;background:#0E1518"></span><span style="aspect-ratio:1;border:1px solid #697478"></span><span style="aspect-ratio:1;background:#0E7490"></span><span style="aspect-ratio:1;background:#0E1518"></span><span style="aspect-ratio:1;border:1px solid #697478"></span><span style="aspect-ratio:1;border:1px solid #697478"></span><span style="aspect-ratio:1;background:#0E7490"></span><span style="aspect-ratio:1;border:1px solid #697478"></span><span style="aspect-ratio:1;background:#0E1518"></span>
+<span style="aspect-ratio:1;background:#0E1518"></span><span style="aspect-ratio:1;border:1px solid #697478"></span><span style="aspect-ratio:1;border:1px solid #697478"></span><span style="aspect-ratio:1;background:#0E7490"></span><span style="aspect-ratio:1;border:1px solid #697478"></span><span style="aspect-ratio:1;background:#0E1518"></span><span style="aspect-ratio:1;border:1px solid #697478"></span><span style="aspect-ratio:1;border:1px solid #697478"></span><span style="aspect-ratio:1;background:#0E7490"></span><span style="aspect-ratio:1;border:1px solid #697478"></span><span style="aspect-ratio:1;background:#0E1518"></span><span style="aspect-ratio:1;border:1px solid #697478"></span>
+</div>
+<ul aria-label="Multi-cell design" style="list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 22px;font:400 14px/1.4 'IBM Plex Sans',sans-serif;color:#3B4448">
+<li style="display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;background:#0E1518"></span><strong style="font-weight:500;color:#0E1518">Cell A</strong> CTV</li>
+<li style="display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;background:#0E7490"></span><strong style="font-weight:500;color:#0E1518">Cell B</strong> second channel</li>
+<li style="display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border:1px solid #697478"></span><strong style="font-weight:500;color:#0E1518">Holdout</strong> neither</li>
+</ul>
+<p style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#697478">Splitting markets splits statistical power. We check each cell can be read on its own before recommending it.</p>
+</div>
+</div>
+
+<div style="margin-top:clamp(16px,2vw,24px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:clamp(24px,4vw,56px);align-items:center;padding:clamp(20px,2.6vw,32px);border:1px solid rgba(14,21,24,.2);background:#FAFBFC">
+<div style="display:flex;flex-direction:column;gap:12px">
+<span style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#697478">Budget levels <span style="font:400 10px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;padding:4px 8px;color:#0E7490;border:1px solid rgba(14,116,144,.4)">3-cell</span></span>
+<h3 style="font:400 clamp(20px,2vw,26px)/1.2 Archivo,Helvetica,sans-serif;color:#0E1518">Find out what the next dollar is worth.</h3>
+<p style="font:400 15.5px/1.65 'IBM Plex Sans',sans-serif;color:#3B4448;max-width:56ch">Run the same channel at two budget levels in separate groups of markets, against one shared holdout. You get the return at today's budget and the return on the extra spend, which is the number that decides whether to raise it.</p>
+<p style="font:400 15.5px/1.65 'IBM Plex Sans',sans-serif;color:#3B4448;max-width:56ch">A channel can pay back well on average and still waste its last dollars. Average ROAS hides that. A budget test shows it.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+<div style="display:flex;justify-content:space-between;gap:12px;font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#697478"><span>Incremental revenue by spend level</span><span style="font:400 10px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;padding:4px 8px;border:1px solid rgba(14,21,24,.18)">Illustrative</span></div>
+<div data-region="budget" style="display:contents"></div>
+<ul aria-label="Budget test design" style="list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 22px;font:400 14px/1.4 'IBM Plex Sans',sans-serif;color:#3B4448">
+<li style="display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;background:#0E1518"></span><strong style="font-weight:500;color:#0E1518">Cell A</strong> current budget</li>
+<li style="display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;background:#0E7490"></span><strong style="font-weight:500;color:#0E1518">Cell B</strong> 2x budget</li>
+<li style="display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border:1px solid #697478"></span><strong style="font-weight:500;color:#0E1518">Holdout</strong> none</li>
+</ul>
+<p style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#697478">Here the extra spend returns about half what the first dollars did. Worth knowing before the cap goes up.</p>
+</div>
+</div>
+</div>
 </section>
 
-<!-- 04 HOW IT WORKS -->
-<section id="how" class="section light-2" aria-labelledby="how-h">
-  <div class="wrap">
-    <span class="label">04 — How it works</span>
-    <h2 id="how-h" class="h2 small" style="margin-top:14px">Three steps. The first one decides whether the other two are worth doing.</h2>
-    <ol class="ruled steps">
-      <li><span class="idx">01</span><div><h3 class="h3">Design</h3><p class="body">Using your daily sales by market, we find test markets whose history can be matched, day for day, by a weighted blend of other markets. Then we size the budget so the lift you care about is detectable. If it isn't, we say so before you spend anything.</p></div></li>
-      <li><span class="idx">02</span><div><h3 class="h3">Run</h3><p class="body">Spend goes into the test markets for 4 to 8 weeks while everything else stays exactly as it was, plus two weeks afterward so delayed purchases still count. No pixels, no platform cooperation, no tracking prerequisites: the test only needs your own sales data.</p></div></li>
-      <li><span class="idx">03</span><div><h3 class="h3">Read</h3><p class="body">We compare what the test markets did against what the control says they would have done. Orders and revenue are read side by side, since orders are steadier when a few large purchases could skew a market. You get the lift, a confidence interval, incremental ROAS, and a plain statement of how sure we are.</p></div></li>
-    </ol>
-  </div>
+
+<section aria-label="Pull quote" data-screen-label="Pull quote" style="padding:clamp(56px,8vw,120px) clamp(20px,4vw,64px);background:#FAFBFC;border-bottom:1px solid rgba(14,21,24,.12)">
+<figure style="max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:24px clamp(24px,4vw,56px);align-items:end">
+<blockquote style="margin:0;grid-column:span 3;font:italic 400 clamp(28px,4.2vw,56px)/1.12 Archivo,Helvetica,sans-serif;letter-spacing:-.015em;color:#0E1518;max-width:22ch;text-wrap:balance">Platforms grade their own homework. A holdout market has no stake in the answer.</blockquote>
+<figcaption style="font:400 11px/1.6 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#697478;padding-top:14px;border-top:1px solid rgba(14,21,24,.28)">Why the test only needs your sales data</figcaption>
+</figure>
 </section>
 
-<!-- 05 SAMPLE DESIGN -->
-<section id="design" class="section light" aria-labelledby="design-h">
-  <div class="wrap">
-    <div class="section-head">
-      <span class="label">05 — Sample test design</span>
-      <h2 id="design-h" class="h2 small">What you see before a dollar goes out.</h2>
-      <p class="body">From a real run of our testing platform on <em>Aurelia</em>, an illustrative direct-to-consumer brand with realistic daily sales by market. The brand is fictional. The method and every number below are what the platform produced. The design is sized to what the data can support, not worked backward from a budget.</p>
-    </div>
 
-    <div class="panel sample" id="design-panel">
-      <div class="panel-head"><span>Sample — geo-lift test design</span><span class="tag tag-muted">Illustrative brand</span></div>
-      <div class="subhead"><span data-k="test.summary">—</span><span>Control modeled from holdout markets</span></div>
-
-      <div class="stat-row">
-        <div class="stat"><span class="label">Test markets</span><span class="big" data-k="test.n_markets">—</span><span class="meta" data-k="test.share_fmt">—</span></div>
-        <div class="stat"><span class="label">Duration</span><span class="big" data-k="test.days_fmt">—</span><span class="meta" data-k="test.window_fmt">—</span></div>
-        <div class="stat"><span class="label">Smallest readable lift</span><span class="big" data-k="design.mde_fmt">—</span><span class="meta" data-k="design.mde_meta">—</span></div>
-        <div class="stat"><span class="label">Recommended spend</span><span class="big" data-k="design.spend_fmt">—</span><span class="meta" data-k="design.spend_meta">—</span></div>
-      </div>
-
-      <div class="chart-row">
-        <div class="chart-cell">
-          <div class="chart-title"><span>Test markets vs. modeled control, before launch</span><span class="chart-legend"><i class="ln ink"></i>Test <i class="ln grey"></i>Control</span></div>
-          <div class="chart" id="fit-chart"></div>
-          <p class="chart-note" data-k="design.fit_note">—</p>
-        </div>
-        <div class="chart-cell">
-          <div class="chart-title"><span>Chance of detecting a lift of each size</span></div>
-          <div class="chart" id="power-chart"></div>
-          <p class="chart-note">Simulated by planting each lift in past periods and checking whether the test finds it.</p>
-        </div>
-      </div>
-
-      <div class="sens">
-        <div class="sens-copy">
-          <span class="label">Can this test see a result that matters?</span>
-          <p class="body">Any true cost per incremental order below <strong data-k="design.max_cpa_fmt">—</strong> will show up as significant. Break-even at this brand's average order value is <strong data-k="design.breakeven_cpa_fmt">—</strong>, so the test has <strong data-k="design.headroom_fmt">—</strong> headroom.</p>
-        </div>
-        <div class="chart" id="sens-chart"></div>
-      </div>
-
-      <div class="design-foot">
-        <div>
-          <span class="label">Test markets · share of revenue</span>
-          <ul class="market-list" id="market-list"></ul>
-        </div>
-        <div>
-          <span class="label">Control built from · weight</span>
-          <ul class="market-list donors" id="donor-list"></ul>
-          <p class="chart-note" data-k="design.donor_note">—</p>
-        </div>
-        <div>
-          <span class="label">Placebo check</span>
-          <p class="placebo"><span class="sq-mark"></span><span data-k="design.placebo_verdict">—</span></p>
-          <p class="chart-note" data-k="design.placebo_note">—</p>
-          <p class="chart-note">We rerun the design on past periods where nothing happened. If it "finds" a lift there, the markets get changed before launch.</p>
-        </div>
-      </div>
-    </div>
-  </div>
+<section id="how" aria-labelledby="how-h" data-screen-label="04 How it works" style="padding:clamp(56px,7vw,96px) clamp(20px,4vw,64px);background:#EFF2F3;border-bottom:1px solid rgba(14,21,24,.12)">
+<div style="max-width:1180px;margin:0 auto">
+<div style="display:flex;flex-direction:column;gap:14px;margin-bottom:clamp(32px,4vw,52px)">
+<span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#697478">04 — How it works</span>
+<h2 id="how-h" style="font:400 clamp(24px,2.6vw,32px)/1.15 Archivo,Helvetica,sans-serif;letter-spacing:-.01em;color:#0E1518;max-width:34ch">Three steps. The first one decides whether the other two are worth doing.</h2>
+</div>
+<div aria-label="Typical timeline in weeks" style="display:flex;flex-direction:column;gap:8px;margin-bottom:clamp(28px,3vw,40px)">
+<div style="display:grid;grid-template-columns:2fr 6fr 2fr 1fr;height:36px;gap:2px">
+<div style="border:1px solid #0E1518;display:flex;align-items:center;padding:0 10px;font:400 10.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#0E1518;overflow:hidden;white-space:nowrap">Design</div>
+<div style="background:#0E1518;display:flex;align-items:center;padding:0 10px;font:400 10.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#EFF2F3;overflow:hidden;white-space:nowrap">Run · spend on in test markets</div>
+<div style="background:repeating-linear-gradient(135deg,rgba(14,21,24,.18) 0 4px,transparent 4px 8px);border:1px solid rgba(14,21,24,.4);display:flex;align-items:center;padding:0 10px;font:400 10.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#0E1518;overflow:hidden;white-space:nowrap">Post-period</div>
+<div style="border:1px solid #0E7490;background:#EFF8FB;display:flex;align-items:center;justify-content:center;font:400 10.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#0E7490;overflow:hidden;white-space:nowrap">Read</div>
+</div>
+<div style="display:grid;grid-template-columns:2fr 6fr 2fr 1fr;gap:2px;font:400 10px/1.3 'IBM Plex Mono',monospace;color:#697478">
+<span>Wk 0</span><span>Wk 2 · 4–8 weeks</span><span>+2 weeks</span><span>Readout</span>
+</div>
+</div>
+<ol style="list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:0 clamp(24px,3vw,40px);border-top:1px solid rgba(14,21,24,.28)">
+<li style="display:flex;flex-direction:column;gap:10px;padding:20px 0 24px;border-bottom:1px solid rgba(14,21,24,.14)"><span style="font:400 12px/1.8 'IBM Plex Mono',monospace;color:#0E7490">01</span><h3 style="font:400 clamp(20px,2vw,26px)/1.2 Archivo,Helvetica,sans-serif;color:#0E1518">Design</h3><p style="font:400 15px/1.6 'IBM Plex Sans',sans-serif;color:#3B4448">Using your daily sales by market, we find test markets whose history can be matched, day for day, by a weighted blend of other markets. Then we size the budget so the lift you care about is detectable. If it isn't, we say so before you spend anything.</p></li>
+<li style="display:flex;flex-direction:column;gap:10px;padding:20px 0 24px;border-bottom:1px solid rgba(14,21,24,.14)"><span style="font:400 12px/1.8 'IBM Plex Mono',monospace;color:#0E7490">02</span><h3 style="font:400 clamp(20px,2vw,26px)/1.2 Archivo,Helvetica,sans-serif;color:#0E1518">Run</h3><p style="font:400 15px/1.6 'IBM Plex Sans',sans-serif;color:#3B4448">Spend goes into the test markets for 4 to 8 weeks while everything else stays exactly as it was, plus two weeks afterward so delayed purchases still count. No pixels, no platform cooperation, no tracking prerequisites: the test only needs your own sales data.</p></li>
+<li style="display:flex;flex-direction:column;gap:10px;padding:20px 0 24px;border-bottom:1px solid rgba(14,21,24,.14)"><span style="font:400 12px/1.8 'IBM Plex Mono',monospace;color:#0E7490">03</span><h3 style="font:400 clamp(20px,2vw,26px)/1.2 Archivo,Helvetica,sans-serif;color:#0E1518">Read</h3><p style="font:400 15px/1.6 'IBM Plex Sans',sans-serif;color:#3B4448">We compare what the test markets did against what the control says they would have done. Orders and revenue are read side by side. You get the lift, a confidence interval, incremental ROAS, and a plain statement of how sure we are.</p></li>
+</ol>
+</div>
 </section>
 
-<!-- 06 SAMPLE READOUT -->
-<section id="readout" class="section light-2" aria-labelledby="readout-h">
-  <div class="wrap">
-    <div class="section-head">
-      <span class="label">06 — Sample readout</span>
-      <h2 id="readout-h" class="h2 small">What you get when the test ends.</h2>
-      <p class="body">Same brand, same markets, after the campaign ran. The control is the forecast of what the test markets would have done without the spend.</p>
-    </div>
+<section id="design" aria-labelledby="design-h" data-screen-label="05 Sample design" style="padding:clamp(56px,7vw,96px) clamp(20px,4vw,64px);background:#FAFBFC;border-bottom:1px solid rgba(14,21,24,.12)">
+<div style="max-width:1180px;margin:0 auto">
+<div style="display:flex;flex-direction:column;gap:14px;margin-bottom:clamp(32px,4vw,52px)">
+<span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#697478">05 — Sample test design</span>
+<h2 id="design-h" style="font:400 clamp(24px,2.6vw,32px)/1.15 Archivo,Helvetica,sans-serif;letter-spacing:-.01em;color:#0E1518">What you see before a dollar goes out.</h2>
+<p style="font:400 15.5px/1.65 'IBM Plex Sans',sans-serif;color:#3B4448;max-width:64ch">From a real run of our testing platform on <em>Aurelia</em>, an illustrative direct-to-consumer brand with realistic daily sales by market. The brand is fictional. The method and every number below are what the platform produced. The design is sized to what the data can support, not worked backward from a budget.</p>
+</div>
 
-    <div class="panel sample" id="readout-panel">
-      <div class="panel-head"><span>Sample — geo-lift readout</span><span class="tag tag-muted">Illustrative brand</span></div>
-      <div class="subhead"><span data-k="readout.summary">—</span><span>Control modeled from holdout markets</span></div>
+<div id="design-panel" style="border:1px solid rgba(14,21,24,.2);background:#FFFFFF">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 16px;border-bottom:1px solid rgba(14,21,24,.2);font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#697478;background:#FAFBFC"><span>Sample — geo-lift test design</span><span style="font:400 10px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;padding:4px 8px;border:1px solid rgba(14,21,24,.18)">Illustrative brand</span></div>
+<div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 20px;padding:12px 16px;border-bottom:1px solid rgba(14,21,24,.12);font:400 12px/1.5 'IBM Plex Mono',monospace;color:#3B4448"><span data-k="test.summary">Test: CTV added in 10 markets · 45 days</span><span style="color:#697478">Control modeled from holdout markets</span></div>
 
-      <div class="eq-grid">
-        <div class="eq"><span class="label">Test revenue</span><span class="big" data-k="readout.test_fmt">—</span></div>
-        <div class="op">−</div>
-        <div class="eq"><span class="label">Control (modeled)</span><span class="big" data-k="readout.control_fmt">—</span></div>
-        <div class="op">=</div>
-        <div class="eq"><span class="label">Lift in test markets</span><span class="big"><span data-k="readout.lift_fmt">—</span> <small class="pct" data-k="readout.lift_pct_fmt">—</small></span><span class="sig"><span class="sq-mark"></span><span data-k="readout.sig_label">—</span></span><span class="meta" data-k="readout.lift_ci_fmt">—</span></div>
-      </div>
-      <div class="eq-grid">
-        <div class="eq"><span class="label">Change in revenue</span><span class="big" data-k="readout.lift_fmt">—</span></div>
-        <div class="op">÷</div>
-        <div class="eq"><span class="label">Spend added</span><span class="big" data-k="readout.spend_fmt">—</span></div>
-        <div class="op">=</div>
-        <div class="eq"><span class="label">Incremental ROAS</span><span class="big" data-k="readout.roi_fmt">—</span><span class="sig"><span class="sq-mark"></span><span data-k="readout.sig_label">—</span></span><span class="meta" data-k="readout.roi_ci_fmt">—</span></div>
-      </div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(50%,200px),1fr));border-bottom:1px solid rgba(14,21,24,.2)">
+<div style="display:flex;flex-direction:column;gap:6px;padding:18px 16px;border-right:1px solid rgba(14,21,24,.12);border-bottom:1px solid rgba(14,21,24,.12);margin-bottom:-1px"><span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#697478">Test markets</span><span data-k="test.n_markets" style="font:500 clamp(28px,3vw,38px)/1 Archivo,Helvetica,sans-serif;color:#0E1518;font-variant-numeric:tabular-nums">10</span><span data-k="test.share_fmt" style="font:400 12px/1.4 'IBM Plex Sans',sans-serif;color:#556065">17% of revenue</span></div>
+<div style="display:flex;flex-direction:column;gap:6px;padding:18px 16px;border-right:1px solid rgba(14,21,24,.12);border-bottom:1px solid rgba(14,21,24,.12);margin-bottom:-1px"><span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#697478">Duration</span><span data-k="test.days_fmt" style="font:500 clamp(28px,3vw,38px)/1 Archivo,Helvetica,sans-serif;color:#0E1518;font-variant-numeric:tabular-nums">45 days</span><span data-k="test.window_fmt" style="font:400 12px/1.4 'IBM Plex Sans',sans-serif;color:#556065">Apr 6 – May 20, 2026</span></div>
+<div style="display:flex;flex-direction:column;gap:6px;padding:18px 16px;border-right:1px solid rgba(14,21,24,.12);border-bottom:1px solid rgba(14,21,24,.12);margin-bottom:-1px"><span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#697478">Smallest readable lift</span><span data-k="design.mde_fmt" style="font:500 clamp(28px,3vw,38px)/1 Archivo,Helvetica,sans-serif;color:#0E1518;font-variant-numeric:tabular-nums">5%</span><span data-k="design.mde_meta" style="font:400 12px/1.4 'IBM Plex Sans',sans-serif;color:#556065">80%+ chance of detecting it</span></div>
+<div style="display:flex;flex-direction:column;gap:6px;padding:18px 16px;border-bottom:1px solid rgba(14,21,24,.12);margin-bottom:-1px"><span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#697478">Recommended spend</span><span data-k="design.spend_fmt" style="font:500 clamp(28px,3vw,38px)/1 Archivo,Helvetica,sans-serif;color:#0E1518;font-variant-numeric:tabular-nums">$26,000</span><span data-k="design.spend_meta" style="font:400 12px/1.4 'IBM Plex Sans',sans-serif;color:#556065">≈ $578/day across test markets</span></div>
+</div>
 
-      <div class="chart-row readout-charts">
-        <div class="chart-cell">
-          <div class="chart-title"><span>Revenue, control → test</span></div>
-          <div class="chart" id="bars-chart"></div>
-        </div>
-        <div class="chart-cell">
-          <div class="chart-title"><span>Cumulative revenue</span><span class="chart-legend"><i class="ln ink"></i>Test <i class="ln grey"></i>Control</span></div>
-          <div class="chart" id="cum-chart"></div>
-        </div>
-      </div>
-      <p class="panel-foot" data-k="readout.plain">—</p>
-    </div>
-  </div>
+<div data-region="design" style="display:contents"></div>
+</div>
+</div>
 </section>
 
-<!-- 07 WHAT YOU GET -->
-<section id="deliverables" class="section light" aria-labelledby="del-h">
-  <div class="wrap split top">
-    <div class="split-copy">
-      <span class="label">07 — What's included</span>
-      <h2 id="del-h" class="h2 small">From fit check to next test, in one engagement.</h2>
-      <p class="body">You keep control of the media buy. We design the test, tell you exactly what to change and where, watch it while it runs, and read the result.</p>
-    </div>
-    <ol class="ruled">
-      <li><span class="idx">01</span><div><strong class="li-h">Fit check</strong><p class="body">From a sales export: whether a test will produce a readable answer for your brand, and on what dates.</p></div></li>
-      <li><span class="idx">02</span><div><strong class="li-h">Test design</strong><p class="body">Test markets, duration, spend by market, the smallest lift it can detect, and a placebo check on past data.</p></div></li>
-      <li><span class="idx">03</span><div><strong class="li-h">Launch plan and midpoint check</strong><p class="body">What to turn on, what to hold steady, and a directional read halfway through.</p></div></li>
-      <li><span class="idx">04</span><div><strong class="li-h">Readout</strong><p class="body">Lift, incremental ROAS with a confidence interval, reported vs. measured, and a plain recommendation.</p></div></li>
-      <li><span class="idx">05</span><div><strong class="li-h">What to test next</strong><p class="body">The next question worth answering, based on what this one showed.</p></div></li>
-    </ol>
-  </div>
+<section id="readout" aria-labelledby="readout-h" data-screen-label="06 Sample readout" style="padding:clamp(56px,7vw,96px) clamp(20px,4vw,64px);background:#EFF2F3;border-bottom:1px solid rgba(14,21,24,.12)">
+<div style="max-width:1180px;margin:0 auto">
+<div style="display:flex;flex-direction:column;gap:14px;margin-bottom:clamp(32px,4vw,52px)">
+<span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#697478">06 — Sample readout</span>
+<h2 id="readout-h" style="font:400 clamp(24px,2.6vw,32px)/1.15 Archivo,Helvetica,sans-serif;letter-spacing:-.01em;color:#0E1518">What you get when the test ends.</h2>
+<p style="font:400 15.5px/1.65 'IBM Plex Sans',sans-serif;color:#3B4448;max-width:60ch">Same brand, same markets, after the campaign ran. The control is the forecast of what the test markets would have done without the spend.</p>
+</div>
+
+<div id="readout-panel" style="border:1px solid rgba(14,21,24,.2);background:#FFFFFF">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 16px;border-bottom:1px solid rgba(14,21,24,.2);font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#697478;background:#FAFBFC"><span>Sample — geo-lift readout</span><span style="font:400 10px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;padding:4px 8px;border:1px solid rgba(14,21,24,.18)">Illustrative brand</span></div>
+<div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 20px;padding:12px 16px;border-bottom:1px solid rgba(14,21,24,.12);font:400 12px/1.5 'IBM Plex Mono',monospace;color:#3B4448"><span data-k="readout.summary">Test: CTV added in 10 markets · 45 days</span><span style="color:#697478">Control modeled from holdout markets</span></div>
+
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:20px clamp(24px,4vw,56px);align-items:end;padding:clamp(24px,3.4vw,44px) 16px;border-bottom:1px solid rgba(14,21,24,.2)">
+<div style="display:flex;flex-direction:column;gap:10px">
+<span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#697478">Incremental ROAS</span>
+<span data-k="readout.roi_fmt" style="font:500 clamp(84px,13vw,176px)/.86 Archivo,Helvetica,sans-serif;letter-spacing:-.045em;color:#0E1518;font-variant-numeric:tabular-nums">1.20x</span>
+</div>
+<div style="display:flex;flex-direction:column;gap:14px;padding-bottom:6px">
+<p style="display:flex;align-items:baseline;gap:12px;font:400 12px/1.4 'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#697478"><span data-k="readout.reported_roas_fmt" style="font:500 34px/1 Archivo,Helvetica,sans-serif;letter-spacing:-.02em;color:#F97316;text-transform:none;text-decoration:line-through;text-decoration-thickness:2px">3.4x</span>Platform-reported</p>
+<p data-k="readout.plain" style="font:400 17px/1.55 'IBM Plex Sans',sans-serif;color:#0E1518;max-width:40ch">CTV caused about $1.20 of revenue for every $1 spent in the test markets. The platform reported $3.40.</p>
+</div>
+</div>
+
+
+<div style="display:flex;flex-wrap:wrap;align-items:stretch;border-bottom:1px solid rgba(14,21,24,.12)">
+<div style="flex:1 1 150px;display:flex;flex-direction:column;gap:6px;padding:18px 16px"><span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#697478">Test revenue</span><span data-k="readout.test_fmt" style="font:500 clamp(24px,2.6vw,32px)/1 Archivo,Helvetica,sans-serif;color:#0E1518;font-variant-numeric:tabular-nums">$313.9K</span></div>
+<div style="flex:none;display:flex;align-items:center;padding:0 4px;font:300 28px/1 Archivo,Helvetica,sans-serif;color:#697478">−</div>
+<div style="flex:1 1 150px;display:flex;flex-direction:column;gap:6px;padding:18px 16px"><span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#697478">Control (modeled)</span><span data-k="readout.control_fmt" style="font:500 clamp(24px,2.6vw,32px)/1 Archivo,Helvetica,sans-serif;color:#0E1518;font-variant-numeric:tabular-nums">$282.8K</span></div>
+<div style="flex:none;display:flex;align-items:center;padding:0 4px;font:300 28px/1 Archivo,Helvetica,sans-serif;color:#697478">=</div>
+<div style="flex:1 1 200px;display:flex;flex-direction:column;gap:6px;padding:18px 16px;background:#FAFBFC"><span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#697478">Lift in test markets</span><span style="font:500 clamp(24px,2.6vw,32px)/1 Archivo,Helvetica,sans-serif;color:#0E1518;font-variant-numeric:tabular-nums"><span data-k="readout.lift_fmt">$31.1K</span> <small data-k="readout.lift_pct_fmt" style="font:400 15px/1 'IBM Plex Mono',monospace;color:#3B4448">+11%</small></span><span style="display:flex;align-items:center;gap:8px;font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#0E7490"><span style="width:7px;height:7px;background:#0E7490"></span><span data-k="readout.sig_label">Significant</span></span><span data-k="readout.lift_ci_fmt" style="font:400 12px/1.4 'IBM Plex Mono',monospace;color:#556065">90% CI $14.6K–$47.6K</span></div>
+</div>
+<div style="display:flex;flex-wrap:wrap;align-items:stretch;border-bottom:1px solid rgba(14,21,24,.2)">
+<div style="flex:1 1 150px;display:flex;flex-direction:column;gap:6px;padding:18px 16px"><span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#697478">Change in revenue</span><span data-k="readout.lift_fmt" style="font:500 clamp(24px,2.6vw,32px)/1 Archivo,Helvetica,sans-serif;color:#0E1518;font-variant-numeric:tabular-nums">$31.1K</span></div>
+<div style="flex:none;display:flex;align-items:center;padding:0 4px;font:300 28px/1 Archivo,Helvetica,sans-serif;color:#697478">÷</div>
+<div style="flex:1 1 150px;display:flex;flex-direction:column;gap:6px;padding:18px 16px"><span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#697478">Spend added</span><span data-k="readout.spend_fmt" style="font:500 clamp(24px,2.6vw,32px)/1 Archivo,Helvetica,sans-serif;color:#0E1518;font-variant-numeric:tabular-nums">$26,000</span></div>
+<div style="flex:none;display:flex;align-items:center;padding:0 4px;font:300 28px/1 Archivo,Helvetica,sans-serif;color:#697478">=</div>
+<div style="flex:1 1 200px;display:flex;flex-direction:column;gap:6px;padding:18px 16px;background:#FAFBFC"><span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#697478">Incremental ROAS</span><span data-k="readout.roi_fmt" style="font:500 clamp(24px,2.6vw,32px)/1 Archivo,Helvetica,sans-serif;color:#0E1518;font-variant-numeric:tabular-nums">1.20x</span><span style="display:flex;align-items:center;gap:8px;font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#0E7490"><span style="width:7px;height:7px;background:#0E7490"></span><span data-k="readout.sig_label">Significant</span></span><span data-k="readout.roi_ci_fmt" style="font:400 12px/1.4 'IBM Plex Mono',monospace;color:#556065">90% CI 0.56x–1.83x</span></div>
+</div>
+
+<div data-region="readout" style="display:contents"></div>
+</div>
 </section>
 
-<!-- 08 FIT -->
-<section id="fit" class="section dark" aria-labelledby="fit-h">
-  <div class="wrap split">
-    <div class="split-copy">
-      <span class="label">08 — Is it a fit?</span>
-      <h2 id="fit-h" class="h2 small">Some brands shouldn't run a geo test yet. We'll tell you which one you are.</h2>
-      <p class="body">A test that can't produce a readable answer isn't cheap, it's wasted. Before any budget moves, we check your data against these conditions and tell you plainly whether a test will work, what it would take, or what to do instead.</p>
-    </div>
-    <ol class="ruled dark-ruled">
-      <li><span class="sq"></span><div><strong>Enough daily volume in the markets you would test.</strong> If your biggest markets see only a few orders a day each, a real lift can disappear into ordinary day-to-day noise.</div></li>
-      <li><span class="sq"></span><div><strong>Revenue that isn't driven by a handful of huge orders.</strong> If one purchase can move a market's month, we measure orders instead of revenue.</div></li>
-      <li><span class="sq"></span><div><strong>A season with signal.</strong> Testing in your slowest months can work, but the lift has to clear a higher bar. We'll show you the bar for your dates.</div></li>
-      <li><span class="sq"></span><div><strong>Control markets you can leave alone.</strong> The holdout only works if spend there stays steady for the length of the test.</div></li>
-    </ol>
-  </div>
+<section id="deliverables" aria-labelledby="del-h" data-screen-label="07 Included" style="padding:clamp(56px,7vw,96px) clamp(20px,4vw,64px);background:#FAFBFC;border-bottom:1px solid rgba(14,21,24,.12)">
+<div style="max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));gap:clamp(32px,5vw,72px);align-items:start">
+<div style="display:flex;flex-direction:column;gap:16px">
+<span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#697478">07 — What's included</span>
+<h2 id="del-h" style="font:400 clamp(24px,2.6vw,32px)/1.15 Archivo,Helvetica,sans-serif;letter-spacing:-.01em;color:#0E1518">From fit check to next test, in one engagement.</h2>
+<p style="font:400 15.5px/1.65 'IBM Plex Sans',sans-serif;color:#3B4448;max-width:50ch">You keep control of the media buy. We design the test, tell you exactly what to change and where, watch it while it runs, and read the result.</p>
+</div>
+<ol style="list-style:none;margin:0;padding:0;border-top:1px solid rgba(14,21,24,.28)">
+<li style="display:flex;gap:16px;padding:18px 0;border-bottom:1px solid rgba(14,21,24,.14)"><span style="font:400 12px/1.8 'IBM Plex Mono',monospace;color:#0E7490;min-width:22px">01</span><div style="display:flex;flex-direction:column;gap:4px"><strong style="font:500 16px/1.4 'IBM Plex Sans',sans-serif;color:#0E1518">Fit check</strong><p style="font:400 15px/1.6 'IBM Plex Sans',sans-serif;color:#3B4448">From a sales export: whether a test will produce a readable answer for your brand, and on what dates.</p></div></li>
+<li style="display:flex;gap:16px;padding:18px 0;border-bottom:1px solid rgba(14,21,24,.14)"><span style="font:400 12px/1.8 'IBM Plex Mono',monospace;color:#0E7490;min-width:22px">02</span><div style="display:flex;flex-direction:column;gap:4px"><strong style="font:500 16px/1.4 'IBM Plex Sans',sans-serif;color:#0E1518">Test design</strong><p style="font:400 15px/1.6 'IBM Plex Sans',sans-serif;color:#3B4448">Test markets, duration, spend by market, the smallest lift it can detect, and a placebo check on past data.</p></div></li>
+<li style="display:flex;gap:16px;padding:18px 0;border-bottom:1px solid rgba(14,21,24,.14)"><span style="font:400 12px/1.8 'IBM Plex Mono',monospace;color:#0E7490;min-width:22px">03</span><div style="display:flex;flex-direction:column;gap:4px"><strong style="font:500 16px/1.4 'IBM Plex Sans',sans-serif;color:#0E1518">Launch plan and midpoint check</strong><p style="font:400 15px/1.6 'IBM Plex Sans',sans-serif;color:#3B4448">What to turn on, what to hold steady, and a directional read halfway through.</p></div></li>
+<li style="display:flex;gap:16px;padding:18px 0;border-bottom:1px solid rgba(14,21,24,.14)"><span style="font:400 12px/1.8 'IBM Plex Mono',monospace;color:#0E7490;min-width:22px">04</span><div style="display:flex;flex-direction:column;gap:4px"><strong style="font:500 16px/1.4 'IBM Plex Sans',sans-serif;color:#0E1518">Readout</strong><p style="font:400 15px/1.6 'IBM Plex Sans',sans-serif;color:#3B4448">Lift, incremental ROAS with a confidence interval, reported vs. measured, and a plain recommendation.</p></div></li>
+<li style="display:flex;gap:16px;padding:18px 0;border-bottom:1px solid rgba(14,21,24,.14)"><span style="font:400 12px/1.8 'IBM Plex Mono',monospace;color:#0E7490;min-width:22px">05</span><div style="display:flex;flex-direction:column;gap:4px"><strong style="font:500 16px/1.4 'IBM Plex Sans',sans-serif;color:#0E1518">What to test next</strong><p style="font:400 15px/1.6 'IBM Plex Sans',sans-serif;color:#3B4448">The next question worth answering, based on what this one showed.</p></div></li>
+</ol>
+</div>
 </section>
 
-<!-- 09 FAQ -->
-<section id="faq" class="section light" aria-labelledby="faq-h">
-  <div class="narrow">
-    <span class="label">09 — Questions</span>
-    <h2 id="faq-h" class="h2 small" style="margin-top:14px">What people ask before a first test.</h2>
-    <div class="faq">
-      <details><summary>What data do you need?</summary><p class="body">Daily sales by location for as far back as you have it, ideally two years. A Shopify or order-system export by ZIP code is enough; we roll it up to TV markets. No pixels, no platform access.</p></details>
-      <details><summary>How long does a test take?</summary><p class="body">Usually 4 to 8 weeks of spend plus two weeks for late conversions to settle. The design tells you the exact length for your brand and season.</p></details>
-      <details><summary>How much do I need to spend?</summary><p class="body">Enough to move sales in the test markets by more than their normal noise. The design sizes it for you. For many brands that lands in the tens of thousands over the test, spent only in the test markets.</p></details>
-      <details><summary>Do I have to pause my other advertising?</summary><p class="body">No. Everything else keeps running as usual in every market. The test only changes one thing, in the test markets, so its effect can be isolated.</p></details>
-      <details><summary>What if the result isn't significant?</summary><p class="body">Then the channel didn't move sales by as much as the test could detect, which is a finding in itself. Because we size the test before launch, "inconclusive" means the effect was small, not that the test was too weak to see a meaningful one.</p></details>
-      <details><summary>Why measure orders instead of revenue?</summary><p class="body">Orders are steadier. Revenue can swing on a handful of large purchases in one market on one day, which widens the confidence interval. We read both; when big orders are common, orders lead and revenue is recovered with your average order value.</p></details>
-      <details><summary>Can we test two channels at once?</summary><p class="body">Yes, with a multi-cell design: each channel gets its own group of markets against a shared holdout. It answers which channel earns more per dollar in one window. The catch is that each cell has less volume behind it, so we confirm every cell can be read on its own first.</p></details>
-      <details><summary>Why keep measuring after the campaign ends?</summary><p class="body">Some channels, CTV especially, drive purchases days after someone sees the ad. A two-week window after spend stops lets those orders land, so the channel isn't undercounted.</p></details>
-      <details><summary>How is this different from a platform lift study?</summary><p class="body">A platform's own lift study is graded by the platform, inside its own walls, on its own users. A geo test is measured on your sales data, the same way for every channel, so results can be compared side by side.</p></details>
-      <details><summary>How is this different from media mix modeling?</summary><p class="body">MMM estimates every channel at once from history and is only as good as its assumptions. A geo test is an experiment: it changes one thing on purpose and measures the result. The two work well together; a test result is the best way to calibrate an MMM.</p></details>
-    </div>
-  </div>
+<section id="method" aria-labelledby="method-h" data-screen-label="08 Check our work" style="padding:clamp(56px,7vw,96px) clamp(20px,4vw,64px);background:#EFF2F3;border-bottom:1px solid rgba(14,21,24,.12)">
+<div style="max-width:1180px;margin:0 auto">
+<div style="display:flex;flex-direction:column;gap:14px;margin-bottom:clamp(32px,4vw,52px)">
+<span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#697478">08 — How to check our work</span>
+<h2 id="method-h" style="font:400 clamp(24px,2.6vw,32px)/1.15 Archivo,Helvetica,sans-serif;letter-spacing:-.01em;color:#0E1518;max-width:30ch">No logo wall. A method you can audit instead.</h2>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:clamp(28px,4vw,56px);align-items:start">
+<div style="border:1px solid rgba(14,21,24,.2);background:#FFFFFF">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 16px;border-bottom:1px solid rgba(14,21,24,.2);font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#697478;background:#FAFBFC"><span>Design record · locked</span><span style="font:400 10px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;padding:4px 8px;border:1px solid rgba(14,21,24,.18)">Sample</span></div>
+<dl style="margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);font:400 12.5px/1.5 'IBM Plex Mono',monospace">
+<dt style="padding:10px 16px;border-bottom:1px solid rgba(14,21,24,.1);color:#697478">Locked</dt><dd data-k="design.record.locked" style="margin:0;padding:10px 16px;border-bottom:1px solid rgba(14,21,24,.1);color:#0E1518">—</dd>
+<dt style="padding:10px 16px;border-bottom:1px solid rgba(14,21,24,.1);color:#697478">Question</dt><dd style="margin:0;padding:10px 16px;border-bottom:1px solid rgba(14,21,24,.1);color:#0E1518">Does CTV cause incremental revenue?</dd>
+<dt style="padding:10px 16px;border-bottom:1px solid rgba(14,21,24,.1);color:#697478">Primary metric</dt><dd data-k="design.record.metric" style="margin:0;padding:10px 16px;border-bottom:1px solid rgba(14,21,24,.1);color:#0E1518">—</dd>
+<dt style="padding:10px 16px;border-bottom:1px solid rgba(14,21,24,.1);color:#697478">Markets</dt><dd data-k="design.record.markets" style="margin:0;padding:10px 16px;border-bottom:1px solid rgba(14,21,24,.1);color:#0E1518">—</dd>
+<dt style="padding:10px 16px;color:#697478">Decision rule</dt><dd style="margin:0;padding:10px 16px;color:#0E1518">Scale if iROAS ≥ 1.0x at 90% confidence</dd>
+</dl>
+</div>
+<ol style="list-style:none;margin:0;padding:0;border-top:1px solid rgba(14,21,24,.28)">
+<li style="display:flex;gap:16px;padding:18px 0;border-bottom:1px solid rgba(14,21,24,.14)"><span style="width:7px;height:7px;background:#0E7490;margin-top:9px;flex:none"></span><div style="display:flex;flex-direction:column;gap:4px"><strong style="font:500 16px/1.4 'IBM Plex Sans',sans-serif;color:#0E1518">Written down before launch.</strong><p style="font:400 15px/1.6 'IBM Plex Sans',sans-serif;color:#3B4448">Markets, metric, and the decision rule are locked and dated before spend starts. The answer can't be worked backward.</p></div></li>
+<li style="display:flex;gap:16px;padding:18px 0;border-bottom:1px solid rgba(14,21,24,.14)"><span style="width:7px;height:7px;background:#0E7490;margin-top:9px;flex:none"></span><div style="display:flex;flex-direction:column;gap:4px"><strong style="font:500 16px/1.4 'IBM Plex Sans',sans-serif;color:#0E1518">Tested on nothing first.</strong><p style="font:400 15px/1.6 'IBM Plex Sans',sans-serif;color:#3B4448">Every design is rerun on past windows with no campaign. You see how often it finds a lift that isn't there.</p></div></li>
+<li style="display:flex;gap:16px;padding:18px 0;border-bottom:1px solid rgba(14,21,24,.14)"><span style="width:7px;height:7px;background:#0E7490;margin-top:9px;flex:none"></span><div style="display:flex;flex-direction:column;gap:4px"><strong style="font:500 16px/1.4 'IBM Plex Sans',sans-serif;color:#0E1518">The daily series is yours.</strong><p style="font:400 15px/1.6 'IBM Plex Sans',sans-serif;color:#3B4448">The readout ships with the test and control numbers by day, so your analyst can recompute the lift.</p></div></li>
+<li style="display:flex;gap:16px;padding:18px 0;border-bottom:1px solid rgba(14,21,24,.14)"><span style="width:7px;height:7px;background:#0E7490;margin-top:9px;flex:none"></span><div style="display:flex;flex-direction:column;gap:4px"><strong style="font:500 16px/1.4 'IBM Plex Sans',sans-serif;color:#0E1518">Run by Wildlight Media.</strong><p style="font:400 15px/1.6 'IBM Plex Sans',sans-serif;color:#3B4448">The ecommerce media team behind it. <a href="https://wildlightmedia.com" style="color:#0E7490" class="hv4">wildlightmedia.com</a></p></div></li>
+</ol>
+</div>
+</div>
 </section>
 
-<!-- 10 CHECK FORM -->
-<section id="check" class="section light-2" aria-labelledby="check-h">
-  <div class="narrow">
-    <span class="label">10 — Check your fit</span>
-    <h2 id="check-h" class="h2 small" style="margin-top:14px">See if your brand can run a test.</h2>
-    <p class="body" style="margin-top:14px">A few numbers are enough for a first answer. You'll hear back within two business days with a yes, a no, or what it would take.</p>
-    <form id="check-form" class="check-form" novalidate>
-      <div class="field"><label for="f-name">Name</label><input class="input" id="f-name" name="name" autocomplete="name" required></div>
-      <div class="field"><label for="f-email">Work email</label><input class="input" id="f-email" name="email" type="email" autocomplete="email" required></div>
-      <div class="field"><label for="f-brand">Brand or website</label><input class="input" id="f-brand" name="brand" required></div>
-      <div class="field"><label for="f-revenue">Monthly online revenue</label>
-        <select class="input" id="f-revenue" name="monthly_revenue" required>
-          <option value="">Select</option><option>Under $250K</option><option>$250K–$1M</option><option>$1M–$5M</option><option>$5M+</option>
-        </select></div>
-      <div class="field"><label for="f-orders">Orders per day (typical)</label>
-        <select class="input" id="f-orders" name="orders_per_day" required>
-          <option value="">Select</option><option>Under 100</option><option>100–500</option><option>500–2,000</option><option>2,000+</option>
-        </select></div>
-      <div class="field"><label for="f-channel">What do you want to test?</label><input class="input" id="f-channel" name="channel" placeholder="e.g. CTV, Meta, YouTube"></div>
-      <div class="field wide"><label for="f-notes">Anything else (optional)</label><textarea class="input textarea" id="f-notes" name="notes" rows="3"></textarea></div>
-      <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <div class="form-foot wide">
-        <button type="submit" class="btn btn-primary">Check my fit</button>
-        <p class="form-msg" id="form-msg" role="status" aria-live="polite"></p>
-      </div>
-    </form>
-  </div>
+<section id="fit" aria-labelledby="fit-h" data-screen-label="09 Is it a fit" style="padding:clamp(56px,7vw,96px) clamp(20px,4vw,64px);background:#0E1518;color:#EFF2F3">
+<div style="max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));gap:clamp(32px,5vw,72px);align-items:start">
+<div style="display:flex;flex-direction:column;gap:16px">
+<span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:rgba(239,242,243,.7)">09 — Is it a fit?</span>
+<h2 id="fit-h" style="font:400 clamp(24px,2.6vw,32px)/1.15 Archivo,Helvetica,sans-serif;letter-spacing:-.01em;color:#EFF2F3">Some brands shouldn't run a geo test yet. We'll tell you which one you are.</h2>
+<p style="font:400 15.5px/1.65 'IBM Plex Sans',sans-serif;color:rgba(239,242,243,.78);max-width:52ch">A test that can't produce a readable answer isn't cheap, it's wasted. Before any budget moves, we check your data against these conditions and tell you plainly whether a test will work, what it would take, or what to do instead.</p>
+</div>
+<ol style="list-style:none;margin:0;padding:0;border-top:1px solid rgba(239,242,243,.3)">
+<li style="display:flex;gap:16px;padding:18px 0;border-bottom:1px solid rgba(239,242,243,.14)"><span style="width:7px;height:7px;background:rgba(239,242,243,.7);margin-top:9px;flex:none"></span><p style="font:400 15.5px/1.65 'IBM Plex Sans',sans-serif;color:rgba(239,242,243,.78)"><strong style="font-weight:500;color:#EFF2F3">Enough daily volume in the markets you would test.</strong> If your biggest markets see only a few orders a day each, a real lift can disappear into ordinary day-to-day noise.</p></li>
+<li style="display:flex;gap:16px;padding:18px 0;border-bottom:1px solid rgba(239,242,243,.14)"><span style="width:7px;height:7px;background:rgba(239,242,243,.7);margin-top:9px;flex:none"></span><p style="font:400 15.5px/1.65 'IBM Plex Sans',sans-serif;color:rgba(239,242,243,.78)"><strong style="font-weight:500;color:#EFF2F3">Revenue that isn't driven by a handful of huge orders.</strong> If one purchase can move a market's month, we measure orders instead of revenue.</p></li>
+<li style="display:flex;gap:16px;padding:18px 0;border-bottom:1px solid rgba(239,242,243,.14)"><span style="width:7px;height:7px;background:rgba(239,242,243,.7);margin-top:9px;flex:none"></span><p style="font:400 15.5px/1.65 'IBM Plex Sans',sans-serif;color:rgba(239,242,243,.78)"><strong style="font-weight:500;color:#EFF2F3">A season with signal.</strong> Testing in your slowest months can work, but the lift has to clear a higher bar. We'll show you the bar for your dates.</p></li>
+<li style="display:flex;gap:16px;padding:18px 0;border-bottom:1px solid rgba(239,242,243,.14)"><span style="width:7px;height:7px;background:rgba(239,242,243,.7);margin-top:9px;flex:none"></span><p style="font:400 15.5px/1.65 'IBM Plex Sans',sans-serif;color:rgba(239,242,243,.78)"><strong style="font-weight:500;color:#EFF2F3">Control markets you can leave alone.</strong> The holdout only works if spend there stays steady for the length of the test.</p></li>
+</ol>
+</div>
 </section>
 
-<footer class="section dark footer">
-  <div class="wrap footer-row">
-    <img src="assets/wim-logo-white.png" alt="Wildlight Media" width="56" height="22">
-    <span class="label">Incrementality testing · Geo-lift measurement</span>
-    <a class="text-link" href="https://wildlightmedia.com">wildlightmedia.com</a>
-  </div>
+<section id="faq" aria-labelledby="faq-h" data-screen-label="10 FAQ" style="padding:clamp(56px,7vw,96px) clamp(20px,4vw,64px);background:#EFF2F3;border-bottom:1px solid rgba(14,21,24,.12)">
+<div style="max-width:880px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
+<span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#697478">10 — Questions</span>
+<h2 id="faq-h" style="font:400 clamp(24px,2.6vw,32px)/1.15 Archivo,Helvetica,sans-serif;letter-spacing:-.01em;color:#0E1518">What people ask before a first test.</h2>
+<div style="margin-top:18px;border-top:1px solid rgba(14,21,24,.28)">
+<details style="border-bottom:1px solid rgba(14,21,24,.14)"><summary style="display:flex;justify-content:space-between;gap:16px;padding:18px 0;cursor:pointer;font:400 17px/1.4 Archivo,Helvetica,sans-serif;color:#0E1518">What data do you need?<span aria-hidden="true" style="font:400 16px/1.4 'IBM Plex Mono',monospace;color:#0E7490">+</span></summary><p style="padding:0 0 20px;font:400 15.5px/1.65 'IBM Plex Sans',sans-serif;color:#3B4448;max-width:66ch">Daily sales by location for as far back as you have it, ideally two years. A Shopify or order-system export by ZIP code is enough; we roll it up to TV markets. No pixels, no platform access.</p></details>
+<details style="border-bottom:1px solid rgba(14,21,24,.14)"><summary style="display:flex;justify-content:space-between;gap:16px;padding:18px 0;cursor:pointer;font:400 17px/1.4 Archivo,Helvetica,sans-serif;color:#0E1518">How long does a test take?<span aria-hidden="true" style="font:400 16px/1.4 'IBM Plex Mono',monospace;color:#0E7490">+</span></summary><p style="padding:0 0 20px;font:400 15.5px/1.65 'IBM Plex Sans',sans-serif;color:#3B4448;max-width:66ch">Usually 4 to 8 weeks of spend plus two weeks for late conversions to settle. The design tells you the exact length for your brand and season.</p></details>
+<details style="border-bottom:1px solid rgba(14,21,24,.14)"><summary style="display:flex;justify-content:space-between;gap:16px;padding:18px 0;cursor:pointer;font:400 17px/1.4 Archivo,Helvetica,sans-serif;color:#0E1518">How much do I need to spend?<span aria-hidden="true" style="font:400 16px/1.4 'IBM Plex Mono',monospace;color:#0E7490">+</span></summary><p style="padding:0 0 20px;font:400 15.5px/1.65 'IBM Plex Sans',sans-serif;color:#3B4448;max-width:66ch">Enough to move sales in the test markets by more than their normal noise. The design sizes it for you. For many brands that lands in the tens of thousands over the test, spent only in the test markets.</p></details>
+<details style="border-bottom:1px solid rgba(14,21,24,.14)"><summary style="display:flex;justify-content:space-between;gap:16px;padding:18px 0;cursor:pointer;font:400 17px/1.4 Archivo,Helvetica,sans-serif;color:#0E1518">Do I have to pause my other advertising?<span aria-hidden="true" style="font:400 16px/1.4 'IBM Plex Mono',monospace;color:#0E7490">+</span></summary><p style="padding:0 0 20px;font:400 15.5px/1.65 'IBM Plex Sans',sans-serif;color:#3B4448;max-width:66ch">No. Everything else keeps running as usual in every market. The test only changes one thing, in the test markets, so its effect can be isolated.</p></details>
+<details style="border-bottom:1px solid rgba(14,21,24,.14)"><summary style="display:flex;justify-content:space-between;gap:16px;padding:18px 0;cursor:pointer;font:400 17px/1.4 Archivo,Helvetica,sans-serif;color:#0E1518">What if the result isn't significant?<span aria-hidden="true" style="font:400 16px/1.4 'IBM Plex Mono',monospace;color:#0E7490">+</span></summary><p style="padding:0 0 20px;font:400 15.5px/1.65 'IBM Plex Sans',sans-serif;color:#3B4448;max-width:66ch">Then the channel didn't move sales by as much as the test could detect, which is a finding in itself. Because we size the test before launch, "inconclusive" means the effect was small, not that the test was too weak to see a meaningful one.</p></details>
+<details style="border-bottom:1px solid rgba(14,21,24,.14)"><summary style="display:flex;justify-content:space-between;gap:16px;padding:18px 0;cursor:pointer;font:400 17px/1.4 Archivo,Helvetica,sans-serif;color:#0E1518">Why measure orders instead of revenue?<span aria-hidden="true" style="font:400 16px/1.4 'IBM Plex Mono',monospace;color:#0E7490">+</span></summary><p style="padding:0 0 20px;font:400 15.5px/1.65 'IBM Plex Sans',sans-serif;color:#3B4448;max-width:66ch">Orders are steadier. Revenue can swing on a handful of large purchases in one market on one day, which widens the confidence interval. We read both; when big orders are common, orders lead and revenue is recovered with your average order value.</p></details>
+<details style="border-bottom:1px solid rgba(14,21,24,.14)"><summary style="display:flex;justify-content:space-between;gap:16px;padding:18px 0;cursor:pointer;font:400 17px/1.4 Archivo,Helvetica,sans-serif;color:#0E1518">Can we test two channels at once?<span aria-hidden="true" style="font:400 16px/1.4 'IBM Plex Mono',monospace;color:#0E7490">+</span></summary><p style="padding:0 0 20px;font:400 15.5px/1.65 'IBM Plex Sans',sans-serif;color:#3B4448;max-width:66ch">Yes, with a multi-cell design: each channel gets its own group of markets against a shared holdout. It answers which channel earns more per dollar in one window. The catch is that each cell has less volume behind it, so we confirm every cell can be read on its own first.</p></details>
+<details style="border-bottom:1px solid rgba(14,21,24,.14)"><summary style="display:flex;justify-content:space-between;gap:16px;padding:18px 0;cursor:pointer;font:400 17px/1.4 Archivo,Helvetica,sans-serif;color:#0E1518">Can a test tell us how much to spend?<span aria-hidden="true" style="font:400 16px/1.4 'IBM Plex Mono',monospace;color:#0E7490">+</span></summary><p style="padding:0 0 20px;font:400 15.5px/1.65 'IBM Plex Sans',sans-serif;color:#3B4448;max-width:66ch">Yes. A three-cell budget test runs the same channel at two spend levels in different markets, plus a shared holdout. It measures the return at your current budget and the return on the added budget, so you can see where more spend stops paying back.</p></details>
+<details style="border-bottom:1px solid rgba(14,21,24,.14)"><summary style="display:flex;justify-content:space-between;gap:16px;padding:18px 0;cursor:pointer;font:400 17px/1.4 Archivo,Helvetica,sans-serif;color:#0E1518">Why keep measuring after the campaign ends?<span aria-hidden="true" style="font:400 16px/1.4 'IBM Plex Mono',monospace;color:#0E7490">+</span></summary><p style="padding:0 0 20px;font:400 15.5px/1.65 'IBM Plex Sans',sans-serif;color:#3B4448;max-width:66ch">Some channels, CTV especially, drive purchases days after someone sees the ad. A two-week window after spend stops lets those orders land, so the channel isn't undercounted.</p></details>
+<details style="border-bottom:1px solid rgba(14,21,24,.14)"><summary style="display:flex;justify-content:space-between;gap:16px;padding:18px 0;cursor:pointer;font:400 17px/1.4 Archivo,Helvetica,sans-serif;color:#0E1518">How is this different from a platform lift study?<span aria-hidden="true" style="font:400 16px/1.4 'IBM Plex Mono',monospace;color:#0E7490">+</span></summary><p style="padding:0 0 20px;font:400 15.5px/1.65 'IBM Plex Sans',sans-serif;color:#3B4448;max-width:66ch">A platform's own lift study is graded by the platform, inside its own walls, on its own users. A geo test is measured on your sales data, the same way for every channel, so results can be compared side by side.</p></details>
+<details style="border-bottom:1px solid rgba(14,21,24,.14)"><summary style="display:flex;justify-content:space-between;gap:16px;padding:18px 0;cursor:pointer;font:400 17px/1.4 Archivo,Helvetica,sans-serif;color:#0E1518">How is this different from media mix modeling?<span aria-hidden="true" style="font:400 16px/1.4 'IBM Plex Mono',monospace;color:#0E7490">+</span></summary><p style="padding:0 0 20px;font:400 15.5px/1.65 'IBM Plex Sans',sans-serif;color:#3B4448;max-width:66ch">MMM estimates every channel at once from history and is only as good as its assumptions. A geo test is an experiment: it changes one thing on purpose and measures the result. The two work well together; a test result is the best way to calibrate an MMM.</p></details>
+</div>
+</div>
+</section>
+
+<section id="check" aria-labelledby="check-h" data-screen-label="11 Check your fit" style="padding:clamp(56px,7vw,96px) clamp(20px,4vw,64px);background:#FAFBFC;border-bottom:1px solid rgba(14,21,24,.12)">
+<div style="max-width:880px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
+<span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#697478">11 — Check your fit</span>
+<h2 id="check-h" style="font:400 clamp(26px,3.4vw,44px)/1.12 Archivo,Helvetica,sans-serif;letter-spacing:-.015em;color:#0E1518">See if your brand can run a test.</h2>
+<p style="font:400 15.5px/1.65 'IBM Plex Sans',sans-serif;color:#3B4448;max-width:58ch">A few numbers are enough for a first answer. You'll hear back within two business days with a yes, a no, or what it would take.</p>
+<form id="check-form" noValidate="" style="margin-top:22px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:18px 20px">
+<div style="display:flex;flex-direction:column;gap:8px"><label for="f-name" style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#556065">Name</label><input id="f-name" name="name" autoComplete="name" required="" style="font:400 15px/1.4 'IBM Plex Sans',sans-serif;color:#0E1518;background:#FFFFFF;border:1px solid rgba(14,21,24,.28);border-radius:2px;padding:13px 14px;min-height:48px" style-focus="border-color:#0E7490;outline:none"></div>
+<div style="display:flex;flex-direction:column;gap:8px"><label for="f-email" style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#556065">Work email</label><input id="f-email" name="email" type="email" autoComplete="email" required="" style="font:400 15px/1.4 'IBM Plex Sans',sans-serif;color:#0E1518;background:#FFFFFF;border:1px solid rgba(14,21,24,.28);border-radius:2px;padding:13px 14px;min-height:48px" style-focus="border-color:#0E7490;outline:none"></div>
+<div style="display:flex;flex-direction:column;gap:8px"><label for="f-brand" style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#556065">Brand or website</label><input id="f-brand" name="brand" required="" style="font:400 15px/1.4 'IBM Plex Sans',sans-serif;color:#0E1518;background:#FFFFFF;border:1px solid rgba(14,21,24,.28);border-radius:2px;padding:13px 14px;min-height:48px" style-focus="border-color:#0E7490;outline:none"></div>
+<div style="display:flex;flex-direction:column;gap:8px"><label for="f-channel" style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#556065">What do you want to test?</label><input id="f-channel" name="channel" placeholder="e.g. CTV, Meta, YouTube" style="font:400 15px/1.4 'IBM Plex Sans',sans-serif;color:#0E1518;background:#FFFFFF;border:1px solid rgba(14,21,24,.28);border-radius:2px;padding:13px 14px;min-height:48px" style-focus="border-color:#0E7490;outline:none"></div>
+<fieldset style="grid-column:1/-1;margin:0;padding:0;border:0;display:flex;flex-direction:column;gap:10px"><legend style="padding:0;margin-bottom:10px;font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#556065">Monthly online revenue</legend>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px">
+<label class="seg"><input type="radio" name="monthly_revenue" value="Under $250K" required>Under $250K</label><label class="seg"><input type="radio" name="monthly_revenue" value="$250K–$1M" required>$250K–$1M</label><label class="seg"><input type="radio" name="monthly_revenue" value="$1M–$5M" required>$1M–$5M</label><label class="seg"><input type="radio" name="monthly_revenue" value="$5M+" required>$5M+</label>
+</div></fieldset>
+<fieldset style="grid-column:1/-1;margin:0;padding:0;border:0;display:flex;flex-direction:column;gap:10px"><legend style="padding:0;margin-bottom:10px;font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#556065">Orders per day (typical)</legend>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px">
+<label class="seg"><input type="radio" name="orders_per_day" value="Under 100" required>Under 100</label><label class="seg"><input type="radio" name="orders_per_day" value="100–500" required>100–500</label><label class="seg"><input type="radio" name="orders_per_day" value="500–2,000" required>500–2,000</label><label class="seg"><input type="radio" name="orders_per_day" value="2,000+" required>2,000+</label>
+</div>
+<p id="low-volume" hidden style="display:flex;gap:10px;align-items:flex-start;font:400 13px/1.55 'IBM Plex Sans',sans-serif;color:#B45309"><span style="width:7px;height:7px;background:#B45309;margin-top:6px;flex:none"></span>Under 100 orders a day can still work, usually with a longer test or fewer, larger markets. We'll tell you which.</p>
+</fieldset>
+<div style="grid-column:1/-1;display:flex;flex-direction:column;gap:8px"><label for="f-notes" style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#556065">Anything else (optional)</label><textarea id="f-notes" name="notes" rows="3" style="font:400 15px/1.5 'IBM Plex Sans',sans-serif;color:#0E1518;background:#FFFFFF;border:1px solid rgba(14,21,24,.28);border-radius:2px;padding:13px 14px;resize:vertical" style-focus="border-color:#0E7490;outline:none"></textarea></div>
+<input type="text" name="website" tabIndex="-1" autoComplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+<div style="grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:16px 24px;padding-top:6px">
+<button type="submit" style="font:500 15px/1 'IBM Plex Sans',sans-serif;color:#06100F;background:#67E8F9;border:0;border-radius:2px;padding:18px 32px;cursor:pointer" class="hv5">Check my fit</button>
+<p id="form-msg" role="status" aria-live="polite" style="font:400 14px/1.5 'IBM Plex Sans',sans-serif;color:#0E7490"></p>
+</div>
+</form>
+</div>
+</section>
+
+<footer style="padding:clamp(40px,5vw,64px) clamp(20px,4vw,64px);background:#0E1518;color:#EFF2F3">
+<div style="max-width:1180px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px">
+<img src="assets/wim-logo-white.png" alt="Wildlight Media" style="height:28px;width:auto;display:block;opacity:.9">
+<span style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:rgba(239,242,243,.7)">Incrementality testing · Geo-lift measurement</span>
+<a href="https://wildlightmedia.com" style="font:400 14px/1.2 'IBM Plex Sans',sans-serif;color:rgba(239,242,243,.8);border-bottom:1px solid rgba(239,242,243,.35);padding-bottom:4px;text-decoration:none" class="hv3">wildlightmedia.com</a>
+</div>
 </footer>
-
-<script src="assets/charts.js" defer></script>
+<script src="assets/usmap.js" defer></script>
+<script src="assets/regions.js" defer></script>
+<script src="assets/app.js" defer></script>
 </body>
 </html>

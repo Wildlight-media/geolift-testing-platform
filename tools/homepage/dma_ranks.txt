@@ -1,0 +1,210 @@
+1|New York
+2|Los Angeles
+3|Chicago
+4|Dallas-Fort Worth
+5|Philadelphia
+6|Houston
+7|Atlanta
+8|Washington, D.C. (Hagerstown)
+9|San Francisco-Oakland-San Jose
+10|Boston (Manchester)
+11|Tampa-St. Petersburg (Sarasota)
+12|Phoenix (Prescott)
+13|Seattle-Tacoma
+14|Detroit
+15|Orlando-Daytona Beach-Melbourne
+16|Minneapolis-St. Paul
+17|Denver
+18|Miami-Fort Lauderdale
+19|Cleveland-Akron (Canton)
+20|Sacramento-Stockton-Modesto
+21|Charlotte
+22|Raleigh-Durham (Fayetteville)
+23|Portland, OR
+24|St. Louis
+25|Nashville
+26|Indianapolis
+27|Pittsburgh
+28|Salt Lake City
+29|Baltimore
+30|San Diego
+31|San Antonio
+32|Kansas City
+33|Hartford-New Haven
+34|Austin, TX
+35|Columbus, OH
+36|Greenville-Spartanburg-Asheville-Anderson
+37|Cincinnati
+38|Milwaukee
+39|West Palm Beach-Fort Pierce
+40|Las Vegas
+41|Jacksonville
+42|Harrisburg-Lancaster-Lebanon-York
+43|Grand Rapids-Kalamazoo-Battle Creek
+44|Norfolk-Portsmouth-Newport News
+45|Birmingham (Anniston and Tuscaloosa)
+46|Greensboro-High Point-Winston-Salem
+47|Oklahoma City
+48|Albuquerque-Santa Fe
+49|Louisville
+50|New Orleans
+51|Memphis
+52|Providence-New Bedford
+53|Fort Myers-Naples
+54|Fresno-Visalia
+55|Buffalo
+56|Richmond-Petersburg
+57|Mobile-Pensacola (Fort Walton Beach)
+58|Little Rock-Pine Bluff
+59|Wilkes Barre-Scranton-Hazleton
+60|Knoxville
+61|Tulsa
+62|Albany-Schenectady-Troy
+63|Lexington
+64|Dayton
+65|Tucson (Sierra Vista)
+66|Spokane
+67|Des Moines-Ames
+68|Green Bay-Appleton
+69|Honolulu
+70|Roanoke-Lynchburg
+71|Wichita-Hutchinson
+72|Flint-Saginaw-Bay City
+73|Omaha
+74|Springfield, MO
+75|Huntsville-Decatur (Florence)
+76|Columbia, SC
+77|Madison
+78|Portland-Auburn
+79|Rochester, NY
+80|Harlingen-Weslaco-Brownsville-McAllen
+81|Toledo
+82|Charleston-Huntington
+83|Waco-Temple-Bryan
+84|Savannah
+85|Charleston, SC
+86|Chattanooga
+87|Colorado Springs-Pueblo
+88|Syracuse
+89|El Paso (Las Cruces)
+90|Paducah-Cape Girardeau-Harrisburg
+91|Shreveport-Texarkana
+92|Champaign-Urbana-Springfield-Decatur
+93|Burlington-Plattsburgh
+94|Cedar Rapids-Waterloo-Iowa City-Dubuque
+95|Baton Rouge
+96|Fort Smith-Fayetteville-Springdale-Rogers
+97|Myrtle Beach-Florence
+98|Boise
+99|Jackson, MS
+100|South Bend-Elkhart
+101|Tri-Cities, TN-VA
+102|Greenville-New Bern-Washington
+103|Reno
+104|Davenport-Rock Island-Moline
+105|Tallahassee-Thomasville
+106|Tyler-Longview (Lufkin-Nacogdoches)
+107|Lincoln-Hastings-Kearney
+108|Augusta-Aiken
+109|Evansville
+110|Fort Wayne
+111|Sioux Falls (Mitchell)
+112|Johnstown-Altoona-State College
+113|Fargo-Valley City
+114|Yakima-Pasco-Richland-Kennewick
+115|Springfield-Holyoke
+116|Traverse City-Cadillac
+117|Lansing
+118|Youngstown
+119|Macon
+120|Eugene
+121|Montgomery-Selma
+122|Peoria-Bloomington
+123|Santa Barbara-Santa Maria-San Luis Obispo
+124|Lafayette, LA
+125|Bakersfield
+126|Wilmington, NC
+127|Columbus, GA
+128|Monterey-Salinas
+129|La Crosse-Eau Claire
+130|Corpus Christi
+131|Salisbury
+132|Amarillo
+133|Wausau-Rhinelander
+134|Columbus-Tupelo-West Point-Starkville
+135|Columbia-Jefferson City
+136|Chico-Redding
+137|Rockford
+138|Duluth-Superior
+139|Medford-Klamath Falls
+140|Lubbock
+141|Topeka
+142|Monroe-El Dorado
+143|Beaumont-Port Arthur
+144|Odessa-Midland
+145|Palm Springs
+146|Anchorage
+147|Minot-Bismarck-Dickinson (Williston)
+148|Panama City
+149|Sioux City
+150|Wichita Falls-Lawton
+151|Joplin-Pittsburg
+152|Albany, GA
+153|Rochester-Mason City-Austin
+154|Erie
+155|Idaho Falls-Pocatello (Jackson)
+156|Bangor
+157|Gainesville
+158|Biloxi-Gulfport
+159|Terre Haute
+160|Sherman-Ada
+161|Missoula
+162|Binghamton
+163|Wheeling-Steubenville
+164|Yuma-El Centro
+165|Billings
+166|Abilene-Sweetwater
+167|Bluefield-Beckley-Oak Hill
+168|Hattiesburg-Laurel
+169|Rapid City
+170|Dothan
+171|Utica
+172|Clarksburg-Weston
+173|Harrisonburg
+174|Jackson, TN
+175|Quincy-Hannibal-Keokuk
+176|Charlottesville
+177|Lake Charles
+178|Elmira (Corning)
+179|Watertown
+180|Bowling Green
+181|Marquette
+182|Jonesboro
+183|Alexandria, LA
+184|Laredo
+185|Butte-Bozeman
+186|Bend, OR
+187|Grand Junction-Montrose
+188|Twin Falls
+189|Lafayette, IN
+190|Lima
+191|Great Falls
+192|Meridian
+193|Cheyenne-Scottsbluff
+194|Parkersburg
+195|Greenwood-Greenville
+196|Eureka
+197|San Angelo
+198|Casper-Riverton
+199|Mankato
+200|Ottumwa-Kirksville
+201|St. Joseph
+202|Fairbanks
+203|Zanesville
+204|Victoria
+205|Helena
+206|Presque Isle
+207|Juneau
+208|Alpena
+209|North Platte
+210|Glendive
