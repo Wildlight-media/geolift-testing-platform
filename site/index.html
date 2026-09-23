@@ -24,6 +24,7 @@
   <a href="#top" class="brand" aria-label="Wildlight Media — home"><img src="assets/wim-logo-white.png" alt="Wildlight Media" width="66" height="26"><span class="brand-sub">Incrementality Testing</span></a>
   <div class="nav-links">
     <a href="#why">Why test</a>
+    <a href="#tests">What to test</a>
     <a href="#design">Sample design</a>
     <a href="#readout">Sample readout</a>
     <a href="#faq">FAQ</a>
@@ -33,24 +34,34 @@
 
 <!-- HERO -->
 <header id="top" class="section dark grid-bg hero">
-  <div class="hero-field" aria-hidden="true">
-    <div class="bars" id="hero-bars"></div>
-    <div class="bars ceil" id="hero-ceil"></div>
-    <div class="sweep"></div>
-    <div class="baseline"></div>
-  </div>
-  <div class="wrap hero-copy">
-    <span class="eyebrow"><span class="dot"></span>Geo-lift incrementality testing</span>
-    <h1 class="h1">Find out what your ads actually caused.</h1>
-    <p class="lead">Platforms report the sales they touched. A geo-lift test measures the sales that wouldn't have happened without the spend, by running media in some markets and holding the rest out.</p>
-    <div class="hero-cta">
-      <a href="#check" class="btn btn-primary">See if your brand can run a test</a>
-      <a href="#readout" class="text-link">See a sample readout</a>
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <span class="eyebrow"><span class="dot"></span>Incrementality testing · Geo-lift</span>
+      <h1 class="h1 hero-h1">Every channel claims the sale. Find out which one caused it.</h1>
+      <p class="lead">We design, run, and read geo-lift tests. Media runs in some markets, the rest are held out, and you get the revenue your spend actually caused. Every test is sized before launch, so the answer comes back readable.</p>
+      <div class="hero-cta">
+        <a href="#check" class="btn btn-primary">See if your brand can run a test</a>
+        <a href="#readout" class="text-link">See a sample readout</a>
+      </div>
+      <ul class="proof-strip">
+        <li><span class="sq"></span>Sized before a dollar goes out</li>
+        <li><span class="sq"></span>Measured on your own sales data</li>
+        <li><span class="sq"></span>A readout in 6 to 8 weeks</li>
+      </ul>
     </div>
-    <ul class="legend hero-legend">
-      <li><span class="sw" style="background:#EFF2F3"></span>VERIFIED — measured independently</li>
-      <li><span class="sw" style="background:#F97316"></span>PLATFORM-REPORTED — taken on trust</li>
-    </ul>
+    <figure class="hero-panel" aria-label="Illustrative test readout: platform-reported revenue compared with measured revenue against a holdout control">
+      <div class="hp-head"><span>Live read — CTV test</span><span class="tag tag-muted">Illustrative</span></div>
+      <div class="hp-chart" id="hero-chart"></div>
+      <ul class="hp-legend">
+        <li><i class="ln" style="background:#F97316"></i>Platform-reported</li>
+        <li><i class="ln" style="background:#EFF2F3"></i>Measured, test markets</li>
+        <li><i class="ln dash"></i>Control, holdout markets</li>
+      </ul>
+      <div class="hp-stats">
+        <div><span class="label">Platform claimed</span><span class="hp-val orange" data-k="readout.reported_roas_fmt">—</span><span class="hp-sub">ROAS</span></div>
+        <div><span class="label">Test measured</span><span class="hp-val" data-k="readout.roi_fmt">—</span><span class="hp-sub">Incremental ROAS</span></div>
+      </div>
+    </figure>
   </div>
 </header>
 
@@ -108,26 +119,58 @@
   </div>
 </section>
 
-<!-- 03 HOW IT WORKS -->
-<section id="how" class="section light" aria-labelledby="how-h">
+<!-- 03 WHAT YOU CAN TEST -->
+<section id="tests" class="section light" aria-labelledby="tests-h">
   <div class="wrap">
-    <span class="label">03 — How it works</span>
+    <div class="section-head">
+      <span class="label">03 — What you can test</span>
+      <h2 id="tests-h" class="h2 small">Any channel you can turn up or down by market.</h2>
+      <p class="body">If spend can be changed in some markets and left alone in others, it can be tested, including the channels click-based attribution handles worst.</p>
+    </div>
+    <div class="usecase-grid">
+      <div class="usecase"><span class="label">CTV and streaming</span><p class="body">The channel attribution misses most. Measured on sales in the markets that saw it, not on view-through claims.</p></div>
+      <div class="usecase"><span class="label">Paid social at a higher budget</span><p class="body">Before you double Meta or TikTok, find out whether the next dollar still pays back.</p></div>
+      <div class="usecase"><span class="label">Branded search</span><p class="body">How much of it would have come in anyway? Pull it back in a few markets and watch what happens to total sales.</p></div>
+      <div class="usecase"><span class="label">YouTube and upper-funnel video</span><p class="body">Awareness spend that never gets credit for a click, measured on the revenue it moves.</p></div>
+      <div class="usecase"><span class="label">Offline media</span><p class="body">Direct mail, radio, podcasts, and out-of-home. If it runs by market, it can be read by market.</p></div>
+      <div class="usecase"><span class="label">New-customer acquisition</span><p class="body">Point the same test at first orders only, when the question is growth rather than total sales.</p></div>
+    </div>
+    <div class="multicell">
+      <div>
+        <span class="label">Two channels at once <span class="tag tag-teal">Multi-cell</span></span>
+        <h3 class="h3">One test window, three answers.</h3>
+        <p class="body">Run two channels in separate groups of markets against one shared holdout. You learn what each channel adds on its own and which one earns more per dollar, without two tests months apart under different conditions.</p>
+      </div>
+      <ul class="cells" aria-label="Multi-cell design">
+        <li><span class="cell-sw a"></span><span><strong>Cell A</strong> — CTV</span></li>
+        <li><span class="cell-sw b"></span><span><strong>Cell B</strong> — second channel</span></li>
+        <li><span class="cell-sw h"></span><span><strong>Holdout</strong> — neither</span></li>
+        <li class="cell-note">Splitting markets splits statistical power. We check each cell can be read on its own before recommending it.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 04 HOW IT WORKS -->
+<section id="how" class="section light-2" aria-labelledby="how-h">
+  <div class="wrap">
+    <span class="label">04 — How it works</span>
     <h2 id="how-h" class="h2 small" style="margin-top:14px">Three steps. The first one decides whether the other two are worth doing.</h2>
     <ol class="ruled steps">
       <li><span class="idx">01</span><div><h3 class="h3">Design</h3><p class="body">Using your daily sales by market, we find test markets whose history can be matched, day for day, by a weighted blend of other markets. Then we size the budget so the lift you care about is detectable. If it isn't, we say so before you spend anything.</p></div></li>
-      <li><span class="idx">02</span><div><h3 class="h3">Run</h3><p class="body">Spend goes into the test markets for 4 to 8 weeks while everything else stays exactly as it was. No pixels, no platform cooperation, no tracking prerequisites: the test only needs your own sales data.</p></div></li>
-      <li><span class="idx">03</span><div><h3 class="h3">Read</h3><p class="body">We compare what the test markets did against what the control says they would have done. You get the lift, a confidence interval, incremental ROAS, and a plain statement of how sure we are.</p></div></li>
+      <li><span class="idx">02</span><div><h3 class="h3">Run</h3><p class="body">Spend goes into the test markets for 4 to 8 weeks while everything else stays exactly as it was, plus two weeks afterward so delayed purchases still count. No pixels, no platform cooperation, no tracking prerequisites: the test only needs your own sales data.</p></div></li>
+      <li><span class="idx">03</span><div><h3 class="h3">Read</h3><p class="body">We compare what the test markets did against what the control says they would have done. Orders and revenue are read side by side, since orders are steadier when a few large purchases could skew a market. You get the lift, a confidence interval, incremental ROAS, and a plain statement of how sure we are.</p></div></li>
     </ol>
   </div>
 </section>
 
-<!-- 04 SAMPLE DESIGN -->
-<section id="design" class="section light-2" aria-labelledby="design-h">
+<!-- 05 SAMPLE DESIGN -->
+<section id="design" class="section light" aria-labelledby="design-h">
   <div class="wrap">
     <div class="section-head">
-      <span class="label">04 — Sample test design</span>
+      <span class="label">05 — Sample test design</span>
       <h2 id="design-h" class="h2 small">What you see before a dollar goes out.</h2>
-      <p class="body">From a real run of our testing platform on <em>Aurelia</em>, an illustrative direct-to-consumer brand with realistic daily sales by market. The brand is fictional. The method and every number below are what the platform produced.</p>
+      <p class="body">From a real run of our testing platform on <em>Aurelia</em>, an illustrative direct-to-consumer brand with realistic daily sales by market. The brand is fictional. The method and every number below are what the platform produced. The design is sized to what the data can support, not worked backward from a budget.</p>
     </div>
 
     <div class="panel sample" id="design-panel">
@@ -154,6 +197,14 @@
         </div>
       </div>
 
+      <div class="sens">
+        <div class="sens-copy">
+          <span class="label">Can this test see a result that matters?</span>
+          <p class="body">Any true cost per incremental order below <strong data-k="design.max_cpa_fmt">—</strong> will show up as significant. Break-even at this brand's average order value is <strong data-k="design.breakeven_cpa_fmt">—</strong>, so the test has <strong data-k="design.headroom_fmt">—</strong> headroom.</p>
+        </div>
+        <div class="chart" id="sens-chart"></div>
+      </div>
+
       <div class="design-foot">
         <div>
           <span class="label">Test markets · share of revenue</span>
@@ -175,11 +226,11 @@
   </div>
 </section>
 
-<!-- 05 SAMPLE READOUT -->
-<section id="readout" class="section light" aria-labelledby="readout-h">
+<!-- 06 SAMPLE READOUT -->
+<section id="readout" class="section light-2" aria-labelledby="readout-h">
   <div class="wrap">
     <div class="section-head">
-      <span class="label">05 — Sample readout</span>
+      <span class="label">06 — Sample readout</span>
       <h2 id="readout-h" class="h2 small">What you get when the test ends.</h2>
       <p class="body">Same brand, same markets, after the campaign ran. The control is the forecast of what the test markets would have done without the spend.</p>
     </div>
@@ -218,11 +269,11 @@
   </div>
 </section>
 
-<!-- 06 WHAT YOU GET -->
-<section id="deliverables" class="section light-2" aria-labelledby="del-h">
+<!-- 07 WHAT YOU GET -->
+<section id="deliverables" class="section light" aria-labelledby="del-h">
   <div class="wrap split top">
     <div class="split-copy">
-      <span class="label">06 — What's included</span>
+      <span class="label">07 — What's included</span>
       <h2 id="del-h" class="h2 small">From fit check to next test, in one engagement.</h2>
       <p class="body">You keep control of the media buy. We design the test, tell you exactly what to change and where, watch it while it runs, and read the result.</p>
     </div>
@@ -236,11 +287,11 @@
   </div>
 </section>
 
-<!-- 07 FIT -->
+<!-- 08 FIT -->
 <section id="fit" class="section dark" aria-labelledby="fit-h">
   <div class="wrap split">
     <div class="split-copy">
-      <span class="label">07 — Is it a fit?</span>
+      <span class="label">08 — Is it a fit?</span>
       <h2 id="fit-h" class="h2 small">Some brands shouldn't run a geo test yet. We'll tell you which one you are.</h2>
       <p class="body">A test that can't produce a readable answer isn't cheap, it's wasted. Before any budget moves, we check your data against these conditions and tell you plainly whether a test will work, what it would take, or what to do instead.</p>
     </div>
@@ -253,10 +304,10 @@
   </div>
 </section>
 
-<!-- 08 FAQ -->
+<!-- 09 FAQ -->
 <section id="faq" class="section light" aria-labelledby="faq-h">
   <div class="narrow">
-    <span class="label">08 — Questions</span>
+    <span class="label">09 — Questions</span>
     <h2 id="faq-h" class="h2 small" style="margin-top:14px">What people ask before a first test.</h2>
     <div class="faq">
       <details><summary>What data do you need?</summary><p class="body">Daily sales by location for as far back as you have it, ideally two years. A Shopify or order-system export by ZIP code is enough; we roll it up to TV markets. No pixels, no platform access.</p></details>
@@ -264,16 +315,19 @@
       <details><summary>How much do I need to spend?</summary><p class="body">Enough to move sales in the test markets by more than their normal noise. The design sizes it for you. For many brands that lands in the tens of thousands over the test, spent only in the test markets.</p></details>
       <details><summary>Do I have to pause my other advertising?</summary><p class="body">No. Everything else keeps running as usual in every market. The test only changes one thing, in the test markets, so its effect can be isolated.</p></details>
       <details><summary>What if the result isn't significant?</summary><p class="body">Then the channel didn't move sales by as much as the test could detect, which is a finding in itself. Because we size the test before launch, "inconclusive" means the effect was small, not that the test was too weak to see a meaningful one.</p></details>
+      <details><summary>Why measure orders instead of revenue?</summary><p class="body">Orders are steadier. Revenue can swing on a handful of large purchases in one market on one day, which widens the confidence interval. We read both; when big orders are common, orders lead and revenue is recovered with your average order value.</p></details>
+      <details><summary>Can we test two channels at once?</summary><p class="body">Yes, with a multi-cell design: each channel gets its own group of markets against a shared holdout. It answers which channel earns more per dollar in one window. The catch is that each cell has less volume behind it, so we confirm every cell can be read on its own first.</p></details>
+      <details><summary>Why keep measuring after the campaign ends?</summary><p class="body">Some channels, CTV especially, drive purchases days after someone sees the ad. A two-week window after spend stops lets those orders land, so the channel isn't undercounted.</p></details>
       <details><summary>How is this different from a platform lift study?</summary><p class="body">A platform's own lift study is graded by the platform, inside its own walls, on its own users. A geo test is measured on your sales data, the same way for every channel, so results can be compared side by side.</p></details>
       <details><summary>How is this different from media mix modeling?</summary><p class="body">MMM estimates every channel at once from history and is only as good as its assumptions. A geo test is an experiment: it changes one thing on purpose and measures the result. The two work well together; a test result is the best way to calibrate an MMM.</p></details>
     </div>
   </div>
 </section>
 
-<!-- 09 CHECK FORM -->
+<!-- 10 CHECK FORM -->
 <section id="check" class="section light-2" aria-labelledby="check-h">
   <div class="narrow">
-    <span class="label">09 — Check your fit</span>
+    <span class="label">10 — Check your fit</span>
     <h2 id="check-h" class="h2 small" style="margin-top:14px">See if your brand can run a test.</h2>
     <p class="body" style="margin-top:14px">A few numbers are enough for a first answer. You'll hear back within two business days with a yes, a no, or what it would take.</p>
     <form id="check-form" class="check-form" novalidate>

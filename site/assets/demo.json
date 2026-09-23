@@ -4,8 +4,8 @@
   "n_markets": "10",
   "share_fmt": "17% of revenue",
   "days_fmt": "45 days",
-  "window_fmt": "Apr 6 \u2013 May 20, 2026",
-  "summary": "Test: CTV added in 10 markets \u00b7 45 days",
+  "window_fmt": "Apr 6 – May 20, 2026",
+  "summary": "Test: CTV added in 10 markets · 45 days",
   "markets": [
    {
     "name": "Tampa-St. Petersburg (Sarasota)",
@@ -53,11 +53,11 @@
   "mde": 0.05,
   "mde_fmt": "5%",
   "spend_fmt": "$60,000",
-  "spend_meta": "\u2248 $1,333/day across test markets",
+  "spend_meta": "≈ $1,333/day across test markets",
   "power": [
    {
     "lift": 0,
-    "power": 0.0
+    "power": 0
    },
    {
     "lift": 0.05,
@@ -703,10 +703,16 @@
   ],
   "donor_note": "Top 5 of 27 markets in the weighted control.",
   "placebo_verdict": "Passed",
-  "placebo_note": "No false lift in 5 past 45-day windows (largest: 1.9%)."
+  "placebo_note": "No false lift in 5 past 45-day windows (largest: 1.9%).",
+  "max_cpa": 390,
+  "breakeven_cpa": 92,
+  "max_cpa_fmt": "$390",
+  "breakeven_cpa_fmt": "$92",
+  "headroom_fmt": "4.2x",
+  "mde_meta": "80%+ chance of detecting it"
  },
  "readout": {
-  "summary": "Test: CTV added in 10 markets \u00b7 45 days",
+  "summary": "Test: CTV added in 10 markets · 45 days",
   "test": 313896.9444,
   "control": 282790.04,
   "lift": 31106.9044,
@@ -724,8 +730,8 @@
   "roi_fmt": "0.52x",
   "reported_roas_fmt": "3.4x",
   "sig_label": "Significant",
-  "lift_ci_fmt": "90% CI $18.2K\u2013$110.4K",
-  "roi_ci_fmt": "90% CI 0.55x\u20131.90x",
+  "lift_ci_fmt": "90% CI $18.2K–$110.4K",
+  "roi_ci_fmt": "90% CI 0.55x–1.90x",
   "cumulative": [
    {
     "test": 3776,
