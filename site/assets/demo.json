@@ -52,8 +52,8 @@
  "design": {
   "mde": 0.05,
   "mde_fmt": "5%",
-  "spend_fmt": "$60,000",
-  "spend_meta": "≈ $1,333/day across test markets",
+  "spend_fmt": "$26,000",
+  "spend_meta": "≈ $578/day across test markets",
   "power": [
    {
     "lift": 0,
@@ -704,11 +704,11 @@
   "donor_note": "Top 5 of 27 markets in the weighted control.",
   "placebo_verdict": "Passed",
   "placebo_note": "No false lift in 5 past 45-day windows (largest: 1.9%).",
-  "max_cpa": 390,
+  "max_cpa": 169,
   "breakeven_cpa": 92,
-  "max_cpa_fmt": "$390",
+  "max_cpa_fmt": "$169",
   "breakeven_cpa_fmt": "$92",
-  "headroom_fmt": "4.2x",
+  "headroom_fmt": "1.8x",
   "mde_meta": "80%+ chance of detecting it"
  },
  "readout": {
@@ -716,22 +716,22 @@
   "test": 313896.9444,
   "control": 282790.04,
   "lift": 31106.9044,
-  "spend": 60000,
-  "roi": 0.5184484066666667,
-  "roi_ci_low": 0.55,
-  "roi_ci_high": 1.9,
+  "spend": 26000,
+  "roi": 1.1964194,
+  "roi_ci_low": 0.56,
+  "roi_ci_high": 1.83,
   "significant": true,
   "reported_roas": 3.4,
   "test_fmt": "$313.9K",
   "control_fmt": "$282.8K",
   "lift_fmt": "$31.1K",
   "lift_pct_fmt": "+11%",
-  "spend_fmt": "$60,000",
-  "roi_fmt": "0.52x",
+  "spend_fmt": "$26,000",
+  "roi_fmt": "1.20x",
   "reported_roas_fmt": "3.4x",
   "sig_label": "Significant",
-  "lift_ci_fmt": "90% CI $18.2K–$110.4K",
-  "roi_ci_fmt": "90% CI 0.55x–1.90x",
+  "lift_ci_fmt": "90% CI $14.6K–$47.6K",
+  "roi_ci_fmt": "90% CI 0.56x–1.83x",
   "cumulative": [
    {
     "test": 3776,
@@ -1004,6 +1004,7 @@
     "hi": 287880
    }
   ],
-  "plain": "CTV caused about $1.2 of revenue for every $1 spent in the test markets. The platform reported $3.40."
- }
+  "plain": "CTV caused about $1.20 of revenue for every $1 spent in the test markets. The platform reported $3.40."
+ },
+ "placeholder_note": "PLACEHOLDER values for layout only. The real sample test run will replace every number in this file."
 }
