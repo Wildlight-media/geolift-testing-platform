@@ -10,7 +10,8 @@ import httpx
 
 from app.core.config import settings
 
-TIMEOUT = httpx.Timeout(connect=10.0, read=21600.0, write=300.0, pool=10.0)
+# read timeout matches the RQ job timeout (workers/queue.py): long market selections are real work.
+TIMEOUT = httpx.Timeout(connect=10.0, read=86400.0, write=300.0, pool=10.0)
 
 
 class RServiceError(Exception):
